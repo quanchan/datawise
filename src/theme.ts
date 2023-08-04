@@ -1,9 +1,57 @@
 import { type ChakraTheme, extendTheme } from "@chakra-ui/react";
+import { tabsAnatomy } from '@chakra-ui/anatomy'
+import { createMultiStyleConfigHelpers } from '@chakra-ui/react'
+import { mode } from '@chakra-ui/theme-tools' // import utility to set light and dark mode props
+
+const { definePartsStyle, defineMultiStyleConfig } =
+  createMultiStyleConfigHelpers(tabsAnatomy.keys);
+
+// define a custom variant
+const brandTabVariant = definePartsStyle((props) => {
+
+  return {
+    tab: {
+      border: '1px solid',
+      borderColor: 'border.input',
+      fontWeight: 'bold',
+      color: 'text.secondary',
+      fontSize: 'xs',
+      paddingY: '0.375rem',
+      borderRadius: 'md',
+      _selected: {
+        bg: '#fff',
+        color: 'blue.primary',
+        borderColor: 'blue.primary',
+        backgroundColor: 'blue.01',
+      },
+    },
+  }
+})
+
+const variants = {
+  brand: brandTabVariant,
+}
+
+// export the component theme
+export const tabsTheme = defineMultiStyleConfig({ variants })
+
 const disabledStyles = {
   backgroundColor: "blue.05",
 };
 
 const components: ChakraTheme["components"] = {
+  Text: {
+    baseStyle: {
+      fontSize: "sm",
+      color: "text.primary",
+    }
+  },
+  Input: {
+    baseStyle: {
+      fontSize: "xs",
+      backgroundColor: "surface.01",
+    }
+  },
   Button: {
     baseStyle: {
       fontSize: "sm",
@@ -35,6 +83,7 @@ const components: ChakraTheme["components"] = {
       },
     },
   },
+  Tabs: tabsTheme
 };
 const colors: ChakraTheme["colors"] = {
   blue: {
