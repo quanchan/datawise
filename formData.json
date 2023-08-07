@@ -1,0 +1,29 @@
+{
+  "tables": [
+    {
+      "name": "Person",
+      "quantity": 150,
+      "fields": [
+        {
+          "name": "license_num",
+          "type": "columnMetaId",
+          "constraints": {
+            "not_null": true,
+            "unique": true,
+            "primary_key": true
+          },
+          "default": null,
+          "generationOptions": {
+            "withEntityField": false 
+          }
+        }
+      ],
+      "constraints": [
+        {
+          "name": "CHK_allow_drive",
+          "condition": "dob < '2000-01-01'"
+        }
+      ]
+    }
+  ] 
+}

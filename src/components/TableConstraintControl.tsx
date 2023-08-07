@@ -1,3 +1,4 @@
+import { Tables } from "@/types/table";
 import {
   Box,
   Button,
@@ -7,10 +8,18 @@ import {
   Input,
   Text,
 } from "@chakra-ui/react";
+import { useFormikContext } from "formik";
 import { RiDeleteBinLine } from "react-icons/ri";
-export type TableConstaintsControlProps = {};
+export type TableConstaintControlProps = {
+  onRemove: () => void;
+  tableIndex: number;
+  constraintIndex: number;
+};
 
-export const TableConstaintsControl: React.FC<TableConstaintsControlProps> = () => {
+export const TableConstaintControl: React.FC<TableConstaintControlProps> = (props) => {
+  const { onRemove, tableIndex, constraintIndex } = props;
+  const { values, handleChange } = useFormikContext<Tables>();
+  const data = values.tables[tableIndex].constraints[constraintIndex];
   return (
     <HStack
       spacing={4}
@@ -26,14 +35,18 @@ export const TableConstaintsControl: React.FC<TableConstaintsControlProps> = () 
       <Input
         size="sm"
         placeholder={"Constraint Name"}
-        value={"first_name"}
+        value={data.name}
+        onChange={handleChange}
+        name={`tables.${tableIndex}.constraints.${constraintIndex}.name`}
         flex={2}
         backgroundColor={"surface.01"}
       />
       <Input
         size="sm"
         placeholder={"Condition"}
-        value={"model_year > 2000 OR make = “Super Durable”"}
+        value={data.condition}
+        onChange={handleChange}
+        name={`tables.${tableIndex}.constraints.${constraintIndex}.condition`}
         flex={5}
         backgroundColor={"surface.01"}
       />
@@ -50,6 +63,7 @@ export const TableConstaintsControl: React.FC<TableConstaintsControlProps> = () 
           size={"xs"}
           fontSize="lg"
           aria-label="Menu"
+          onClick={onRemove}
           icon={<Icon color="red" as={RiDeleteBinLine} />}
           colorScheme="white"
         />
