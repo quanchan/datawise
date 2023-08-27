@@ -1,39 +1,38 @@
 import { type ChakraTheme, extendTheme } from "@chakra-ui/react";
-import { tabsAnatomy } from '@chakra-ui/anatomy'
-import { createMultiStyleConfigHelpers } from '@chakra-ui/react'
-import { mode } from '@chakra-ui/theme-tools' // import utility to set light and dark mode props
+import { tabsAnatomy } from "@chakra-ui/anatomy";
+import { createMultiStyleConfigHelpers } from "@chakra-ui/react";
+import { mode } from "@chakra-ui/theme-tools"; // import utility to set light and dark mode props
 
 const { definePartsStyle, defineMultiStyleConfig } =
   createMultiStyleConfigHelpers(tabsAnatomy.keys);
 
 // define a custom variant
 const brandTabVariant = definePartsStyle((props) => {
-
   return {
     tab: {
-      border: '1px solid',
-      borderColor: 'border.input',
-      fontWeight: 'bold',
-      color: 'text.secondary',
-      fontSize: 'xs',
-      paddingY: '0.375rem',
-      borderRadius: 'md',
+      border: "1px solid",
+      borderColor: "border.input",
+      fontWeight: "bold",
+      color: "text.secondary",
+      fontSize: "xs",
+      paddingY: "0.375rem",
+      borderRadius: "md",
       _selected: {
-        bg: '#fff',
-        color: 'blue.primary',
-        borderColor: 'blue.primary',
-        backgroundColor: 'blue.01',
+        bg: "#fff",
+        color: "blue.primary",
+        borderColor: "blue.primary",
+        backgroundColor: "blue.01",
       },
     },
-  }
-})
+  };
+});
 
 const variants = {
   brand: brandTabVariant,
-}
+};
 
 // export the component theme
-export const tabsTheme = defineMultiStyleConfig({ variants })
+export const tabsTheme = defineMultiStyleConfig({ variants });
 
 const disabledStyles = {
   backgroundColor: "blue.05",
@@ -44,23 +43,29 @@ const components: ChakraTheme["components"] = {
     baseStyle: {
       fontSize: "sm",
       color: "text.primary",
-    }
+    },
   },
   Input: {
     baseStyle: {
       fontSize: "xs",
       backgroundColor: "surface.01",
-    }
+    },
   },
   Button: {
-    baseStyle: {
-      fontSize: "sm",
-      fontWeight: "medium",
-    },
     variants: {
+      basic: {
+        fontSize: "xs",
+        minW: "75px",
+        height: 8,
+        paddingInline: 3,
+      },
       primary: {
-        bg: "button.primary",
+        bg: "blue.primary",
         color: "white",
+        minW: "75px",
+        height: 8,
+        paddingInline: 3,
+        fontSize: "xs",
         _disabled: {
           ...disabledStyles,
         },
@@ -83,7 +88,7 @@ const components: ChakraTheme["components"] = {
       },
     },
   },
-  Tabs: tabsTheme
+  Tabs: tabsTheme,
 };
 const colors: ChakraTheme["colors"] = {
   blue: {
@@ -101,7 +106,7 @@ const colors: ChakraTheme["colors"] = {
   },
   border: {
     primary: "#E2E8F0",
-    input: "#CBD5E0"
+    input: "#CBD5E0",
   },
   surface: {
     "01": "#FFFFFF",

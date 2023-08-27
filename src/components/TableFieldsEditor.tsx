@@ -1,21 +1,15 @@
-import {
-  Box,
-  Divider,
-  HStack,
-  Input,
-  Stack,
-  Text,
-} from "@chakra-ui/react";
+import { Box, Divider, HStack, Input, Stack, Text } from "@chakra-ui/react";
 import { FieldControl } from "./FieldControl";
-import { FieldArray, useFormikContext } from "formik";
+import { ArrayHelpers, FieldArray, useFormikContext } from "formik";
 import { Tables, defaultField } from "@/types/table";
 import { AddButton } from "./AddButton";
 export type TableFieldsEditorProps = {
   index: number;
+  onChooseType: (index: number) => void;
 };
 
 export const TableFieldsEditor: React.FC<TableFieldsEditorProps> = (props) => {
-  const { index } = props;
+  const { index, onChooseType } = props;
 
   const { values, handleChange } = useFormikContext<Tables>();
   const data = values.tables[index];
@@ -29,22 +23,37 @@ export const TableFieldsEditor: React.FC<TableFieldsEditorProps> = (props) => {
       p={4}
       borderRadius={8}
     >
-      <Text fontSize={"sm"} alignSelf={"flex-start"}>
-        Rows Quantity{" "}
-        <Input
-          name={`tables.${index}.rowQuantity`}
-          onChange={handleChange}
-          value={data.rowQuantity}
-          p={0}
-          fontSize={"sm"}
-          ml={3}
-          w={"75px"}
-          textAlign={"center"}
-          type="number"
-          py={1}
-          h={"auto"}
-        />
-      </Text>
+      <HStack fontSize={"sm"} alignSelf={"flex-start"}>
+        <HStack spacing={3}>
+          <Text>Table Name</Text>
+          <Input
+            name={`tables.${index}.name`}
+            onChange={handleChange}
+            value={data.name}
+            p={0}
+            fontSize={"sm"}
+            w={"75px"}
+            textAlign={"center"}
+            py={1}
+            h={"auto"}
+          />
+          <Text>Row Quantity</Text>
+          <Input
+            name={`tables.${index}.rowQuantity`}
+            onChange={handleChange}
+            value={data.rowQuantity}
+            p={0}
+            fontSize={"sm"}
+            w={"75px"}
+            textAlign={"center"}
+            type="number"
+            py={1}
+            h={"auto"}
+          />
+        </HStack>
+        <Box>
+      </Box>
+      </HStack>
       <Divider
         orientation="horizontal"
         color={"border.primary"}
@@ -53,7 +62,7 @@ export const TableFieldsEditor: React.FC<TableFieldsEditorProps> = (props) => {
         borderWidth={0.5}
         w={"100%"}
       />
-      <HStack pl={12} fontWeight={"semibold"}>
+      <HStack pl={12} fontWeight={"semibold"} minW={"4xl"}>
         <Text flex={{ base: 2, lg: 3, xl: 4 }}>Field Name</Text>
         <Text flex={{ base: 2, lg: 3, xl: 4 }}>Type</Text>
         <Text flex={{ base: 3, lg: 3, xl: 4 }}>Constraints</Text>
@@ -69,14 +78,15 @@ export const TableFieldsEditor: React.FC<TableFieldsEditorProps> = (props) => {
         w={"100%"}
       />
       <FieldArray name={`tables.${index}.fields`}>
-        {({ remove, push }) => (
+        {({ remove, push }: ArrayHelpers) => (
           <Stack spacing={4}>
             {data.fields.map((f, i) => (
               <FieldControl
-                key={f.name}
+                key={i}
                 onRemove={() => remove(i)}
                 fieldIndex={i}
                 tableIndex={index}
+                onChooseType={onChooseType}
               />
             ))}
             <Box textAlign={"left"}>
@@ -85,7 +95,7 @@ export const TableFieldsEditor: React.FC<TableFieldsEditorProps> = (props) => {
                   push({
                     ...defaultField,
                     name: `Field_${data.fields.length + 1}`,
-                  })
+                  });
                 }}
               >
                 Add Field
