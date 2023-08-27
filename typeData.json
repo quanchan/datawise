@@ -1,0 +1,110 @@
+[
+{
+  "id": "1",
+  "displayName": "Bitcoin Address",
+  "description": "",
+  "example": "1EZ5PdVcsVEaaKYH37t8toLodJc97eooy6",
+  "entityDisplayName": "Bitcoin Address",
+  "standalone": true,
+  "custom": true
+},
+{
+  "id": "2",
+  "displayName": "Person FullName",
+  "description": "",
+  "example": "John Doe",
+  "entityDisplayName": "Person",
+  "standalone": false,
+  "custom": false
+},
+{
+  "id": "3",
+  "displayName": "Book Title",
+  "description": "",
+  "example": "How to kill a mockingbird",
+  "entityDisplayName": "Book",
+  "standalone": false,
+  "custom": false
+},
+{
+  "id": "4",
+  "displayName": "Company Name",
+  "description": "",
+  "example": "Google, Facebook, Microsoft",
+  "entityDisplayName": "Company",
+  "standalone": false,
+  "custom": false
+},
+{
+  "id": "5",
+  "displayName": "Email Address",
+  "description": "",
+  "example": "johndoe@gmail.com",
+  "entityDisplayName": "Person",
+  "standalone": false,
+  "custom": false
+},
+{
+  "id": "6",
+  "displayName": "Car Manufacturer",
+  "description": "",
+  "example": "Honda, Hyundai, Toyota",
+  "entityDisplayName": "Car",
+  "standalone": false,
+  "custom": false
+},
+{
+  "id": "7",
+  "displayName": "Car Model",
+  "description": "",
+  "example": "Civic, Sonata, Camry",
+  "entityDisplayName": "Car",
+  "standalone": false,
+  "custom": false
+},
+{
+  "id": "8",
+  "displayName": "Soft Skills",
+  "description": "",
+  "example": "Communication, Teamwork, Problem Solving",
+  "entityDisplayName": "Skills",
+  "standalone": false,
+  "custom": false
+},
+{
+  "id": "9",
+  "displayName": "Programming Languages",
+  "description": "",
+  "example": "Java, C++, Python",
+  "entityDisplayName": "Programming Languages",
+  "standalone": true,
+  "custom": false
+},
+{
+  "id": "10",
+  "displayName": "Natural Languages",
+  "description": "",
+  "example": "English, Spanish, French",
+  "entityDisplayName": "Natural Languages",
+  "standalone": true,
+  "custom": false
+},
+{
+  "id": "11",
+  "displayName": "Chemical Elements",
+  "description": "",
+  "example": "Hydrogen, Helium, Lithium",
+  "entityDisplayName": "Chemical Elements",
+  "standalone": true,
+  "custom": false
+},
+{
+  "id": "12",
+  "displayName": "Programming Languages",
+  "description": "",
+  "example": "Java, C++, Python",
+  "entityDisplayName": "Programming Languages",
+  "standalone": true,
+  "custom": false
+}
+]

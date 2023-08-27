@@ -14,10 +14,13 @@ export type TableConstaintControlProps = {
   onRemove: () => void;
   tableIndex: number;
   constraintIndex: number;
+  onEditConstraint: (index: number) => void;
 };
 
-export const TableConstaintControl: React.FC<TableConstaintControlProps> = (props) => {
-  const { onRemove, tableIndex, constraintIndex } = props;
+export const TableConstaintControl: React.FC<TableConstaintControlProps> = (
+  props
+) => {
+  const { onRemove, tableIndex, constraintIndex, onEditConstraint } = props;
   const { values, handleChange } = useFormikContext<Tables>();
   const data = values.tables[tableIndex].constraints[constraintIndex];
   return (
@@ -31,6 +34,7 @@ export const TableConstaintControl: React.FC<TableConstaintControlProps> = (prop
       justifyContent={"space-between"}
       padding={4}
       width={"100%"}
+      minW={"4xl"}
     >
       <Input
         size="sm"
@@ -50,13 +54,8 @@ export const TableConstaintControl: React.FC<TableConstaintControlProps> = (prop
         flex={5}
         backgroundColor={"surface.01"}
       />
-      <Button
-        size="sm"
-        variant={"ghost"}
-      >
-        <Text fontSize="xs" color="blue.primary">
-          Edit
-        </Text>
+      <Button size="sm" variant={"ghost"} fontSize="xs" color="blue.primary" onClick={() => onEditConstraint(constraintIndex)}>
+        Edit
       </Button>
       <Box>
         <IconButton

@@ -15,7 +15,7 @@ export const FieldConstraintsControl: React.FC<
   const data = values.tables[tableIndex].fields[fieldIndex].constraints;
 
   return (
-    <HStack spacing={4} w={"100%"}>
+    <HStack w={"100%"} justifyContent={"space-between"}>
       <Checkbox name={`tables.${tableIndex}.fields.${fieldIndex}.constraints.notNull`} checked={data.notNull} onChange={handleChange}>
         <Text fontSize="xs">NOT NULL</Text>
       </Checkbox>

@@ -58,4 +58,5 @@ export type Tables = {
 
 export const defaultTables: Tables = {
   tables: [{ ...defaultTableOptions }],
+  format: Format.MySQL,
 };
