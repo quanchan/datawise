@@ -5,9 +5,10 @@ import {
   Input,
   Stack,
   Text,
+  VStack,
 } from "@chakra-ui/react";
 import { FieldControl } from "./FieldControl";
-import { FieldArray, useFormikContext } from "formik";
+import { FieldArray, useFormikContext, ErrorMessage } from "formik";
 import { Tables, defaultField } from "@/types/table";
 import { AddButton } from "./AddButton";
 export type TableFieldsEditorProps = {
@@ -29,22 +30,29 @@ export const TableFieldsEditor: React.FC<TableFieldsEditorProps> = (props) => {
       p={4}
       borderRadius={8}
     >
-      <Text fontSize={"sm"} alignSelf={"flex-start"}>
-        Rows Quantity{" "}
-        <Input
+      <VStack spacing={1} alignItems={"flex-start"} padding={4} width={"100%"}>
+        <Text fontSize={"sm"} alignSelf={"flex-start"}>
+          Rows Quantity{" "}
+          <Input
+            name={`tables.${index}.rowQuantity`}
+            onChange={handleChange}
+            value={data.rowQuantity}
+            p={0}
+            fontSize={"sm"}
+            ml={3}
+            w={"75px"}
+            textAlign={"center"}
+            type="number"
+            py={1}
+            h={"auto"}
+          />
+        </Text>
+        <ErrorMessage
           name={`tables.${index}.rowQuantity`}
-          onChange={handleChange}
-          value={data.rowQuantity}
-          p={0}
-          fontSize={"sm"}
-          ml={3}
-          w={"75px"}
-          textAlign={"center"}
-          type="number"
-          py={1}
-          h={"auto"}
+          component={Text}
+          color="red.500"
         />
-      </Text>
+      </VStack>
       <Divider
         orientation="horizontal"
         color={"border.primary"}
@@ -85,7 +93,7 @@ export const TableFieldsEditor: React.FC<TableFieldsEditorProps> = (props) => {
                   push({
                     ...defaultField,
                     name: `Field_${data.fields.length + 1}`,
-                  })
+                  });
                 }}
               >
                 Add Field
