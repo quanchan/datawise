@@ -2,7 +2,7 @@ import { Box, Divider, HStack, Heading, Stack, Text } from "@chakra-ui/react";
 import { TableConstaintControl } from "./TableConstraintControl";
 import { AddButton } from "./AddButton";
 import { ArrayHelpers, FieldArray, useFormikContext } from "formik";
-import { Tables, defaultTableConstaints } from "@/types/table";
+import { Tables, defaultTableConstaints } from "@/types";
 
 export type TableConstaintsEditorProps = {
   tableIndex: number;

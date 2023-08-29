@@ -1,5 +1,5 @@
 import { HStack, Text, Button, Select } from "@chakra-ui/react";
-import { Format, Tables } from "@/types/table";
+import { Format, Tables } from "@/types";
 import { useFormikContext } from "formik";
 
 export type FooterProps = {};

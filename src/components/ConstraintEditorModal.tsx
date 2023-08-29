@@ -2,7 +2,7 @@ import { Box, HStack, Text, Textarea, VStack } from "@chakra-ui/react";
 import { BaseTopBar } from "./BaseTopBar";
 import { ConstraintEditorModalFooter } from "@/components/ConstraintEditorModalFooter";
 import { useFormikContext } from "formik";
-import { Tables } from "@/types/table";
+import { Tables } from "@/types";
 export type ConstraintEditorModalProps = {
   onClose: () => void;
   tableIndex: number;

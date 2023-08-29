@@ -24,7 +24,7 @@ import React from "react";
 import { TableFieldsEditor } from "@/components/TableFieldsEditor";
 import { TableConstaintsEditor } from "@/components/TableConstaintsEditor";
 import { ArrayHelpers, FieldArray, Form, Formik } from "formik";
-import { Tables, defaultTableOptions, defaultTables } from "@/types/table";
+import { Tables, defaultTableOptions, defaultTables } from "@/types";
 import { AddButton } from "@/components/AddButton";
 import { BsX } from "react-icons/bs";
 import { ChooseType } from "@/components/ChooseType";
@@ -250,6 +250,16 @@ export default function Home() {
             <ModalOverlay />
             <ModalContent>
               <Button onClick={() => onCloseModal("visualiser")}>Close</Button>
+            </ModalContent>
+          </Modal>
+          <Modal
+            isOpen={openModal.generationOptions}
+            onClose={() => onCloseModal("generationOptions")}
+            size={"full"}
+          >
+            <ModalOverlay />
+            <ModalContent>
+              <Button onClick={() => onCloseModal("generationOptions")}>Close</Button>
             </ModalContent>
           </Modal>
         </>

@@ -1,7 +1,7 @@
 import { Box, Divider, HStack, Input, Stack, Text } from "@chakra-ui/react";
 import { FieldControl } from "./FieldControl";
 import { ArrayHelpers, FieldArray, useFormikContext } from "formik";
-import { Tables, defaultField } from "@/types/table";
+import { Tables, defaultField } from "@/types";
 import { AddButton } from "./AddButton";
 export type TableFieldsEditorProps = {
   index: number;
@@ -30,10 +30,8 @@ export const TableFieldsEditor: React.FC<TableFieldsEditorProps> = (props) => {
             name={`tables.${index}.name`}
             onChange={handleChange}
             value={data.name}
-            p={0}
             fontSize={"sm"}
-            w={"75px"}
-            textAlign={"center"}
+            w={"300px"}
             py={1}
             h={"auto"}
           />
