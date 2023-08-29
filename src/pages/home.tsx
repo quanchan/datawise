@@ -5,7 +5,6 @@ import {
   Button,
   HStack,
   Icon,
-  IconButton,
   Modal,
   ModalBody,
   ModalContent,
@@ -24,15 +23,67 @@ import React from "react";
 import { TableFieldsEditor } from "@/components/TableFieldsEditor";
 import { TableConstaintsEditor } from "@/components/TableConstaintsEditor";
 import { ArrayHelpers, FieldArray, Form, Formik } from "formik";
-import { Tables, defaultTableOptions, defaultTables } from "@/types/table";
+import {
+  Tables,
+  defaultTableOptions,
+  defaultTables,
+  sqlReservedWords,
+} from "@/types/table";
 import { AddButton } from "@/components/AddButton";
 import { BsX } from "react-icons/bs";
 import { ChooseType } from "@/components/ChooseType";
 import { ConstraintEditorModal } from "@/components/ConstraintEditorModal";
+import * as yup from "yup";
 
 const initialValues: Tables = {
   ...defaultTables,
 };
+
+const sqlFieldNamePattern = /^[a-zA-Z][a-zA-Z0-9_]*$/;
+
+const validationSchema = yup.object().shape({
+  tables: yup.array().of(
+    yup.object().shape({
+      name: yup
+        .string()
+        .matches(sqlFieldNamePattern, "Name should not contain spaces")
+        .notOneOf(sqlReservedWords, "Reserved SQL keyword used as field name")
+        .required("Table name is required"),
+      rowQuantity: yup
+        .number()
+        .min(1, "The minimum row quantity should be 1")
+        .max(100, "The maximum rows quantity should be 100")
+        .required("Rows quantity is required"),
+      fields: yup.array().of(
+        yup.object().shape({
+          name: yup
+            .string()
+            .matches(sqlFieldNamePattern, "Name should not contain spaces")
+            .notOneOf(
+              sqlReservedWords,
+              "Reserved SQL keyword used as field name"
+            )
+            .required("Field name is required"),
+          type: yup.string().required("Type is required"),
+        })
+      ),
+      constraints: yup.array().of(
+        yup.object().shape({
+          name: yup
+            .string()
+            .matches(
+              sqlFieldNamePattern,
+              "Constraint name should not contain spaces"
+            )
+            .notOneOf(
+              sqlReservedWords,
+              "Reserved SQL keyword used as field name"
+            ),
+        })
+      ),
+    })
+  ),
+});
 
 type ModalOpenStates = {
   chooseType: boolean;
@@ -103,6 +154,7 @@ export default function Home() {
       onSubmit={async (values) => {
         alert(JSON.stringify(values));
       }}
+      validationSchema={validationSchema}
     >
       {({ values, handleChange }) => (
         <>
@@ -114,7 +166,12 @@ export default function Home() {
               mb={20}
             >
               <TopBar heading="Create your database schemas" />
-              <VStack direction="row" align="center" maxWidth={"1600px"} w={"100%"}>
+              <VStack
+                direction="row"
+                align="center"
+                maxWidth={"1600px"}
+                w={"100%"}
+              >
                 <Tabs
                   onChange={(index: number) => setTabIndex(index)}
                   index={tabIndex}
@@ -156,7 +213,12 @@ export default function Home() {
                         )}
                       </FieldArray>
                     </HStack>
-                    <Button variant={"primary"} onClick={() => onOpenModal("visualiser")}>Visualiser</Button>
+                    <Button
+                      variant={"primary"}
+                      onClick={() => onOpenModal("visualiser")}
+                    >
+                      Visualiser
+                    </Button>
                   </TabList>
                   <TabPanels w={"100%"}>
                     {values.tables.map((table, index) => (

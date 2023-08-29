@@ -1,6 +1,19 @@
-import { Box, Divider, HStack, Input, Stack, Text } from "@chakra-ui/react";
+import {
+  Box,
+  Divider,
+  HStack,
+  Input,
+  Stack,
+  Text,
+  VStack,
+} from "@chakra-ui/react";
 import { FieldControl } from "./FieldControl";
-import { ArrayHelpers, FieldArray, useFormikContext } from "formik";
+import {
+  ArrayHelpers,
+  FieldArray,
+  useFormikContext,
+  ErrorMessage,
+} from "formik";
 import { Tables, defaultField } from "@/types/table";
 import { AddButton } from "./AddButton";
 export type TableFieldsEditorProps = {
@@ -23,37 +36,48 @@ export const TableFieldsEditor: React.FC<TableFieldsEditorProps> = (props) => {
       p={4}
       borderRadius={8}
     >
-      <HStack fontSize={"sm"} alignSelf={"flex-start"}>
-        <HStack spacing={3}>
-          <Text>Table Name</Text>
-          <Input
-            name={`tables.${index}.name`}
-            onChange={handleChange}
-            value={data.name}
-            p={0}
-            fontSize={"sm"}
-            w={"75px"}
-            textAlign={"center"}
-            py={1}
-            h={"auto"}
-          />
-          <Text>Row Quantity</Text>
-          <Input
-            name={`tables.${index}.rowQuantity`}
-            onChange={handleChange}
-            value={data.rowQuantity}
-            p={0}
-            fontSize={"sm"}
-            w={"75px"}
-            textAlign={"center"}
-            type="number"
-            py={1}
-            h={"auto"}
-          />
+      <VStack spacing={1} alignItems={"flex-start"} padding={4} width={"100%"}>
+        <HStack fontSize={"sm"} alignSelf={"flex-start"}>
+          <HStack spacing={3}>
+            <Text>Table Name</Text>
+            <Input
+              name={`tables.${index}.name`}
+              onChange={handleChange}
+              value={data.name}
+              p={0}
+              fontSize={"sm"}
+              w={"75px"}
+              textAlign={"center"}
+              py={1}
+              h={"auto"}
+            />
+            <Text>Row Quantity</Text>
+            <Input
+              name={`tables.${index}.rowQuantity`}
+              onChange={handleChange}
+              value={data.rowQuantity}
+              p={0}
+              fontSize={"sm"}
+              w={"75px"}
+              textAlign={"center"}
+              type="number"
+              py={1}
+              h={"auto"}
+            />
+          </HStack>
+          <Box></Box>
         </HStack>
-        <Box>
-      </Box>
-      </HStack>
+        <ErrorMessage
+          name={`tables.${index}.name`}
+          component={Text}
+          color="red.500"
+        />
+        <ErrorMessage
+          name={`tables.${index}.rowQuantity`}
+          component={Text}
+          color="red.500"
+        />
+      </VStack>
       <Divider
         orientation="horizontal"
         color={"border.primary"}
