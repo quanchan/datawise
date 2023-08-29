@@ -17,6 +17,6 @@ create table if not exists column_meta
   example varchar(255),
   column_name varchar(255) not null,
   entity_meta_id int not null,
-  constraint fk_entity_meta_id foreign key (entity_meta_id) references entity_meta(id)
+  constraint fk_entity_meta_id foreign key (entity_meta_id) references entity_meta(id) on delete cascade
 );
 

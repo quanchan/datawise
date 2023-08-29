@@ -1,23 +1,21 @@
-import { Type } from "@/types/type";
+import { Type } from "@/types";
 import {
-  Box,
   Button,
   Checkbox,
   HStack,
-  Stack,
   Text,
   Tooltip,
 } from "@chakra-ui/react";
 import { useMemo } from "react";
 
 export type ChooseTypeFooterProps = {
-  selection: Type;
+  selection: Type | undefined;
   onClose: () => void;
 };
 
-function getSelectionText(selection: Type) {
+function getSelectionText(selection: Type | undefined) {
   if (selection) {
-    let entity = selection.entityDisplayName;
+    let entity = selection.entity_display_name;
     if (selection.standalone) {
       entity = "Standalone";
     }
@@ -25,7 +23,7 @@ function getSelectionText(selection: Type) {
       entity = "Custom";
     }
 
-    return `${entity} / ${selection.displayName}`;
+    return `${entity} / ${selection.display_name}`;
   }
   return "None";
 }

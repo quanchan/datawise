@@ -11,10 +11,11 @@ import { MdOutlineDragIndicator } from "react-icons/md";
 import { IoOpenOutline } from "react-icons/io5";
 import { FieldConstraintsControl } from "./FieldConstraintsControl";
 import { RiDeleteBinLine } from "react-icons/ri";
-import { Tables } from "@/types/table";
+import { Tables, Type } from "@/types";
 import { useFormikContext } from "formik";
-import { useRouter } from "next/router";
-import allData from "../../typeData.json";
+import axios from "axios";
+import { useQuery } from "@tanstack/react-query";
+
 
 export type FieldControlProps = {
   onRemove: () => void;
@@ -24,11 +25,16 @@ export type FieldControlProps = {
 };
 
 export const FieldControl: React.FC<FieldControlProps> = (props) => {
+
+  const { data: allType } = useQuery<Type[]>({
+    queryKey: ["typesData"],
+    queryFn: () => axios.get("/api/types").then((res) => res.data),
+  });
+
   const { values, handleChange } = useFormikContext<Tables>();
   const { onRemove, tableIndex, fieldIndex, onChooseType } = props;
   const data = values.tables[tableIndex].fields[fieldIndex];
-  const router = useRouter();
-  const type = allData.find((type) => type.id === data.type);
+  const type = allType?.find((type) => type.id === data.type);
   return (
     <HStack
       spacing={4}
@@ -68,7 +74,7 @@ export const FieldControl: React.FC<FieldControlProps> = (props) => {
         backgroundColor={"surface.01"}
         onClick={() => onChooseType(fieldIndex)}
       >
-        {type?.displayName || (
+        {type?.display_name || (
           <Text as="i" color="text.disable">
             Choose a Type
           </Text>

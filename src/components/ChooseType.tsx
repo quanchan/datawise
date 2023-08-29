@@ -6,21 +6,21 @@ import {
   TabPanel,
   TabPanels,
   VStack,
-  Stack,
   Box,
   InputGroup,
   InputLeftElement,
   Input,
 } from "@chakra-ui/react";
 import React, { useState, useMemo } from "react";
-import data from "../../typeData.json";
 import { TypeCard } from "@/components/TypeCard";
-import { Type } from "@/types/type";
+import { Type, Tables } from "@/types";
 import { BaseTopBar } from "@/components/BaseTopBar";
 import { ChooseTypeFooter } from "@/components/ChooseTypeFooter";
 import { BiSearch } from "react-icons/bi";
 import { useFormikContext } from "formik";
-import { Tables } from "@/types/table";
+import axios from "axios";
+import { useQuery } from "@tanstack/react-query";
+
 export type ChooseTypeProps = {
   onClose: () => void;
   tableIndex: number;
@@ -36,7 +36,17 @@ export const ChooseType: React.FC<ChooseTypeProps> = (props) => {
   );
   const [searchTerm, setSearchTerm] = useState("");
 
+  const { data } = useQuery<Type[]>({
+    queryKey: ["typesData"],
+    queryFn: () => axios.get("/api/types").then((res) => res.data),
+  });
+
   const typeMap = useMemo(() => {
+    if (!data) return {
+      "All": [],
+      "Standalone": [],
+      "Custom": [],
+    };
     const standalone = data.filter((type) => type.standalone && !type.custom);
     const custom = data.filter((type) => type.custom);
     const others = data.filter((type) => !type.standalone && !type.custom);
@@ -45,10 +55,10 @@ export const ChooseType: React.FC<ChooseTypeProps> = (props) => {
     typeMap["Standalone"] = standalone;
     typeMap["Custom"] = custom;
     others.forEach((type) => {
-      if (typeMap[type.entityDisplayName]) {
-        typeMap[type.entityDisplayName].push(type);
+      if (typeMap[type.entity_display_name]) {
+        typeMap[type.entity_display_name].push(type);
       } else {
-        typeMap[type.entityDisplayName] = [type];
+        typeMap[type.entity_display_name] = [type];
       }
     });
     return typeMap;
@@ -116,7 +126,7 @@ export const ChooseType: React.FC<ChooseTypeProps> = (props) => {
                 <Box display={"flex"} flexWrap={"wrap"} gap={6}>
                   {typeMap[key]
                     .filter((t) =>
-                      t.displayName
+                      t.display_name
                         .toLowerCase()
                         .includes(searchTerm.toLowerCase())
                     )
@@ -137,7 +147,7 @@ export const ChooseType: React.FC<ChooseTypeProps> = (props) => {
         </TabPanels>
       </Tabs>
       <ChooseTypeFooter
-        selection={data.filter((t) => t.id === selectedType)[0]}
+        selection={data?.filter((t) => t.id === selectedType)[0]}
         onClose={onSave}
       />
     </VStack>
