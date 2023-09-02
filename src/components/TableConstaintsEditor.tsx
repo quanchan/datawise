@@ -1,8 +1,10 @@
-import { Box, Divider, HStack, Heading, Stack, Text } from "@chakra-ui/react";
+import { Box, Divider, HStack, Heading, Stack, Text, useDisclosure } from "@chakra-ui/react";
 import { TableConstaintControl } from "./TableConstraintControl";
-import { AddButton } from "./AddButton";
+import { AddButton } from "./btn/AddButton";
 import { ArrayHelpers, FieldArray, useFormikContext } from "formik";
 import { Tables, defaultTableConstaints } from "@/types";
+import React from "react";
+import { ConfirmDeleteModal } from "./modal/ConfirmDeleteModal";
 
 export type TableConstaintsEditorProps = {
   tableIndex: number;
@@ -16,7 +18,22 @@ export const TableConstaintsEditor: React.FC<TableConstaintsEditorProps> = (
   const { values, handleChange } = useFormikContext<Tables>();
   const data = values.tables[tableIndex].constraints;
 
+  const { isOpen, onOpen, onClose } = useDisclosure();
+  const [currentConstraintIndex, setCurrentConstraintIndex] = React.useState<number>(0);
+  const [removeField, setRemoveField] =
+    React.useState<ArrayHelpers["remove"]>();
+
+  const openRemoveConstraintModal = (
+    index: number,
+    remove: ArrayHelpers["remove"]
+  ) => {
+    setCurrentConstraintIndex(index);
+    setRemoveField(() => remove);
+    onOpen();
+  };
+
   return (
+    <>
     <Stack
       overflowX={{ base: "scroll", lg: "hidden" }}
       display={"flex"}
@@ -64,7 +81,7 @@ export const TableConstaintsEditor: React.FC<TableConstaintsEditorProps> = (
             {data.map((constraint, i) => (
               <TableConstaintControl
                 key={i}
-                onRemove={() => remove(i)}
+                onRemove={() => openRemoveConstraintModal(i, remove)}
                 tableIndex={tableIndex}
                 constraintIndex={i}
                 onEditConstraint={onEditConstraint}
@@ -86,5 +103,14 @@ export const TableConstaintsEditor: React.FC<TableConstaintsEditorProps> = (
         )}
       </FieldArray>
     </Stack>
+    <ConfirmDeleteModal
+        isOpen={isOpen}
+        onClose={onClose}
+        onRemove={() => {
+          removeField && removeField(currentConstraintIndex);
+        }}
+        entity={"constraint"}
+      />
+    </>
   );
 };

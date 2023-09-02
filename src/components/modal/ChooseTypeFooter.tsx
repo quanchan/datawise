@@ -1,12 +1,7 @@
 import { Type } from "@/types";
-import {
-  Button,
-  Checkbox,
-  HStack,
-  Text,
-  Tooltip,
-} from "@chakra-ui/react";
+import { Button, Checkbox, HStack, Text, Tooltip } from "@chakra-ui/react";
 import { useMemo } from "react";
+import { BaseFooter } from "@/components/BaseFooter";
 
 export type ChooseTypeFooterProps = {
   selection: Type | undefined;
@@ -32,17 +27,10 @@ export const ChooseTypeFooter: React.FC<ChooseTypeFooterProps> = (props) => {
   const { selection, onClose } = props;
   const selectionText = useMemo(() => getSelectionText(selection), [selection]);
   return (
-    <HStack
-      paddingX={8}
-      paddingY={4}
-      background={"surface.01"}
-      width={"100vw"}
-      position={"fixed"}
-      bottom={0}
-      left={0}
-      justifyContent={"space-between"}
-      borderTop={"1px solid"}
-      borderColor={"border.primary"}
+    <BaseFooter
+      styles={{
+        justifyContent: "space-between",
+      }}
     >
       <Text fontWeight={"bold"}>
         Currently selected:{" "}
@@ -61,10 +49,14 @@ i.e Name: John, Age: 16, Occupation: Student, Gender: Male"
             </Checkbox>
           </span>
         </Tooltip>
-        <Button variant={"primary"} onClick={() => onClose()} fontWeight={"bold"}>
+        <Button
+          variant={"primary"}
+          onClick={() => onClose()}
+          fontWeight={"bold"}
+        >
           Save
         </Button>
       </HStack>
-    </HStack>
+    </BaseFooter>
   );
 };
