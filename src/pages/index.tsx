@@ -1,4 +1,4 @@
-import { NavCardButton } from "@/components/NavCardButton";
+import { NavCardButton } from "@/components/btn";
 import { FileUpload } from "@/components/FileUpload";
 import { Heading, HStack, VStack } from "@chakra-ui/react";
 import { AiOutlinePlusCircle } from "react-icons/ai";

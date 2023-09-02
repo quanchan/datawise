@@ -25,10 +25,15 @@ import { TableFieldsEditor } from "@/components/TableFieldsEditor";
 import { TableConstaintsEditor } from "@/components/TableConstaintsEditor";
 import { ArrayHelpers, FieldArray, Form, Formik } from "formik";
 import { Tables, defaultTableOptions, defaultTables } from "@/types";
-import { AddButton } from "@/components/AddButton";
+import { AddButton } from "@/components/btn/AddButton";
 import { BsX } from "react-icons/bs";
-import { ChooseType } from "@/components/ChooseType";
-import { ConstraintEditorModal } from "@/components/ConstraintEditorModal";
+import {
+  ChooseTypeModal,
+  ConstraintModal,
+  GenOptionsModal,
+} from "@/components/modal";
+import { VisualiserModal } from "@/components/modal/VisualiserModal";
+import { ConfirmDeleteModal } from "@/components/modal/ConfirmDeleteModal";
 
 const initialValues: Tables = {
   ...defaultTables,
@@ -82,14 +87,19 @@ export default function Home() {
     index: number,
     remove: ArrayHelpers["remove"]
   ) => {
-    onOpenModal("removeTable");
     setDeletingModal(index);
     setRemoveTable(() => remove);
+    onOpenModal("removeTable");
   };
 
   const onChooseType = (index: number) => {
     setCurrentFieldIndex(index);
     onOpenModal("chooseType");
+  };
+
+  const onEditOptions = (index: number) => {
+    setCurrentFieldIndex(index);
+    onOpenModal("generationOptions");
   };
 
   const onEditConstraint = (index: number) => {
@@ -114,7 +124,12 @@ export default function Home() {
               mb={20}
             >
               <TopBar heading="Create your database schemas" />
-              <VStack direction="row" align="center" maxWidth={"1600px"} w={"100%"}>
+              <VStack
+                direction="row"
+                align="center"
+                maxWidth={"1600px"}
+                w={"100%"}
+              >
                 <Tabs
                   onChange={(index: number) => setTabIndex(index)}
                   index={tabIndex}
@@ -156,7 +171,12 @@ export default function Home() {
                         )}
                       </FieldArray>
                     </HStack>
-                    <Button variant={"primary"} onClick={() => onOpenModal("visualiser")}>Visualiser</Button>
+                    <Button
+                      variant={"primary"}
+                      onClick={() => onOpenModal("visualiser")}
+                    >
+                      Visualiser
+                    </Button>
                   </TabList>
                   <TabPanels w={"100%"}>
                     {values.tables.map((table, index) => (
@@ -165,6 +185,7 @@ export default function Home() {
                           <TableFieldsEditor
                             index={index}
                             onChooseType={onChooseType}
+                            onEditOptions={onEditOptions}
                           />
                           <TableConstaintsEditor
                             tableIndex={index}
@@ -179,89 +200,37 @@ export default function Home() {
               <Footer />
             </VStack>
           </Form>
-          <Modal
+
+          <ChooseTypeModal
             isOpen={openModal.chooseType}
             onClose={() => onCloseModal("chooseType")}
-            size={"full"}
-          >
-            <ModalOverlay />
-            <ModalContent>
-              <ChooseType
-                onClose={() => onCloseModal("chooseType")}
-                tableIndex={tabIndex}
-                fieldIndex={currentFieldIndex}
-              />
-            </ModalContent>
-          </Modal>
-          <Modal
+            tableIndex={tabIndex}
+            fieldIndex={currentFieldIndex}
+          />
+          <ConfirmDeleteModal
             isOpen={openModal.removeTable}
             onClose={() => onCloseModal("removeTable")}
-            size={"sm"}
-          >
-            <ModalOverlay />
-            <ModalContent>
-              <ModalHeader>Confirm Table Deletion</ModalHeader>
-              <ModalBody>
-                <Text>
-                  Are you sure you want to delete this table? This action cannot
-                  be undone. All data in this table will be lost.
-                </Text>
-              </ModalBody>
-              <ModalFooter>
-                <Button
-                  variant={"basic"}
-                  bg="gray.02"
-                  mr={4}
-                  onClick={() => onCloseModal("removeTable")}
-                >
-                  Cancel
-                </Button>
-                <Button
-                  variant={"primary"}
-                  onClick={() => {
-                    removeTable!(deletingModal);
-                    onCloseModal("removeTable");
-                  }}
-                >
-                  Confirm
-                </Button>
-              </ModalFooter>
-            </ModalContent>
-          </Modal>
-          <Modal
+            onRemove={() => {
+              removeTable && removeTable(deletingModal);
+            }}
+            entity={"table"}
+          />
+          <ConstraintModal
             isOpen={openModal.constraint}
             onClose={() => onCloseModal("constraint")}
-            size={"full"}
-          >
-            <ModalOverlay />
-            <ModalContent>
-              <ConstraintEditorModal
-                onClose={() => onCloseModal("constraint")}
-                tableIndex={tabIndex}
-                constraintIndex={currentConstraintIndex}
-              />
-            </ModalContent>
-          </Modal>
-          <Modal
+            tableIndex={tabIndex}
+            constraintIndex={currentConstraintIndex}
+          />
+          <VisualiserModal
             isOpen={openModal.visualiser}
             onClose={() => onCloseModal("visualiser")}
-            size={"full"}
-          >
-            <ModalOverlay />
-            <ModalContent>
-              <Button onClick={() => onCloseModal("visualiser")}>Close</Button>
-            </ModalContent>
-          </Modal>
-          <Modal
+          />
+          <GenOptionsModal
             isOpen={openModal.generationOptions}
             onClose={() => onCloseModal("generationOptions")}
-            size={"full"}
-          >
-            <ModalOverlay />
-            <ModalContent>
-              <Button onClick={() => onCloseModal("generationOptions")}>Close</Button>
-            </ModalContent>
-          </Modal>
+            tableIndex={tabIndex}
+            fieldIndex={currentFieldIndex}
+          />
         </>
       )}
     </Formik>

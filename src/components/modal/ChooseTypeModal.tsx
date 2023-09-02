@@ -15,24 +15,24 @@ import React, { useState, useMemo } from "react";
 import { TypeCard } from "@/components/TypeCard";
 import { Type, Tables } from "@/types";
 import { BaseTopBar } from "@/components/BaseTopBar";
-import { ChooseTypeFooter } from "@/components/ChooseTypeFooter";
+import { BaseModal, BaseModalProps, ChooseTypeFooter } from "@/components/modal";
 import { BiSearch } from "react-icons/bi";
 import { useFormikContext } from "formik";
 import axios from "axios";
 import { useQuery } from "@tanstack/react-query";
 
-export type ChooseTypeProps = {
+export type ChooseTypeModalProps = {
   onClose: () => void;
   tableIndex: number;
   fieldIndex: number;
-};
+} & BaseModalProps;
 
-export const ChooseType: React.FC<ChooseTypeProps> = (props) => {
-  const { onClose, tableIndex, fieldIndex } = props;
+export const ChooseTypeModal: React.FC<ChooseTypeModalProps> = (props) => {
+  const { onClose, tableIndex, fieldIndex, isOpen } = props;
   const [tabIndex, setTabIndex] = useState(0);
   const { setFieldValue, values } = useFormikContext<Tables>();
   const [selectedType, setSelectedType] = useState<string>(
-    values.tables[tableIndex].fields[fieldIndex].type
+    values.tables[tableIndex].fields[fieldIndex]?.type
   );
   const [searchTerm, setSearchTerm] = useState("");
 
@@ -73,6 +73,10 @@ export const ChooseType: React.FC<ChooseTypeProps> = (props) => {
   };
 
   return (
+    <BaseModal
+      isOpen={isOpen}
+      onClose={onClose}
+    >
     <VStack
       width={"100vw"}
       textAlign={"center"}
@@ -151,5 +155,6 @@ export const ChooseType: React.FC<ChooseTypeProps> = (props) => {
         onClose={onSave}
       />
     </VStack>
+    </BaseModal>
   );
 };
