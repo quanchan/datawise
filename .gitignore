@@ -35,9 +35,14 @@ yarn-error.log*
 next-env.d.ts
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 #db
 /volumes
 =======
 #volumes
 /volumes
 >>>>>>> d31bd0a11652f5bb120b1a5ed165f7bb6bcbd01a
+=======
+# db 
+/volumes
+>>>>>>> bc497cb33a2341a9dbc08bcb1ba9621035adad71

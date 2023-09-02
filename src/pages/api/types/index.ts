@@ -14,6 +14,7 @@ export default async function handler(
         ${cm.n_display_name} as display_name, 
         ${cm.n_description} as description, 
         ${cm.n_example} as example, 
+        ${cm.n_data_type} as data_type,
         ${em.n_display_name} as entity_display_name,
         ${em.n_standalone} as standalone,
         ${em.n_custom} as custom

@@ -22,6 +22,7 @@ export type FieldControlProps = {
   tableIndex: number;
   fieldIndex: number;
   onChooseType: (index: number) => void;
+  onEditOptions: (index: number) => void;
 };
 
 export const FieldControl: React.FC<FieldControlProps> = (props) => {
@@ -32,7 +33,7 @@ export const FieldControl: React.FC<FieldControlProps> = (props) => {
   });
 
   const { values, handleChange } = useFormikContext<Tables>();
-  const { onRemove, tableIndex, fieldIndex, onChooseType } = props;
+  const { onRemove, tableIndex, fieldIndex, onChooseType, onEditOptions } = props;
   const data = values.tables[tableIndex].fields[fieldIndex];
   const type = allType?.find((type) => type.id === data.type);
   return (
@@ -93,7 +94,7 @@ export const FieldControl: React.FC<FieldControlProps> = (props) => {
         name={`tables.${tableIndex}.fields.${fieldIndex}.defaultValue`}
         onChange={handleChange}
       />
-      <Button variant={"primary"}>Options</Button>
+      <Button variant={"primary"} onClick={() => onEditOptions(fieldIndex)}>Options</Button>
       <Box>
         <IconButton
           size={"xs"}

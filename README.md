@@ -28,3 +28,18 @@ yarn dev
 ```
 
 The application is up and running at http://localhost:3000
+
+To create new db migration, run:
+```
+yarn db-migrate create <migration_name> --sql-file
+```
+
+To run the newly created db migration, run:
+```
+yarn db-migrate up <migration_name>
+```
+
+To remove the migration, run:
+```
+yarn db-migrate down <migration_name>
+```
