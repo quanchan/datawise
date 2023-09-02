@@ -11,20 +11,30 @@ import { MdOutlineDragIndicator } from "react-icons/md";
 import { IoOpenOutline } from "react-icons/io5";
 import { FieldConstraintsControl } from "./FieldConstraintsControl";
 import { RiDeleteBinLine } from "react-icons/ri";
-import { Tables } from "@/types/table";
+import { Tables, Type } from "@/types";
 import { useFormikContext } from "formik";
+import axios from "axios";
+import { useQuery } from "@tanstack/react-query";
+
 
 export type FieldControlProps = {
   onRemove: () => void;
   tableIndex: number;
   fieldIndex: number;
+  onChooseType: (index: number) => void;
 };
 
 export const FieldControl: React.FC<FieldControlProps> = (props) => {
-  const { values, handleChange } = useFormikContext<Tables>();
-  const { onRemove, tableIndex, fieldIndex } = props;
-  const data = values.tables[tableIndex].fields[fieldIndex];
 
+  const { data: allType } = useQuery<Type[]>({
+    queryKey: ["typesData"],
+    queryFn: () => axios.get("/api/types").then((res) => res.data),
+  });
+
+  const { values, handleChange } = useFormikContext<Tables>();
+  const { onRemove, tableIndex, fieldIndex, onChooseType } = props;
+  const data = values.tables[tableIndex].fields[fieldIndex];
+  const type = allType?.find((type) => type.id === data.type);
   return (
     <HStack
       spacing={4}
@@ -36,6 +46,7 @@ export const FieldControl: React.FC<FieldControlProps> = (props) => {
       justifyContent={"space-between"}
       padding={4}
       width={"100%"}
+      minW={"4xl"}
     >
       <Box>
         <MdOutlineDragIndicator />
@@ -52,15 +63,27 @@ export const FieldControl: React.FC<FieldControlProps> = (props) => {
       <Button
         padding={4}
         size="xs"
+        fontSize={"sm"}
+        fontWeight={"normal"}
         justifyContent={"space-between"}
         variant={"outline"}
-        rightIcon={<Icon as={IoOpenOutline} fontSize={"md"} color={"blue.primary"} />}
+        rightIcon={
+          <Icon as={IoOpenOutline} fontSize={"md"} color={"blue.primary"} />
+        }
         w={"100%"}
         backgroundColor={"surface.01"}
+        onClick={() => onChooseType(fieldIndex)}
       >
-        {data.type || <Text as="i" color="text.disable">Choose a Type</Text>}
+        {type?.display_name || (
+          <Text as="i" color="text.disable">
+            Choose a Type
+          </Text>
+        )}
       </Button>
-      <FieldConstraintsControl fieldIndex={fieldIndex} tableIndex={tableIndex} />
+      <FieldConstraintsControl
+        fieldIndex={fieldIndex}
+        tableIndex={tableIndex}
+      />
       <Input
         size="sm"
         placeholder={"Default Value"}
@@ -70,16 +93,7 @@ export const FieldControl: React.FC<FieldControlProps> = (props) => {
         name={`tables.${tableIndex}.fields.${fieldIndex}.defaultValue`}
         onChange={handleChange}
       />
-      <Button
-        minW={"75px"}
-        size="sm"
-        variant={"solid"}
-        background={"blue.primary"}
-      >
-        <Text fontSize="xs" color="white">
-          Options
-        </Text>
-      </Button>
+      <Button variant={"primary"}>Options</Button>
       <Box>
         <IconButton
           size={"xs"}

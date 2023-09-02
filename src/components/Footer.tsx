@@ -1,10 +1,5 @@
-import {
-  HStack,
-  Text,
-  Button,
-  Select,
-} from "@chakra-ui/react";
-import { Format, Tables } from "@/types/table";
+import { HStack, Text, Button, Select } from "@chakra-ui/react";
+import { Format, Tables } from "@/types";
 import { useFormikContext } from "formik";
 
 export type FooterProps = {};
@@ -26,7 +21,14 @@ export const Footer: React.FC<FooterProps> = (props) => {
       borderColor={"border.primary"}
     >
       <Text>Format</Text>
-      <Select size="sm" fontSize="xs" w={"150px"} value={data} onChange={handleChange} name="format">
+      <Select
+        size="sm"
+        fontSize="xs"
+        w={"150px"}
+        value={data}
+        onChange={handleChange}
+        name="format"
+      >
         <option value={Format.MySQL}>{Format.MySQL}</option>
         <option value={Format.OracleSQL}>{Format.OracleSQL}</option>
       </Select>
@@ -35,16 +37,8 @@ export const Footer: React.FC<FooterProps> = (props) => {
           Preview
         </Text>
       </Button>
-      <Button
-        minW={"75px"}
-        size="sm"
-        variant={"solid"}
-        background={"blue.primary"}
-        type="submit"
-      >
-        <Text fontSize="xs" fontWeight={"bold"} color="white">
-          Download
-        </Text>
+      <Button variant={"primary"} type="submit" fontWeight={"bold"}>
+        Download
       </Button>
     </HStack>
   );
