@@ -12,11 +12,11 @@ values
 
 insert into column_meta (display_name, description, example, column_name, data_type, entity_meta_id)
 values 
-('Card Type', 'Type of the Credit Card', 'Visa', 'card_type', 'VARCHAR', 5);
+('Card Type', 'Type of the Credit Card', 'Visa, MasterCard, American Express', 'card_type', 'varchar.255', 5);
 
 insert into column_meta (display_name, description, example, column_name, data_type, entity_meta_id)
 values 
-('Card Number', 'Credit Card Number', '1234-5678-9012-3456', 'card_num', 'VARCHAR', 5);
+('Card Number', 'Credit Card Number', '1234-5678-9012-3456', 'card_num', 'varchar.19', 5);
 
 insert into creditcard (card_type, card_num, entity_meta_id)
 values 

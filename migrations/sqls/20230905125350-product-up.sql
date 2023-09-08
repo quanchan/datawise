@@ -18,7 +18,7 @@ INSERT INTO column_meta (display_name, description, example, column_name, data_t
 
 -- Column: qr_code
 INSERT INTO column_meta (display_name, description, example, column_name, data_type, entity_meta_id) VALUES
-('QR Code', '', '1234567890', 'qr_code', 'VARCHAR', 14);
+('Product Code', '', '1234567890', 'qr_code', 'VARCHAR', 14);
 
 -- Column: category_name
 INSERT INTO column_meta (display_name, description, example, column_name, data_type, entity_meta_id) VALUES

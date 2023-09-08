@@ -25,7 +25,7 @@ values
  '', 
  'TechWorld Corp.', 
  'name', 
- 'VARCHAR', 
+ 'varchar.255', 
  6);
 
 insert into column_meta (display_name, description, example, column_name, data_type, entity_meta_id)
@@ -34,7 +34,7 @@ values
  '', 
  'BN123456789', 
  'business_number', 
- 'VARCHAR', 
+ 'varchar.50', 
  6);
 
 insert into column_meta (display_name, description, example, column_name, data_type, entity_meta_id)
@@ -43,7 +43,7 @@ values
  '', 
  'Software Development', 
  'industry', 
- 'VARCHAR', 
+ 'varchar.100', 
  6);
 
 insert into company (name, business_number, industry, entity_meta_id)
@@ -76,7 +76,7 @@ values
 
 insert into company (name, business_number, industry, entity_meta_id)
 values 
-('AeroWings Aviation', 'BN852741963', 'Airlines', 6);
+('AeroWings Aviation', 'BN852741963', 'Aviation', 6);
 
 insert into company (name, business_number, industry, entity_meta_id)
 values 
@@ -344,7 +344,7 @@ values
 
 insert into company (name, business_number, industry, entity_meta_id)
 values 
-('AzureCloud Tech', 'BNKAPS6251Y9Z3', 'Cloud Solutions', 6);
+('AzureCloud Tech', 'BNKAPS6251Y9Z3', 'Information Technology', 6);
 
 insert into company (name, business_number, industry, entity_meta_id)
 values  

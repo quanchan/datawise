@@ -40,35 +40,6 @@ insert into soft_skill (soft_skill, entity_meta_id) values ('Organizational Skil
 insert into soft_skill (soft_skill, entity_meta_id) values ('Analytical Skills', 11);
 insert into soft_skill (soft_skill, entity_meta_id) values ('Customer Service', 11);
 insert into soft_skill (soft_skill, entity_meta_id) values ('Multitasking', 11);
-insert into soft_skill (soft_skill, entity_meta_id) values ('Decision Making', 11);
-insert into soft_skill (soft_skill, entity_meta_id) values ('Problem Solving', 11);
 insert into soft_skill (soft_skill, entity_meta_id) values ('Innovation', 11);
-insert into soft_skill (soft_skill, entity_meta_id) values ('Adaptability', 11);
-insert into soft_skill (soft_skill, entity_meta_id) values ('Time Management', 11);
-insert into soft_skill (soft_skill, entity_meta_id) values ('Leadership', 11);
-insert into soft_skill (soft_skill, entity_meta_id) values ('Communication', 11);
-insert into soft_skill (soft_skill, entity_meta_id) values ('Collaboration', 11);
-insert into soft_skill (soft_skill, entity_meta_id) values ('Creativity', 11);
-insert into soft_skill (soft_skill, entity_meta_id) values ('Critical Thinking', 11);
-insert into soft_skill (soft_skill, entity_meta_id) values ('Problem Solving', 11);
-insert into soft_skill (soft_skill, entity_meta_id) values ('Teamwork', 11);
-insert into soft_skill (soft_skill, entity_meta_id) values ('Adaptability', 11);
-insert into soft_skill (soft_skill, entity_meta_id) values ('Decision Making', 11);
-insert into soft_skill (soft_skill, entity_meta_id) values ('Problem Solving', 11);
-insert into soft_skill (soft_skill, entity_meta_id) values ('Leadership', 11);
-insert into soft_skill (soft_skill, entity_meta_id) values ('Communication', 11);
-insert into soft_skill (soft_skill, entity_meta_id) values ('Advising', 11);
-insert into soft_skill (soft_skill, entity_meta_id) values ('Networking', 11);
-insert into soft_skill (soft_skill, entity_meta_id) values ('Presentation', 11);
-insert into soft_skill (soft_skill, entity_meta_id) values ('Collaboration', 11);
-insert into soft_skill (soft_skill, entity_meta_id) values ('Organizational Skills', 11);
-insert into soft_skill (soft_skill, entity_meta_id) values ('Analytical Skills', 11);
-insert into soft_skill (soft_skill, entity_meta_id) values ('Customer Service', 11);
-insert into soft_skill (soft_skill, entity_meta_id) values ('Multitasking', 11);
-insert into soft_skill (soft_skill, entity_meta_id) values ('Decision Making', 11);
-insert into soft_skill (soft_skill, entity_meta_id) values ('Problem Solving', 11);
-insert into soft_skill (soft_skill, entity_meta_id) values ('Innovation', 11);
-insert into soft_skill (soft_skill, entity_meta_id) values ('Adaptability', 11);
-insert into soft_skill (soft_skill, entity_meta_id) values ('Time Management', 11);
 
 

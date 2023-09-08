@@ -1,8 +1,8 @@
 create table if not exists class (
-    id serial primary key,        -- A primary key for unique identification
-    subject_name varchar(255) not null,
-    field varchar(255) not null,
-    subject_code varchar(100) unique not null,
+  id serial primary key,
+  subject_name varchar(255) not null,
+  field varchar(255) not null,
+  subject_code varchar(10) unique not null,
 	entity_meta_id int not null,
   constraint fk_class_entity_id foreign key (entity_meta_id) references entity_meta(id) on delete cascade
 );
@@ -23,7 +23,7 @@ values
     'Name of the subject', 
     'Mathematics', 
     'subject_name', 
-    'varchar', 
+    'varchar.255', 
     2
 );
 
@@ -34,7 +34,7 @@ values
     'Field associated with the subject', 
     'Science', 
     'field', 
-    'varchar', 
+    'varchar.255', 
     2
 );
 
@@ -45,138 +45,117 @@ values
     'Unique code for the subject', 
     'MATH101', 
     'subject_code', 
-    'varchar', 
+    'varchar.10', 
     2
 );
 
 insert into class (subject_name, field, subject_code, entity_meta_id) 
-values ('Mathematics', 'Mathematics Theory', 'MATH123', 2);
+values ('Mathematics Theory', 'Mathematics', 'MATH123', 2);
 
 insert into class (subject_name, field, subject_code, entity_meta_id) 
-values ('Biology', 'Biology Lab', 'BIOL456', 2);
+values ('Organic Chemistry', 'Chemistry', 'CHEM789', 2);
 
 insert into class (subject_name, field, subject_code, entity_meta_id) 
-values ('Chemistry', 'Chemistry Organic', 'CHEM789', 2);
-
-insert into class (subject_name, field, subject_code, entity_meta_id) 
-values ('Physics', 'Physics Quantum', 'PHYS321', 2);
+values ('Introduction to Quantum Physics', 'Physics', 'PHYS321', 2);
 
 insert into class (subject_name, field, subject_code, entity_meta_id) 
 values ('Environmental Science', 'EnvironmentalScience Conservation', 'ENVI020', 2);
 
 insert into class (subject_name, field, subject_code, entity_meta_id) 
-values ('History', 'History Ancient', 'HIST654', 2);
+values ('Ancient History', 'History', 'HIST654', 2);
 
 insert into class (subject_name, field, subject_code, entity_meta_id) 
-values ('Geography', 'Geography Urban', 'GEOG987', 2);
+values ('Urban Geography', 'Geography', 'GEOG987', 2);
 
 insert into class (subject_name, field, subject_code, entity_meta_id) 
-values ('Music', 'Music Classical', 'MUSI782', 2);
+values ('Classical Music', 'Music', 'MUSI782', 2);
 
 insert into class (subject_name, field, subject_code, entity_meta_id) 
-values ('Art', 'Art Modern', 'ARTI489', 2);
+values ('Modern Art', 'Art', 'ARTI489', 2);
 
 insert into class (subject_name, field, subject_code, entity_meta_id) 
-values ('PhysicalEducation', 'PhysicalEducation Gym', 'PHYS112', 2);
+values ('Cosmic Astronomy', 'Astronomy', 'ASTR245', 2);
 
 insert into class (subject_name, field, subject_code, entity_meta_id) 
-values ('Astronomy', 'Astronomy Cosmic', 'ASTR245', 2);
+values ('Global Political Science', 'Political Science', 'POLI678', 2);
 
 insert into class (subject_name, field, subject_code, entity_meta_id) 
-values ('PoliticalScience', 'PoliticalScience Global', 'POLI678', 2);
+values ('Clinical Psychology', 'Psychology', 'PSYC901', 2);
 
 insert into class (subject_name, field, subject_code, entity_meta_id) 
-values ('Psychology', 'Psychology Clinical', 'PSYC901', 2);
+values ('Urban Sociology', 'Sociology', 'SOCI345', 2);
 
 insert into class (subject_name, field, subject_code, entity_meta_id) 
-values ('Sociology', 'Sociology Urban', 'SOCI345', 2);
+values ('Christian Theology', 'Religion', 'THEO678', 2);
 
 insert into class (subject_name, field, subject_code, entity_meta_id) 
-values ('Theology', 'Theology Christian', 'THEO678', 2);
+values ('Surgeric Medicine', 'Medicine', 'MEDI234', 2);
 
 insert into class (subject_name, field, subject_code, entity_meta_id) 
-values ('Medicine', 'Medicine Surgery', 'MEDI234', 2);
+values ('Architecture Design', 'Architecture', 'ARCH001', 2);
 
 insert into class (subject_name, field, subject_code, entity_meta_id) 
-values ('Engineering', 'Engineering Civil', 'ENGI567', 2);
+values ('Contemporary Dance', 'Dance', 'DANC002', 2);
 
 insert into class (subject_name, field, subject_code, entity_meta_id) 
-values ('Architecture', 'Architecture Design', 'ARCH001', 2);
+values ('Criminal Law', 'Law', 'LAWY003', 2);
 
 insert into class (subject_name, field, subject_code, entity_meta_id) 
-values ('Dance', 'Dance Contemporary', 'DANC002', 2);
+values ('Finance for Corporate', 'Finance', 'FINA004', 2);
 
 insert into class (subject_name, field, subject_code, entity_meta_id) 
-values ('Law', 'Law Criminal', 'LAWY003', 2);
+values ('Journalism & Broadcast', 'Journalism', 'JOUR006', 2);
 
 insert into class (subject_name, field, subject_code, entity_meta_id) 
-values ('Finance', 'Finance Corporate', 'FINA004', 2);
+values ('Bread Baking', 'Culinary', 'CULI007', 2);
 
 insert into class (subject_name, field, subject_code, entity_meta_id) 
-values ('Nursing', 'Nursing Pediatric', 'NURS005', 2);
+values ('Pharmacy Clinical', 'Medicine', 'PHAR008', 2);
 
 insert into class (subject_name, field, subject_code, entity_meta_id) 
-values ('Journalism', 'Journalism Broadcast', 'JOUR006', 2);
+values ('Forestry Conservation', 'Forestry', 'FORE009', 2);
 
 insert into class (subject_name, field, subject_code, entity_meta_id) 
-values ('CulinaryArts', 'CulinaryArts Baking', 'CULI007', 2);
+values ('Veterinary Medicine', 'Medicine', 'VETE010', 2);
 
 insert into class (subject_name, field, subject_code, entity_meta_id) 
-values ('Pharmacy', 'Pharmacy Clinical', 'PHAR008', 2);
+values ('Anthropology Cultural', 'Anthropology', 'ANTH011', 2);
 
 insert into class (subject_name, field, subject_code, entity_meta_id) 
-values ('Forestry', 'Forestry Conservation', 'FORE009', 2);
+values ('Geology Structural', 'Geology', 'GEOL012', 2);
 
 insert into class (subject_name, field, subject_code, entity_meta_id) 
-values ('Veterinary Medicine', 'VeterinaryMedicine Surgery', 'VETE010', 2);
+values ('Linguistics Syntax', 'Linguistics ', 'LING013', 2);
 
 insert into class (subject_name, field, subject_code, entity_meta_id) 
-values ('Anthropology', 'Anthropology Cultural', 'ANTH011', 2);
+values ('Telecommunications & Radio', 'Telecommunications', 'TELE015', 2);
 
 insert into class (subject_name, field, subject_code, entity_meta_id) 
-values ('Geology', 'Geology Structural', 'GEOL012', 2);
+values ('Agriculture Crop', 'Agriculture', 'AGRI016', 2);
 
 insert into class (subject_name, field, subject_code, entity_meta_id) 
-values ('Linguistics', 'Linguistics Syntax', 'LING013', 2);
+values ('Criminology Forensic', 'Criminology', 'CRIM017', 2);
 
 insert into class (subject_name, field, subject_code, entity_meta_id) 
-values ('MarineBiology', 'MarineBiology Coral', 'MARI014', 2);
+values ('Mammals', 'Zoology', 'ZOOL036', 2);
 
 insert into class (subject_name, field, subject_code, entity_meta_id) 
-values ('Telecommunications', 'Telecommunications Radio', 'TELE015', 2);
+values ('Botany Plants', 'Botany', 'BOTA037', 2);
 
 insert into class (subject_name, field, subject_code, entity_meta_id) 
-values ('Agriculture', 'Agriculture Crop', 'AGRI016', 2);
+values ('Mycology Fungi', 'Mycology', 'MYCO038', 2);
 
 insert into class (subject_name, field, subject_code, entity_meta_id) 
-values ('Criminology', 'Criminology Forensic', 'CRIM017', 2);
+values ('Entomology Insects', 'Entomology', 'ENTO039', 2);
 
 insert into class (subject_name, field, subject_code, entity_meta_id) 
-values ('Ornithology', 'Ornithology Birds', 'ORNI035', 2);
+values ('Gemology Precious Stones', 'Gemology', 'GEMO41', 2);
 
 insert into class (subject_name, field, subject_code, entity_meta_id) 
-values ('Zoology', 'Zoology Mammals', 'ZOOL036', 2);
+values ('Virology Epidemics', 'Virology', 'VIRO42', 2);
 
 insert into class (subject_name, field, subject_code, entity_meta_id) 
-values ('Botany', 'Botany Plants', 'BOTA037', 2);
-
-insert into class (subject_name, field, subject_code, entity_meta_id) 
-values ('Mycology', 'Mycology Fungi', 'MYCO038', 2);
-
-insert into class (subject_name, field, subject_code, entity_meta_id) 
-values ('Entomology', 'Entomology Insects', 'ENTO039', 2);
-
-insert into class (subject_name, field, subject_code, entity_meta_id) 
-values ('Ichthyology', 'Ichthyology Fish', 'ICHT040', 2);
-
-insert into class (subject_name, field, subject_code, entity_meta_id) 
-values ('Gemology', 'Gemology Precious Stones', 'GEMO41', 2);
-
-insert into class (subject_name, field, subject_code, entity_meta_id) 
-values ('Virology', 'Virology Epidemics', 'VIRO42', 2);
-
-insert into class (subject_name, field, subject_code, entity_meta_id) 
-values ('Orchid Biodiversity', 'Botany', 'ORCH54', 2);
+values ('Orchid Biodiversity', 'Biology', 'ORCH54', 2);
 
 insert into class (subject_name, field, subject_code, entity_meta_id) 
 values ('Child Psychopathology', 'Psychology', 'CHPS55', 2);

@@ -1,7 +1,7 @@
 create table if not exists bank (
     id serial primary key,
     name varchar(255) not null,
-    description text,
+    description varchar(255),
     entity_meta_id int not null,
     foreign key (entity_meta_id) references entity_meta(id)
 );
@@ -9,11 +9,10 @@ create table if not exists bank (
 insert into entity_meta (id, display_name, table_name, standalone, custom) values
     (16, 'Bank', 'bank', false, false);
 
-insert into column_meta (display_name, column_name, data_type, entity_meta_id) values
-    ('Name', 'name', 'varchar(255)', 16);
+insert into column_meta (display_name, description, column_name, data_type, entity_meta_id) values
+    ('Bank Name', 'Bank commonlyused name', 'name', 'varchar.255', 16),
+    ('Bank Description', '', 'description', 'varchar.255', 16);
 
-insert into column_meta (display_name, column_name, data_type, entity_meta_id) values
-    ('Description', 'description', 'text', 16);
 
 insert into bank (name, description, entity_meta_id) values ('Commonwealth Bank', 'One of the largest banks in Australia', 16);
 insert into bank (name, description, entity_meta_id) values ('Westpac Banking Corporation', 'An Australian bank and financial services provider', 16);
@@ -25,7 +24,6 @@ insert into bank (name, description, entity_meta_id) values ('Suncorp Group', 'A
 insert into bank (name, description, entity_meta_id) values ('Bendigo and Adelaide Bank', 'An Australian financial institution', 16);
 insert into bank (name, description, entity_meta_id) values ('ME Bank', 'An Australian direct bank', 16);
 insert into bank (name, description, entity_meta_id) values ('ING Australia', 'An Australian banking and financial services provider', 16);
-
 insert into bank (name, description, entity_meta_id) values ('AMP Bank', 'An Australian retail and corporate bank', 16);
 insert into bank (name, description, entity_meta_id) values ('Heritage Bank', 'A customer-owned bank in Australia', 16);
 insert into bank (name, description, entity_meta_id) values ('Beyond Bank', 'An Australian customer-owned bank', 16);

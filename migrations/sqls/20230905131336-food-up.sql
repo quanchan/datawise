@@ -1,8 +1,8 @@
 create table if not exists food (
     id serial primary key,
     name varchar(255) not null,
-    ingredients text,
-    description text,
+    ingredients varchar(255),
+    description varchar(255),
     entity_meta_id int not null,
     foreign key (entity_meta_id) references entity_meta(id)
 );
@@ -17,11 +17,11 @@ values
 
 insert into column_meta (display_name, description, example, column_name, data_type, entity_meta_id)
 values
-    ('Ingredients', '', 'Flour, water, salt', 'ingredients', 'text', 15);
+    ('Ingredients', '', 'Flour, water, salt', 'ingredients', 'varchar.255', 15);
 
 insert into column_meta (display_name, description, example, column_name, data_type, entity_meta_id)
 values
-    ('Description', '', 'Delicious pasta dish', 'description', 'text', 15);
+    ('Description', '', 'Delicious pasta dish', 'description', 'varchar.255', 15);
 
 insert into food (name, ingredients, description, entity_meta_id)
 values ('Pasta Carbonara', 'Pasta, eggs, bacon, Parmesan cheese', 'Italian pasta dish', 15);

@@ -15,50 +15,75 @@ values
 insert into column_meta 
     (display_name, description, example, column_name, data_type, entity_meta_id)
 values 
-    ('Webpage', '', 'www.example.com', 'webpage', 'VARCHAR(255)', 7);
+    ('Webpage', 'Popular website', 'www.example.com', 'webpage', 'varchar.255', 7);
 
-insert into webpage (webpage, entity_meta_id) values ('homepage', 7);
-insert into webpage (webpage, entity_meta_id) values ('profilepage', 7);
-insert into webpage (webpage, entity_meta_id) values ('dashboard', 7);
-insert into webpage (webpage, entity_meta_id) values ('settingspage', 7);
-insert into webpage (webpage, entity_meta_id) values ('adminpage', 7);
-insert into webpage (webpage, entity_meta_id) values ('searchpage', 7);
-insert into webpage (webpage, entity_meta_id) values ('productpage', 7);
-insert into webpage (webpage, entity_meta_id) values ('cartpage', 7);
-insert into webpage (webpage, entity_meta_id) values ('checkoutpage', 7);
-insert into webpage (webpage, entity_meta_id) values ('orderhistorypage', 7);
-insert into webpage (webpage, entity_meta_id) values ('blogpage', 7);
-insert into webpage (webpage, entity_meta_id) values ('contactpage', 7);
-insert into webpage (webpage, entity_meta_id) values ('aboutuspage', 7);
-insert into webpage (webpage, entity_meta_id) values ('faqpage', 7);
-insert into webpage (webpage, entity_meta_id) values ('termsofservicepage', 7);
-insert into webpage (webpage, entity_meta_id) values ('privacypolicypage', 7);
-insert into webpage (webpage, entity_meta_id) values ('login', 7);
-insert into webpage (webpage, entity_meta_id) values ('register', 7);
-insert into webpage (webpage, entity_meta_id) values ('forgotpassword', 7);
-insert into webpage (webpage, entity_meta_id) values ('resetpassword', 7);
-insert into webpage (webpage, entity_meta_id) values ('usersettings', 7);
-insert into webpage (webpage, entity_meta_id) values ('notifications', 7);
-insert into webpage (webpage, entity_meta_id) values ('messageinbox', 7);
-insert into webpage (webpage, entity_meta_id) values ('friendlist', 7);
-insert into webpage (webpage, entity_meta_id) values ('eventcalendar', 7);
-insert into webpage (webpage, entity_meta_id) values ('projectmanagement', 7);
-insert into webpage (webpage, entity_meta_id) values ('employeedirectory', 7);
-insert into webpage (webpage, entity_meta_id) values ('performancedashboard', 7);
-insert into webpage (webpage, entity_meta_id) values ('salesreports', 7);
-insert into webpage (webpage, entity_meta_id) values ('productcatalog', 7);
-insert into webpage (webpage, entity_meta_id) values ('customersupport', 7);
-insert into webpage (webpage, entity_meta_id) values ('feedbackform', 7);
-insert into webpage (webpage, entity_meta_id) values ('knowledgebase', 7);
-insert into webpage (webpage, entity_meta_id) values ('resourcelibrary', 7);
-insert into webpage (webpage, entity_meta_id) values ('joblistings', 7);
-insert into webpage (webpage, entity_meta_id) values ('resumebuilder', 7);
-insert into webpage (webpage, entity_meta_id) values ('jobapplications', 7);
-insert into webpage (webpage, entity_meta_id) values ('appointmentscheduler', 7);
-insert into webpage (webpage, entity_meta_id) values ('bookingsystem', 7);
-insert into webpage (webpage, entity_meta_id) values ('surveyform', 7);
-insert into webpage (webpage, entity_meta_id) values ('quizpage', 7);
-insert into webpage (webpage, entity_meta_id) values ('testimonials', 7);
-insert into webpage (webpage, entity_meta_id) values ('gallery', 7);
-insert into webpage (webpage, entity_meta_id) values ('weatherforecast', 7);
-insert into webpage (webpage, entity_meta_id) values ('travelplanner', 7);
+NSERT INTO webpage (webpage, entity_meta_id) VALUES
+    ('example.com', 7),
+    ('google.com', 7),
+    ('facebook.com', 7),
+    ('twitter.com', 7),
+    ('youtube.com', 7),
+    ('instagram.com', 7),
+    ('linkedin.com', 7),
+    ('pinterest.com', 7),
+    ('reddit.com', 7),
+    ('amazon.com', 7),
+    ('ebay.com', 7),
+    ('wikipedia.org', 7),
+    ('stackoverflow.com', 7),
+    ('github.com', 7),
+    ('cnn.com', 7),
+    ('bbc.com', 7),
+    ('nytimes.com', 7),
+    ('washingtonpost.com', 7),
+    ('forbes.com', 7),
+    ('apple.com', 7),
+    ('microsoft.com', 7),
+    ('netflix.com', 7),
+    ('hulu.com', 7),
+    ('spotify.com', 7),
+    ('amazonaws.com', 7),
+    ('adobe.com', 7),
+    ('wordpress.com', 7),
+    ('tumblr.com', 7),
+    ('imgur.com', 7),
+    ('flickr.com', 7),
+    ('dropbox.com', 7),
+    ('slack.com', 7),
+    ('zoom.us', 7),
+    ('salesforce.com', 7),
+    ('oracle.com', 7),
+    ('craigslist.org', 7),
+    ('yelp.com', 7),
+    ('quora.com', 7),
+    ('stackexchange.com', 7),
+    ('github.io', 7),
+    ('vimeo.com', 7),
+    ('buzzfeed.com', 7),
+    ('espn.com', 7),
+    ('cnet.com', 7),
+    ('nationalgeographic.com', 7),
+    ('weather.com', 7),
+    ('npr.org', 7),
+    ('huffpost.com', 7),
+    ('pbs.org', 7),
+    ('nike.com', 7),
+    ('walmart.com', 7),
+    ('target.com', 7),
+    ('bestbuy.com', 7),
+    ('wired.com', 7),
+    ('techcrunch.com', 7),
+    ('businessinsider.com', 7),
+    ('time.com', 7),
+    ('foxnews.com', 7),
+    ('bloomberg.com', 7),
+    ('reuters.com', 7),
+    ('bbc.co.uk', 7),
+    ('aljazeera.com', 7),
+    ('nasa.gov', 7),
+    ('ea.com', 7),
+    ('rockstargames.com', 7),
+    ('nintendo.com', 7),
+    ('xbox.com', 7),
+    ('playstation.com', 7),
+    ('ubisoft.com', 7);

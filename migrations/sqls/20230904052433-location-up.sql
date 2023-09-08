@@ -19,64 +19,64 @@ insert into entity_meta (id, display_name, description, table_name, standalone, 
   false
 );
 insert into column_meta 
-(display_name, description, example, column_name, data_type, entity_meta_id)
-values 
-('Street Address', 
-'Complete Address of the Location', 
-'123 Main St', 
-'street_address', 
-'varchar(255)', 
-3);
+(display_name, description, example, column_name, data_type, entity_meta_id) values (
+  'Street Address', 
+  'Complete Address of the Location', 
+  '123 Main St', 
+  'street_address', 
+  'varchar.255', 
+  3
+);
 
 insert into column_meta 
-(display_name, description, example, column_name, data_type, entity_meta_id)
-values 
-('Suburb', 
-'Suburb of the Location', 
-'Downtown', 
-'suburb', 
-'varchar(100)', 
-3);
+(display_name, description, example, column_name, data_type, entity_meta_id) values (
+  'Suburb', 
+  'Suburb of the Location', 
+  'Central, Redfern, Burwood', 
+  'suburb', 
+  'varchar.100', 
+  3
+);
 
 insert into column_meta 
-(display_name, description, example, column_name, data_type, entity_meta_id)
-values 
-('State/Province', 
-'State or Province of the Location', 
-'California', 
-'state_province', 
-'varchar(100)', 
-3);
+(display_name, description, example, column_name, data_type, entity_meta_id) values (
+  'State/Province', 
+  'State or Province of the Location', 
+  'NSW, VIC', 
+  'state_province', 
+  'varchar.100', 
+  3
+);
 
 insert into column_meta 
-(display_name, description, example, column_name, data_type, entity_meta_id)
-values 
-('Postcode', 
-'Postal Code of the Location', 
-'90001', 
-'postcode', 
-'varchar(20)', 
-3);
+(display_name, description, example, column_name, data_type, entity_meta_id) values (
+  'Postcode', 
+  'Postal Code of the Location', 
+  '90001', 
+  'postcode', 
+  'varchar.20', 
+  3
+);
 
 insert into column_meta 
-(display_name, description, example, column_name, data_type, entity_meta_id)
-values 
-('Country', 
-'Country of the Location', 
-'USA', 
-'country', 
-'varchar(100)', 
-3);
+(display_name, description, example, column_name, data_type, entity_meta_id) values (
+  'Country', 
+  'Country of the Location', 
+  'USA, Australia', 
+  'country', 
+  'varchar.100', 
+  3
+);
 
 insert into column_meta 
-(display_name, description, example, column_name, data_type, entity_meta_id)
-values 
-('Region', 
-'Region or District of the Location', 
-'West Coast', 
-'region', 
-'varchar(100)', 
-3);
+(display_name, description, example, column_name, data_type, entity_meta_id) values (
+  'Region', 
+  'Region of the Location', 
+  'Asia, Europe, North America, South America, Africa, Oceania', 
+  'region', 
+  'varchar.100', 
+  3
+);
 
 insert into location (street_address, suburb, state_province, postcode, country, region, entity_meta_id) 
 values ('123 Main St', 'Downtown', 'California', '90001', 'USA', 'North America', 3);
