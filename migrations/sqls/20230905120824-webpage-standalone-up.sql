@@ -17,7 +17,7 @@ insert into column_meta
 values 
     ('Webpage', 'Popular website', 'www.example.com', 'webpage', 'varchar.255', 7);
 
-NSERT INTO webpage (webpage, entity_meta_id) VALUES
+INSERT INTO webpage (webpage, entity_meta_id) VALUES
     ('example.com', 7),
     ('google.com', 7),
     ('facebook.com', 7),
