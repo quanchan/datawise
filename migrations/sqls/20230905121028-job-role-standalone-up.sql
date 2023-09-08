@@ -13,9 +13,9 @@ values
 
 -- column_meta
 insert into column_meta 
-    (display_name, description, example, column_name, data_type, entity_meta_id)
+    (display_name, description, example, column_name, data_type, gen_opts_name, entity_meta_id)
 values 
-    ('Job Role', '', 'Software Engineer', 'job_role', 'VARCHAR(255)', 12);
+    ('Job Role', '', 'Software Engineer', 'job_role', 'varchar.255', 'entityVarchar', 12);
 
 insert into job_role (job_role, entity_meta_id) values ('Financial Analyst', 12);
 insert into job_role (job_role, entity_meta_id) values ('Customer Service Representative', 12);

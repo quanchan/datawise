@@ -13,9 +13,9 @@ values
 
 -- column_meta
 insert into column_meta 
-    (display_name, description, example, column_name, data_type, entity_meta_id)
+    (display_name, description, example, column_name, data_type, gen_opts_name, entity_meta_id)
 values 
-    ('Job Level', '', 'Senior', 'job_level', 'varchar.255', 13);
+    ('Job Level', '', 'Senior', 'job_level', 'varchar.255', 'entityVarchar', 13);
 
 INSERT INTO job_level (job_level, entity_meta_id) VALUES ('Novice', 13);
 INSERT INTO job_level (job_level, entity_meta_id) VALUES ('Apprentice', 13);
@@ -33,5 +33,3 @@ INSERT INTO job_level (job_level, entity_meta_id) VALUES ('Director', 13);
 INSERT INTO job_level (job_level, entity_meta_id) VALUES ('Executive', 13);
 INSERT INTO job_level (job_level, entity_meta_id) VALUES ('Chief', 13);
 INSERT INTO job_level (job_level, entity_meta_id) VALUES ('President', 13);
-INSERT INTO job_level (job_level, entity_meta_id) VALUES ('Chairman', 13);
-INSERT INTO job_level (job_level, entity_meta_id) VALUES ('Founder', 13);

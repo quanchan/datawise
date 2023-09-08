@@ -9,9 +9,9 @@ create table if not exists bank (
 insert into entity_meta (id, display_name, table_name, standalone, custom) values
     (16, 'Bank', 'bank', false, false);
 
-insert into column_meta (display_name, description, column_name, data_type, entity_meta_id) values
-    ('Bank Name', 'Bank commonlyused name', 'name', 'varchar.255', 16),
-    ('Bank Description', '', 'description', 'varchar.255', 16);
+insert into column_meta (display_name, description, column_name, data_type, gen_opts_name, entity_meta_id) values
+    ('Bank Name', 'Bank commonlyused name', 'name', 'varchar.255', 'entityVarchar', 16),
+    ('Bank Description', '', 'description', 'varchar.255', 'entityVarchar', 16);
 
 
 insert into bank (name, description, entity_meta_id) values ('Commonwealth Bank', 'One of the largest banks in Australia', 16);

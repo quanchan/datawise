@@ -16,36 +16,32 @@ insert into entity_meta (id, display_name, description, table_name, standalone, 
   false
 );
 
-insert into column_meta (display_name, description, example, column_name, data_type, entity_meta_id)
-values 
+insert into column_meta (display_name, description, example, column_name, data_type, gen_opts_name, entity_meta_id) values 
 (
     'Subject Name', 
     'Name of the subject', 
     'Mathematics', 
     'subject_name', 
-    'varchar.255', 
+    'varchar.255',
+    'entityVarchar', 
     2
-);
-
-insert into column_meta (display_name, description, example, column_name, data_type, entity_meta_id)
-values 
+),
 (
     'Field', 
     'Field associated with the subject', 
     'Science', 
     'field', 
-    'varchar.255', 
+    'varchar.255',
+    'entityVarchar', 
     2
-);
-
-insert into column_meta (display_name, description, example, column_name, data_type, entity_meta_id)
-values 
+), 
 (
     'Subject Code', 
     'Unique code for the subject', 
     'MATH101', 
     'subject_code', 
     'varchar.10', 
+    'entityVarchar',
     2
 );
 

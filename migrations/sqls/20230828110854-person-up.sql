@@ -30,9 +30,8 @@ insert into column_meta (display_name, description, example, column_name, data_t
   'varchar.255',
   'entityVarchar',
   1
-);
-
-insert into column_meta (display_name, description, example, column_name, data_type, gen_opts_name, entity_meta_id) values (
+),
+(
   'Last Name',
   '',
   'Smith, Jones',
@@ -40,9 +39,8 @@ insert into column_meta (display_name, description, example, column_name, data_t
   'varchar.255',
   'entityVarchar',
   1
-);
-
-insert into column_meta (display_name, description, example, column_name, data_type, gen_opts_name, entity_meta_id) values (
+),
+(
   'Middle Name',
   '',
   'Grace, William',
@@ -50,9 +48,8 @@ insert into column_meta (display_name, description, example, column_name, data_t
   'varchar.255',
   'entityVarchar',
   1
-);
-
-insert into column_meta (display_name, description, example, column_name, data_type, gen_opts_name, entity_meta_id) values (
+),
+(
   'Initials',
   'First letters of a person fullname, separated by a dot',
   'J.S, M.J.W',
@@ -60,9 +57,8 @@ insert into column_meta (display_name, description, example, column_name, data_t
   'varchar.10',
   'entityVarchar',
   1
-);
-
-insert into column_meta (display_name, description, example, column_name, data_type, gen_opts_name, entity_meta_id) values (
+),
+(
   'Email Prefix',
   'Email username created from person fullname',
   'johnsmith, maryjwatson',
@@ -70,9 +66,8 @@ insert into column_meta (display_name, description, example, column_name, data_t
   'varchar.255',
   'entityVarchar',
   1
-);
-
-insert into column_meta (display_name, description, example, column_name, data_type, gen_opts_name, entity_meta_id) values (
+),
+(
   'Gender',
   'Can be Male, Female or Non-Binary. Can be shorten to M, F and N',
   'Male, Female, Non-Binary',
@@ -80,9 +75,8 @@ insert into column_meta (display_name, description, example, column_name, data_t
   'varchar.10',
   'entityVarchar',
   1
-);
-
-insert into column_meta (display_name, description, example, column_name, data_type, gen_opts_name, entity_meta_id) values (
+),
+(
   'Title',
   'Used to address individuals in various formal and informal contexts.',
   'Mr., Mrs., Ms., Dr., Prof.',

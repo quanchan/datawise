@@ -13,9 +13,15 @@ values
 
 -- column_meta
 insert into column_meta 
-    (display_name, description, example, column_name, data_type, entity_meta_id)
+    (display_name, description, example, column_name, data_type, gen_opts_name, entity_meta_id)
 values 
-    ('YesNo', '', 'Yes', 'yesno', 'VARCHAR(255)', 9);
+    ('Yes/No', '', 'Yes', 'yesno', 'varchar.255', 'entityVarchar', 9);
 
 insert into yesno (yesno, entity_meta_id) values ('Yes', 9);
 insert into yesno (yesno, entity_meta_id) values ('No', 9);
+insert into yesno (yesno, entity_meta_id) values ('Y', 9);
+insert into yesno (yesno, entity_meta_id) values ('N', 9);
+insert into yesno (yesno, entity_meta_id) values ('True', 9);
+insert into yesno (yesno, entity_meta_id) values ('False', 9);
+insert into yesno (yesno, entity_meta_id) values ('T', 9);
+insert into yesno (yesno, entity_meta_id) values ('F', 9);

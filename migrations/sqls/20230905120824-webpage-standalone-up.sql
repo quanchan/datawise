@@ -1,23 +1,49 @@
-create table if not exists webpage (
-    id serial primary key,
-    webpage varchar(255) not null,
-    entity_meta_id int not null,
-    constraint fk_webpage_entity_meta foreign key (entity_meta_id) references entity_meta(id)
-);
+create table
+    if not exists webpage (
+        id serial primary key,
+        webpage varchar(255) not null,
+        entity_meta_id int not null,
+        constraint fk_webpage_entity_meta foreign key (entity_meta_id) references entity_meta (id)
+    );
 
 -- entity_meta
-insert into entity_meta 
-    (id, display_name, description, table_name, standalone, custom)
-values 
+insert into
+    entity_meta (
+        id,
+        display_name,
+        description,
+        table_name,
+        standalone,
+        custom
+    )
+values
     (7, 'Webpage', '', 'webpage', true, false);
 
 -- column_meta
-insert into column_meta 
-    (display_name, description, example, column_name, data_type, entity_meta_id)
-values 
-    ('Webpage', 'Popular website', 'www.example.com', 'webpage', 'varchar.255', 7);
+insert into
+    column_meta (
+        display_name,
+        description,
+        example,
+        column_name,
+        data_type,
+        gen_opts_name,
+        entity_meta_id
+    )
+values
+    (
+        'Webpage',
+        'Popular website',
+        'www.example.com',
+        'webpage',
+        'varchar.255',
+        'entityVarchar',
+        7
+    );
 
-INSERT INTO webpage (webpage, entity_meta_id) VALUES
+INSERT INTO
+    webpage (webpage, entity_meta_id)
+VALUES
     ('example.com', 7),
     ('google.com', 7),
     ('facebook.com', 7),

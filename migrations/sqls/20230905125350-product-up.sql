@@ -3,7 +3,7 @@ CREATE TABLE IF NOT EXISTS product (
     product_name VARCHAR(255) NOT NULL,
     qr_code VARCHAR(50) NOT NULL,
     category_name VARCHAR(255) NOT NULL,
-    product_description TEXT,
+    product_description VARCHAR(500),
     supplier_name VARCHAR(255) NOT NULL,
     entity_meta_id INT NOT NULL,
     FOREIGN KEY (entity_meta_id) REFERENCES entity_meta(id)
@@ -13,24 +13,12 @@ INSERT INTO entity_meta (id, display_name, description, table_name, standalone, 
 (14, 'Product', '', 'product', false, false);
 
 -- Column: product_name
-INSERT INTO column_meta (display_name, description, example, column_name, data_type, entity_meta_id) VALUES
-('Product Name', '', 'Widget', 'product_name', 'VARCHAR', 14);
-
--- Column: qr_code
-INSERT INTO column_meta (display_name, description, example, column_name, data_type, entity_meta_id) VALUES
-('Product Code', '', '1234567890', 'qr_code', 'VARCHAR', 14);
-
--- Column: category_name
-INSERT INTO column_meta (display_name, description, example, column_name, data_type, entity_meta_id) VALUES
-('Category Name', '', 'Electronics', 'category_name', 'VARCHAR', 14);
-
--- Column: product_description
-INSERT INTO column_meta (display_name, description, example, column_name, data_type, entity_meta_id) VALUES
-('Product Description', '', 'A high-quality widget.', 'product_description', 'TEXT', 14);
-
--- Column: supplier_name
-INSERT INTO column_meta (display_name, description, example, column_name, data_type, entity_meta_id) VALUES
-('Supplier Name', '', 'ABC Electronics', 'supplier_name', 'VARCHAR', 14);
+INSERT INTO column_meta (display_name, description, example, column_name, data_type, gen_opts_name, entity_meta_id) VALUES
+('Product Name', '', 'Widget', 'product_name', 'varchar.255', 'entityVarchar', 14),
+('Product Code', '', '1234567890', 'qr_code', 'varchar.50', 'entityVarchar', 14),
+('Category Name', '', 'Electronics', 'category_name', 'varchar.255', 'entityVarchar', 14),
+('Product Description', '', 'A high-quality widget.', 'product_description', 'varchar.500', 'entityVarchar', 14),
+('Supplier Name', '', 'ABC Electronics', 'supplier_name', 'varchar.255', 'entityVarchar', 14);
 
 insert into product (product_name, qr_code, category_name, product_description, supplier_name, entity_meta_id) values ('Widget A', 'QR12345', 'Electronics', 'A high-quality widget.', 'ABC Electronics', 14);
 

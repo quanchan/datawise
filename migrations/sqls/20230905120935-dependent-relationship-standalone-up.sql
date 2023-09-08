@@ -13,9 +13,9 @@ values
 
 -- column_meta
 insert into column_meta 
-    (display_name, description, example, column_name, data_type, entity_meta_id)
+    (display_name, description, example, column_name, data_type, gen_opts_name, entity_meta_id)
 values 
-    ('Dependent Relationship', '', 'Spouse', 'dependent_relationship', 'VARCHAR(255)', 10);
+    ('Dependent Relationship', '', 'Spouse', 'dependent_relationship', 'varchar.255', 'entityVarchar', 10);
 
 insert into dependent_relationship (dependent_relationship, entity_meta_id) values ('Spouse', 10);
 insert into dependent_relationship (dependent_relationship, entity_meta_id) values ('Child', 10);

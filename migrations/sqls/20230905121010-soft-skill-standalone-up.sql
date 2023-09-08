@@ -13,9 +13,9 @@ values
 
 -- column_meta
 insert into column_meta 
-    (display_name, description, example, column_name, data_type, entity_meta_id)
+    (display_name, description, example, column_name, data_type, gen_opts_name, entity_meta_id)
 values 
-    ('Soft Skill', '', 'Communication', 'soft_skill', 'VARCHAR(255)', 11);
+    ('Soft Skill', '', 'Communication', 'soft_skill', 'varchar.255', 'entityVarchar', 11);
 
 insert into soft_skill (soft_skill, entity_meta_id) values ('Adaptability', 11);
 insert into soft_skill (soft_skill, entity_meta_id) values ('Communication', 11);
