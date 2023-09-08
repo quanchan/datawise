@@ -27,15 +27,15 @@ export type FieldControlProps = {
 
 export const FieldControl: React.FC<FieldControlProps> = (props) => {
 
-  const { data: allType } = useQuery<Type[]>({
-    queryKey: ["typesData"],
-    queryFn: () => axios.get("/api/types").then((res) => res.data),
-  });
-
   const { values, handleChange } = useFormikContext<Tables>();
   const { onRemove, tableIndex, fieldIndex, onChooseType, onEditOptions } = props;
   const data = values.tables[tableIndex].fields[fieldIndex];
-  const type = allType?.find((type) => type.id === data.type);
+
+  const { data: typeObj } = useQuery<Type | undefined>({
+    queryKey: [`typeData${data.type}`],
+    queryFn: () => axios.get(`/api/types/id?id=${data.type}`).then((res) => res.data),
+  });
+
   return (
     <HStack
       spacing={4}
@@ -75,7 +75,7 @@ export const FieldControl: React.FC<FieldControlProps> = (props) => {
         backgroundColor={"surface.01"}
         onClick={() => onChooseType(fieldIndex)}
       >
-        {type?.display_name || (
+        {typeObj?.display_name || (
           <Text as="i" color="text.disable">
             Choose a Type
           </Text>

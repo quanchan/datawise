@@ -251,9 +251,9 @@ export const DatePicker: FC<DatePickerProps> = ({
   const [currMonth, setCurrMonth] = useState(now.startOf("month"));
   const [selectedDate, setSelectedDate] = useState<Dayjs>();
   const [selectedTime, setSelectedTime] = useState<{
-    hour: number | undefined;
-    minute: number | undefined;
-    second: number | undefined;
+    hour?: number;
+    minute?: number;
+    second?: number;
   }>({
     hour: undefined,
     minute: undefined,
@@ -1181,7 +1181,7 @@ export interface DatePickerProps {
   onChange?: (formattedDay: string, day: Dayjs) => void;
   onOk?: (day: Dayjs) => void;
   picker?: "anniversary" | "date";
-  showCancelButton?: boolean;/*  */
+  showCancelButton?: boolean /*  */;
   showOkButton?: boolean;
   showSelectableDays?: boolean;
   showTimeSelector?: boolean;

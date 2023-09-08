@@ -4,11 +4,11 @@ import { useMemo } from "react";
 import { BaseFooter } from "@/components/BaseFooter";
 
 export type ChooseTypeFooterProps = {
-  selection: Type | undefined;
+  selection?: Type ;
   onClose: () => void;
 };
 
-function getSelectionText(selection: Type | undefined) {
+function getSelectionText(selection?: Type) {
   if (selection) {
     let entity = selection.entity_display_name;
     if (selection.standalone) {

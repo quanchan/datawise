@@ -1,45 +1,51 @@
 import { Box, Button, HStack, Icon, VStack } from "@chakra-ui/react";
 import { InputLabel, InputLabelProps } from "./InputLabel";
-import { useState } from "react";
+import React, { useState } from "react";
 import { HiArrowNarrowRight, HiArrowNarrowLeft } from "react-icons/hi";
-export type ValuePoolInputProps = {} & InputLabelProps;
+import { useQuery } from "@tanstack/react-query";
+import axios from "axios";
+import { Tables, Type } from "@/types";
+import { useFormikContext } from "formik";
+export type ValuePoolInputProps = {
+  type?: Type;
+  excluded?: (string | number)[];
+} & InputLabelProps;
 
 export const ValuePoolInput: React.FC<ValuePoolInputProps> = (
   props: ValuePoolInputProps
 ) => {
-  const { name } = props;
-  const [values, setValues] = useState<string[]>([
-    "Helo",
-    "World",
-    "Test",
-    "Helo",
-    "World",
-    "Test",
-    "Helo",
-    "World",
-    "Test",
-    "Helo",
-    "World",
-    "Test",
-    "Helo",
-    "World",
-    "Test",
-    "Helo",
-    "World",
-    "Test",
-  ]);
-  const [isExcluded, setIsExcluded] = useState<boolean[]>([
-    false,
-    false,
-    false,
-  ]);
+  const { setFieldValue } = useFormikContext<Tables>();
+  const { name, type, excluded } = props;
+  const { data } = useQuery<(string | number)[]>({
+    queryKey: [`values${type?.column_name}`],
+    queryFn: () =>
+      axios
+        .get(
+          `/api/types/values?column=${type?.column_name}&table=${type?.entity_table_name}`
+        )
+        .then((res) => res.data),
+  });
+  const [isExcluded, setIsExcluded] = useState<boolean[]>([]);
+  const [values, setValues] = useState<(string | number)[]>([]);
+  React.useEffect(() => {
+    if (data) {
+      setValues(Array.from(new Set(data.sort())))
+    }
+  }, [data]);
+
+  React.useEffect(() => {
+    setIsExcluded(values?.map((v) => excluded?.includes(v) || false) ?? []);
+  }, [values, excluded]);
 
   const toggleExclude = (index: number) => {
-    setIsExcluded((prev) => [
-      ...prev.slice(0, index),
-      !prev[index],
-      ...prev.slice(index + 1),
-    ]);
+    if (excluded) {
+      const isExcluded = excluded.includes(values[index]);
+      if (isExcluded) {
+        setFieldValue(name || "", excluded.filter((v) => v !== values[index]));
+      } else {
+        setFieldValue(name || "", [...excluded, values[index]]);
+      }
+    }
   };
 
   return (
@@ -63,13 +69,12 @@ export const ValuePoolInput: React.FC<ValuePoolInputProps> = (
           h={"500px"}
           overflow={"auto"}
         >
-          {values.map(
+          {values?.map(
             (value, i) =>
               isExcluded[i] || (
                 <MovingButton
                   onClick={() => toggleExclude(i)}
                   value={value}
-                  index={i}
                   isExcluded={isExcluded[i]}
                   key={i}
                 />
@@ -89,13 +94,12 @@ export const ValuePoolInput: React.FC<ValuePoolInputProps> = (
           h={"500px"}
           overflow={"auto"}
         >
-          {values.map(
+          {values?.map(
             (value, i) =>
               isExcluded[i] && (
                 <MovingButton
                   onClick={() => toggleExclude(i)}
                   value={value}
-                  index={i}
                   isExcluded={isExcluded[i]}
                   key={i}
                 />
@@ -109,13 +113,12 @@ export const ValuePoolInput: React.FC<ValuePoolInputProps> = (
 
 type MovingButtonProps = {
   onClick: () => void;
-  value: string;
-  index: number;
+  value: string | number;
   isExcluded: boolean;
 };
 
 const MovingButton: React.FC<MovingButtonProps> = (props) => {
-  const { onClick, value, index, isExcluded } = props;
+  const { onClick, value, isExcluded } = props;
   return (
     <Button
       onClick={onClick}

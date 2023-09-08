@@ -6,6 +6,7 @@ export class column_meta {
   static example = "example";
   static column_name = "column_name";
   static data_type = "data_type";
+  static gen_opts_name = "gen_opts_name";
   static entity_meta_id = "entity_meta_id";
   static n_id = this.n + "." + this.id;
   static n_display_name = this.n + "." + this.display_name;
@@ -13,6 +14,7 @@ export class column_meta {
   static n_example = this.n + "." + this.example;
   static n_column_name = this.n + "." + this.column_name;
   static n_data_type = this.n + "." + this.data_type;
+  static n_gen_opts_name = this.n + "." + this.gen_opts_name;
   static n_entity_meta_id = this.n + "." + this.entity_meta_id;
 }
 

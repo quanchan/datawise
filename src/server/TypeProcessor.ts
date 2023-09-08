@@ -1,0 +1,53 @@
+import { Format } from "@/types";
+import { MySQLTypeMap, OracleSQLTypeMap, TypeMap } from "@/types/sql";
+export class TypeProcessor {
+  private _type: string;
+  private _args: string[];
+  constructor(type: string = "") {
+    const [typeString, ...args] = type.split(".");
+    this._type = typeString;
+    this._args = args;
+  }
+
+  public get typeSQL(): string {
+    if (this._args.length > 0) {
+      return `${this._type.toUpperCase()}(${this._args.join(", ")})`;
+    }
+    return this._type;
+  }
+
+  public get type(): string {
+    return this._type.toUpperCase();
+  }
+
+  public get args(): string[] {
+    return this._args;
+  }
+
+  public set type(t: string) {
+    this._type = t;
+  }
+
+  public set args(a: string[]) {
+    this._args = a;
+  }
+
+  public getSQLType(format: Format) {
+    switch (format) {
+      case Format.MySQL:
+        return this._getMySQLType();
+      case Format.OracleSQL:
+        return this._getOracleSQLType();
+    } 
+  }
+
+  private _getMySQLType(): string {
+    const tm = MySQLTypeMap;
+    return tm[this._type as keyof TypeMap];
+  }
+
+  private _getOracleSQLType(): string {
+    const tm = OracleSQLTypeMap;
+    return tm[this._type as keyof TypeMap];
+  }
+}

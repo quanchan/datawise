@@ -4,7 +4,7 @@ import { BiInfoCircle } from "react-icons/bi";
 
 export type InputLabelProps = {
   name?: string;
-  label: string;
+  label?: string;
   onChange?: (e: ChangeEvent<any>) => void;
   inclusiveChecked?: boolean;
   tooltip?: string;

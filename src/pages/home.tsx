@@ -1,4 +1,3 @@
-import { Footer } from "@/components/Footer";
 import { TopBar } from "@/components/TopBar";
 import {
   Box,
@@ -12,6 +11,7 @@ import {
   ModalFooter,
   ModalHeader,
   ModalOverlay,
+  Select,
   Tab,
   TabList,
   TabPanel,
@@ -24,7 +24,7 @@ import React from "react";
 import { TableFieldsEditor } from "@/components/TableFieldsEditor";
 import { TableConstaintsEditor } from "@/components/TableConstaintsEditor";
 import { ArrayHelpers, FieldArray, Form, Formik } from "formik";
-import { Tables, defaultTableOptions, defaultTables } from "@/types";
+import { Format, Tables, defaultTableOptions, defaultTables } from "@/types";
 import { AddButton } from "@/components/btn/AddButton";
 import { BsX } from "react-icons/bs";
 import {
@@ -34,6 +34,8 @@ import {
 } from "@/components/modal";
 import { VisualiserModal } from "@/components/modal/VisualiserModal";
 import { ConfirmDeleteModal } from "@/components/modal/ConfirmDeleteModal";
+import { PreviewSQLModal } from "@/components/modal/PreviewSQLModal";
+import { BaseFooter } from "@/components/BaseFooter";
 
 const initialValues: Tables = {
   ...defaultTables,
@@ -45,6 +47,7 @@ type ModalOpenStates = {
   constraint: boolean;
   generationOptions: boolean;
   visualiser: boolean;
+  preview: boolean;
 };
 
 export default function Home() {
@@ -55,6 +58,7 @@ export default function Home() {
     constraint: false,
     generationOptions: false,
     visualiser: false,
+    preview: false,
   });
   const [currentFieldIndex, setCurrentFieldIndex] = React.useState<number>(0);
   const [currentConstraintIndex, setCurrentConstraintIndex] =
@@ -197,13 +201,42 @@ export default function Home() {
                   </TabPanels>
                 </Tabs>
               </VStack>
-              <Footer />
+              <BaseFooter>
+                <Text>Format</Text>
+                <Select
+                  size="sm"
+                  fontSize="xs"
+                  w={"150px"}
+                  value={values.format}
+                  onChange={handleChange}
+                  name="format"
+                >
+                  <option value={Format.MySQL}>{Format.MySQL}</option>
+                  <option value={Format.OracleSQL}>{Format.OracleSQL}</option>
+                </Select>
+                <Button
+                  minW={"75px"}
+                  size="sm"
+                  variant={"outline"}
+                  fontSize={"xs"}
+                  fontWeight={"bold"}
+                  onClick={() => onOpenModal("preview")}
+                >
+                  Preview
+                </Button>
+                <Button variant={"primary"} type="submit" fontWeight={"bold"}>
+                  Download
+                </Button>
+              </BaseFooter>
             </VStack>
           </Form>
 
           <ChooseTypeModal
             isOpen={openModal.chooseType}
-            onClose={() => onCloseModal("chooseType")}
+            onClose={() => {
+              onCloseModal("chooseType");
+              onOpenModal("generationOptions");
+            }}
             tableIndex={tabIndex}
             fieldIndex={currentFieldIndex}
           />
@@ -230,6 +263,10 @@ export default function Home() {
             onClose={() => onCloseModal("generationOptions")}
             tableIndex={tabIndex}
             fieldIndex={currentFieldIndex}
+          />
+          <PreviewSQLModal
+            isOpen={openModal.preview}
+            onClose={() => onCloseModal("preview")}
           />
         </>
       )}

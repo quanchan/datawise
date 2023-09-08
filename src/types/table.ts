@@ -1,3 +1,5 @@
+import { GenOptions } from "./genOpts";
+
 export type FieldConstraints = {
   notNull: boolean;
   unique: boolean;
@@ -9,6 +11,7 @@ export type Field = {
   type: string;
   defaultValue: string;
   constraints: FieldConstraints;
+  genOptions: GenOptions,
 }
 
 export const defaultField: Field = {
@@ -20,6 +23,9 @@ export const defaultField: Field = {
     unique: false,
     primaryKey: false,
   },
+  genOptions: {
+    actualType: "",
+  }
 };
 
 export type TableConstraints = {

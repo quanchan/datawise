@@ -22,66 +22,73 @@ insert into entity_meta (id, display_name, description, table_name, standalone, 
   false
 );
 
-insert into column_meta (display_name, description, example, column_name, data_type, entity_meta_id) values (
+insert into column_meta (display_name, description, example, column_name, data_type, gen_opts_name, entity_meta_id) values (
   'First Name',
   '',
   'John, Mary',
   'first_name',
   'varchar.255',
+  'entityVarchar',
   1
 );
 
-insert into column_meta (display_name, description, example, column_name, data_type, entity_meta_id) values (
+insert into column_meta (display_name, description, example, column_name, data_type, gen_opts_name, entity_meta_id) values (
   'Last Name',
   '',
   'Smith, Jones',
   'last_name',
   'varchar.255',
+  'entityVarchar',
   1
 );
 
-insert into column_meta (display_name, description, example, column_name, data_type, entity_meta_id) values (
+insert into column_meta (display_name, description, example, column_name, data_type, gen_opts_name, entity_meta_id) values (
   'Middle Name',
   '',
   'Grace, William',
   'middle_name',
   'varchar.255',
+  'entityVarchar',
   1
 );
 
-insert into column_meta (display_name, description, example, column_name, data_type, entity_meta_id) values (
+insert into column_meta (display_name, description, example, column_name, data_type, gen_opts_name, entity_meta_id) values (
   'Initials',
   'First letters of a person fullname, separated by a dot',
   'J.S, M.J.W',
   'initials',
   'varchar.10',
+  'entityVarchar',
   1
 );
 
-insert into column_meta (display_name, description, example, column_name, data_type, entity_meta_id) values (
+insert into column_meta (display_name, description, example, column_name, data_type, gen_opts_name, entity_meta_id) values (
   'Email Prefix',
   'Email username created from person fullname',
   'johnsmith, maryjwatson',
   'email_prefix',
   'varchar.255',
+  'entityVarchar',
   1
 );
 
-insert into column_meta (display_name, description, example, column_name, data_type, entity_meta_id) values (
+insert into column_meta (display_name, description, example, column_name, data_type, gen_opts_name, entity_meta_id) values (
   'Gender',
   'Can be Male, Female or Non-Binary. Can be shorten to M, F and N',
   'Male, Female, Non-Binary',
   'gender',
   'varchar.10',
+  'entityVarchar',
   1
 );
 
-insert into column_meta (display_name, description, example, column_name, data_type, entity_meta_id) values (
+insert into column_meta (display_name, description, example, column_name, data_type, gen_opts_name, entity_meta_id) values (
   'Title',
   'Used to address individuals in various formal and informal contexts.',
   'Mr., Mrs., Ms., Dr., Prof.',
   'title',
   'varchar.10',
+  'entityVarchar',
   1
 );
 
