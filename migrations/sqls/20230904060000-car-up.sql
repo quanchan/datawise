@@ -6,7 +6,7 @@ create table if not exists car (
     weight int,
     engine_type varchar(10),
     make varchar(50),
-    type varchar(10),
+    type varchar(20),
     entity_meta_id int not null,
     constraint fk_entity_meta_id foreign key (entity_meta_id) references entity_meta(id) on delete cascade
 );
@@ -15,13 +15,14 @@ insert into entity_meta (id, display_name, description, table_name, standalone, 
 values (4, 'Car', '', 'car', false, false);
 
 insert into column_meta (display_name, description, example, column_name, data_type, entity_meta_id)
-values ('Car Registration Number', 'Registration number of the car', 'XYZ123', 'rego', 'varchar.10', 4),
-values ('Car Model', 'Model of the car', 'Hyundai i30, BMW X5', 'model', 'varchar.50', 4),
-values ('Car Seats', 'Total number of seats (including driver) of the car', '4, 5, 2, 7', 'seats', 'integer', 4),
-values ('Car Weight', 'Weight of the car in KG', '1000', 'weight', 'integer', 4),
-values ('Car Engine Type', 'Engine/Fuel Type', 'petrol, electric, diesel', 'engine_type', 'varchar.100', 4),
-values ('Car Make', 'Manufacturer of the car', 'Toyota', 'make', 'varchar.50', 4),
-values ('Car Body Type', 'Body type of the car', 'sedan, hatch, SUV', 'type', 'varchar.50', 4);
+values 
+ ('Car Registration Number', 'Registration number of the car', 'XYZ123', 'rego', 'varchar.10', 4),
+ ('Car Model', 'Model of the car', 'Hyundai i30, BMW X5', 'model', 'varchar.50', 4),
+ ('Car Seats', 'Total number of seats (including driver) of the car', '4, 5, 2, 7', 'seats', 'integer', 4),
+ ('Car Weight', 'Weight of the car in KG', '1000', 'weight', 'integer', 4),
+ ('Car Engine Type', 'Engine/Fuel Type', 'petrol, electric, diesel', 'engine_type', 'varchar.100', 4),
+ ('Car Make', 'Manufacturer of the car', 'Toyota', 'make', 'varchar.50', 4),
+ ('Car Body Type', 'Body type of the car', 'sedan, hatch, SUV', 'type', 'varchar.50', 4);
 
 INSERT INTO car (rego, model, seats, weight, engine_type, make, type, entity_meta_id)
 VALUES
