@@ -5,26 +5,23 @@ import {
   Button,
   HStack,
   Icon,
-  IconButton,
-  Modal,
-  ModalBody,
-  ModalContent,
-  ModalFooter,
-  ModalHeader,
-  ModalOverlay,
   Tab,
   TabList,
   TabPanel,
   TabPanels,
   Tabs,
-  Text,
   VStack,
 } from "@chakra-ui/react";
 import React from "react";
 import { TableFieldsEditor } from "@/components/TableFieldsEditor";
 import { TableConstaintsEditor } from "@/components/TableConstaintsEditor";
 import { ArrayHelpers, FieldArray, Form, Formik } from "formik";
-import { Tables, defaultTableOptions, defaultTables } from "@/types";
+import {
+  Tables,
+  defaultTableOptions,
+  defaultTables,
+  sqlReservedWords,
+} from "@/types";
 import { AddButton } from "@/components/btn/AddButton";
 import { BsX } from "react-icons/bs";
 import {
@@ -34,10 +31,57 @@ import {
 } from "@/components/modal";
 import { VisualiserModal } from "@/components/modal/VisualiserModal";
 import { ConfirmDeleteModal } from "@/components/modal/ConfirmDeleteModal";
+import * as yup from "yup";
 
 const initialValues: Tables = {
   ...defaultTables,
 };
+
+const sqlFieldNamePattern = /^[a-zA-Z][a-zA-Z0-9_]*$/;
+
+const validationSchema = yup.object().shape({
+  tables: yup.array().of(
+    yup.object().shape({
+      name: yup
+        .string()
+        .matches(sqlFieldNamePattern, "Name should not contain spaces")
+        .notOneOf(sqlReservedWords, "Reserved SQL keyword used as field name")
+        .required("Table name is required"),
+      rowQuantity: yup
+        .number()
+        .min(1, "The minimum row quantity should be 1")
+        .max(100, "The maximum rows quantity should be 100")
+        .required("Rows quantity is required"),
+      fields: yup.array().of(
+        yup.object().shape({
+          name: yup
+            .string()
+            .matches(sqlFieldNamePattern, "Name should not contain spaces")
+            .notOneOf(
+              sqlReservedWords,
+              "Reserved SQL keyword used as field name"
+            )
+            .required("Field name is required"),
+          type: yup.string().required("Type is required"),
+        })
+      ),
+      constraints: yup.array().of(
+        yup.object().shape({
+          name: yup
+            .string()
+            .matches(
+              sqlFieldNamePattern,
+              "Constraint name should not contain spaces"
+            )
+            .notOneOf(
+              sqlReservedWords,
+              "Reserved SQL keyword used as field name"
+            ),
+        })
+      ),
+    })
+  ),
+});
 
 type ModalOpenStates = {
   chooseType: boolean;
@@ -113,6 +157,7 @@ export default function Home() {
       onSubmit={async (values) => {
         alert(JSON.stringify(values));
       }}
+      validationSchema={validationSchema}
     >
       {({ values, handleChange }) => (
         <>
