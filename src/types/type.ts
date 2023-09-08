@@ -1,9 +1,10 @@
 export type Type = {
   id: string,
-  displayName: string,
+  display_name: string,
   description: string,
+  data_type: string,
   example: string,
-  entityDisplayName: string,
+  entity_display_name: string,
   standalone: boolean,
   custom: boolean,
 }

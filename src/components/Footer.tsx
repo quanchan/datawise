@@ -1,6 +1,7 @@
-import { HStack, Text, Button, Select } from "@chakra-ui/react";
-import { Format, Tables } from "@/types/table";
+import { Text, Button, Select } from "@chakra-ui/react";
+import { Format, Tables } from "@/types";
 import { useFormikContext } from "formik";
+import { BaseFooter } from "@/components/BaseFooter";
 
 export type FooterProps = {};
 
@@ -8,18 +9,7 @@ export const Footer: React.FC<FooterProps> = (props) => {
   const { values, handleChange } = useFormikContext<Tables>();
   const data = values.format;
   return (
-    <HStack
-      paddingX={8}
-      paddingY={4}
-      background={"surface.01"}
-      width={"100vw"}
-      position={"fixed"}
-      bottom={0}
-      left={0}
-      justifyContent={"flex-end"}
-      borderTop={"1px solid"}
-      borderColor={"border.primary"}
-    >
+    <BaseFooter>
       <Text>Format</Text>
       <Select
         size="sm"
@@ -40,6 +30,6 @@ export const Footer: React.FC<FooterProps> = (props) => {
       <Button variant={"primary"} type="submit" fontWeight={"bold"}>
         Download
       </Button>
-    </HStack>
+    </BaseFooter>
   );
 };

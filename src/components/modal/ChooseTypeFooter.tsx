@@ -1,23 +1,16 @@
-import { Type } from "@/types/type";
-import {
-  Box,
-  Button,
-  Checkbox,
-  HStack,
-  Stack,
-  Text,
-  Tooltip,
-} from "@chakra-ui/react";
+import { Type } from "@/types";
+import { Button, Checkbox, HStack, Text, Tooltip } from "@chakra-ui/react";
 import { useMemo } from "react";
+import { BaseFooter } from "@/components/BaseFooter";
 
 export type ChooseTypeFooterProps = {
-  selection: Type;
+  selection: Type | undefined;
   onClose: () => void;
 };
 
-function getSelectionText(selection: Type) {
+function getSelectionText(selection: Type | undefined) {
   if (selection) {
-    let entity = selection.entityDisplayName;
+    let entity = selection.entity_display_name;
     if (selection.standalone) {
       entity = "Standalone";
     }
@@ -25,7 +18,7 @@ function getSelectionText(selection: Type) {
       entity = "Custom";
     }
 
-    return `${entity} / ${selection.displayName}`;
+    return `${entity} / ${selection.display_name}`;
   }
   return "None";
 }
@@ -34,17 +27,10 @@ export const ChooseTypeFooter: React.FC<ChooseTypeFooterProps> = (props) => {
   const { selection, onClose } = props;
   const selectionText = useMemo(() => getSelectionText(selection), [selection]);
   return (
-    <HStack
-      paddingX={8}
-      paddingY={4}
-      background={"surface.01"}
-      width={"100vw"}
-      position={"fixed"}
-      bottom={0}
-      left={0}
-      justifyContent={"space-between"}
-      borderTop={"1px solid"}
-      borderColor={"border.primary"}
+    <BaseFooter
+      styles={{
+        justifyContent: "space-between",
+      }}
     >
       <Text fontWeight={"bold"}>
         Currently selected:{" "}
@@ -63,10 +49,14 @@ i.e Name: John, Age: 16, Occupation: Student, Gender: Male"
             </Checkbox>
           </span>
         </Tooltip>
-        <Button variant={"primary"} onClick={() => onClose()} fontWeight={"bold"}>
+        <Button
+          variant={"primary"}
+          onClick={() => onClose()}
+          fontWeight={"bold"}
+        >
           Save
         </Button>
       </HStack>
-    </HStack>
+    </BaseFooter>
   );
 };

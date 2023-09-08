@@ -1,4 +1,4 @@
-import { Tables } from "@/types/table";
+import { Tables } from "@/types";
 import { Checkbox, HStack, Text } from "@chakra-ui/react";
 import { useFormikContext } from "formik";
 

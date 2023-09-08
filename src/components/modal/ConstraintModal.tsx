@@ -1,13 +1,14 @@
 import { Box, HStack, Text, Textarea, VStack } from "@chakra-ui/react";
-import { BaseTopBar } from "./BaseTopBar";
-import { ConstraintEditorModalFooter } from "@/components/ConstraintEditorModalFooter";
+import { BaseTopBar } from "../BaseTopBar";
+import { ConstraintModalFooter } from "@/components/modal";
 import { useFormikContext } from "formik";
-import { Tables } from "@/types/table";
-export type ConstraintEditorModalProps = {
+import { Tables } from "@/types";
+import { BaseModal, BaseModalProps } from "./BaseModal";
+export type ConstraintModalProps = {
   onClose: () => void;
   tableIndex: number;
   constraintIndex: number;
-};
+} & BaseModalProps;
 
 const functions = [
   "CONCAT(string1, string2, ..., string_n)",
@@ -15,15 +16,21 @@ const functions = [
   "LEN(string)",
   "UNIQUE(col1, col2, ..., col_n)",
   "FOREIGN KEY(col1, col2, ..., col_n) REFERENCES table_name(col1, col2, ..., col_n)",
+  "PRIMARY KEY(col1, col2, ..., col_n)",
 ];
 
-export const ConstraintEditorModal: React.FC<ConstraintEditorModalProps> = (
+export const ConstraintModal: React.FC<ConstraintModalProps> = (
   props
 ) => {
-  const { onClose, tableIndex, constraintIndex } = props;
+  const { onClose, tableIndex, constraintIndex, isOpen, size } = props;
   const { values, handleChange } = useFormikContext<Tables>();
 
   return (
+    <BaseModal
+      isOpen={isOpen}
+      onClose={onClose}
+      size={size}
+    >
     <VStack
       width={"100vw"}
       textAlign={"center"}
@@ -48,7 +55,7 @@ export const ConstraintEditorModal: React.FC<ConstraintEditorModalProps> = (
           name={`tables.${tableIndex}.constraints.${constraintIndex}.condition`}
           onChange={handleChange}
           value={
-            values.tables[tableIndex].constraints[constraintIndex].condition
+            values.tables[tableIndex].constraints[constraintIndex]?.condition
           }
           height={"70vh"}
           variant={"outline"}
@@ -67,7 +74,8 @@ export const ConstraintEditorModal: React.FC<ConstraintEditorModalProps> = (
           </Box>
         </Box>
       </HStack>
-      <ConstraintEditorModalFooter onClose={onClose} />
+      <ConstraintModalFooter onClose={onClose} />
     </VStack>
+    </BaseModal>
   );
 };
