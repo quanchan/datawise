@@ -1443,6 +1443,11 @@ ajv@^6.10.0, ajv@^6.12.4:
     json-schema-traverse "^0.4.1"
     uri-js "^4.2.2"
 
+all@^0.0.0:
+  version "0.0.0"
+  resolved "https://registry.yarnpkg.com/all/-/all-0.0.0.tgz#fb2aa75d4759d40e39ecbb118fabf0cc11ff554f"
+  integrity sha512-0oKlfNVv2d+d7c1gwjGspzgbwot47PGQ4b3v1ccx4mR8l9P/Y6E6Dr/yE8lNT63EcAKEbHo6UG3odDpC/NQcKw==
+
 ansi-regex@^5.0.1:
   version "5.0.1"
   resolved "https://registry.npmjs.org/ansi-regex/-/ansi-regex-5.0.1.tgz"
@@ -1911,7 +1916,7 @@ db-migrate-shared@^1.2.0:
 
 db-migrate@^0.11.13:
   version "0.11.13"
-  resolved "https://registry.npmjs.org/db-migrate/-/db-migrate-0.11.13.tgz"
+  resolved "https://registry.yarnpkg.com/db-migrate/-/db-migrate-0.11.13.tgz#b9e5b242c62e82ef8ed2b29e118698813e953d67"
   integrity sha512-OE/bbDo/mQvLmZrui/2jNAiAECJROSURCOU5xs6qKr3FvtUE2O6b0xBUI6WyAAKdili3LJQHFlpqugiYCGTSBA==
   dependencies:
     balanced-match "^1.0.0"
