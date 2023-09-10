@@ -4,7 +4,9 @@ import { DatePickerInput } from "@/components/DatePicker";
 
 export type DateInputProps = {
   isNumber?: boolean;
-  value: string | number;
+  value?: Date;
+  selectTime?: boolean;
+  styles?: Record<string, any>;
 } & InputLabelProps;
 
 export const DateInput: React.FC<DateInputProps> = (props) => {
@@ -14,11 +16,13 @@ export const DateInput: React.FC<DateInputProps> = (props) => {
     onChange,
     inclusiveChecked,
     tooltip,
+    selectTime,
     value,
+    styles
   } = props;
 
   return (
-    <Box m={2}>
+    <Box {...styles}>
       <InputLabel
         name={name}
         label={label}
@@ -27,9 +31,9 @@ export const DateInput: React.FC<DateInputProps> = (props) => {
         tooltip={tooltip}
       />
       <DatePickerInput
-        showTimeSelector={true}
+        showTimeSelector={selectTime}
         currentLangKey="en"
-        format="DD-MM-YYYY HH:mm:ss"
+        format={selectTime ? "DD-MM-YYYY HH:mm:ss" : "DD-MM-YYYY"}
       />
     </Box>
   );

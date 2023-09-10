@@ -27,8 +27,8 @@ insert into column_meta (display_name, description, example, column_name, data_t
     2
 ),
 (
-    'Field', 
-    'Field associated with the subject', 
+    'Subject Field of Study', 
+    'Field of Study associated with the subject', 
     'Science', 
     'field', 
     'varchar.255',
@@ -55,7 +55,7 @@ insert into class (subject_name, field, subject_code, entity_meta_id)
 values ('Introduction to Quantum Physics', 'Physics', 'PHYS321', 2);
 
 insert into class (subject_name, field, subject_code, entity_meta_id) 
-values ('Environmental Science', 'EnvironmentalScience Conservation', 'ENVI020', 2);
+values ('Environmental Conservation', 'Environmental Science', 'ENVI020', 2);
 
 insert into class (subject_name, field, subject_code, entity_meta_id) 
 values ('Ancient History', 'History', 'HIST654', 2);
@@ -166,7 +166,7 @@ insert into class (subject_name, field, subject_code, entity_meta_id)
 values ('Wildlife Conservation', 'Ecology', 'WILD58', 2);
 
 insert into class (subject_name, field, subject_code, entity_meta_id) 
-values ('Embedded System Design', 'Electrical Eng.', 'EMBE59', 2);
+values ('Embedded System Design', 'Electrical Engineering', 'EE159', 2);
 
 insert into class (subject_name, field, subject_code, entity_meta_id) 
 values ('Financial Risk Analysis', 'Finance', 'FRAN60', 2);

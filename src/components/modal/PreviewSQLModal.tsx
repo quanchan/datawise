@@ -2,7 +2,7 @@ import { useFormikContext } from "formik";
 import { BaseModal, BaseModalProps } from "./BaseModal";
 import { Tables } from "@/types";
 import axios from "axios";
-import { useQuery } from "@tanstack/react-query";
+import { useMutation } from "@tanstack/react-query";
 import {
   Box,
   Button,
@@ -10,16 +10,27 @@ import {
   ModalFooter,
   ModalHeader,
 } from "@chakra-ui/react";
+import React, { useEffect } from "react";
 
 export type PreviewSQLModalProps = {} & BaseModalProps;
 
 export const PreviewSQLModal: React.FC<PreviewSQLModalProps> = (props) => {
   const { isOpen, onClose } = props;
   const { values } = useFormikContext<Tables>();
-  const { data } = useQuery<string>({
-    queryKey: ["sqlPreview"],
-    queryFn: () => axios.post("/api/schema", values).then((res) => res.data),
-  });
+  const [data, setData] = React.useState("");
+  const previewMutation = useMutation(
+    () => axios.post("/api/schema", values).then((res) => res.data),
+    {
+      onSuccess: (data) => setData(data),
+    }
+  );
+
+  useEffect(() => {
+    if (isOpen) {
+      previewMutation.mutateAsync();
+    }
+  }, [isOpen]);
+
   return (
     <BaseModal isOpen={isOpen} onClose={onClose} size={"6xl"}>
       <ModalHeader>SQL Preview</ModalHeader>

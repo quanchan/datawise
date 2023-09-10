@@ -64,6 +64,7 @@ export const FieldControl: React.FC<FieldControlProps> = (props) => {
           onChange={handleChange}
           w={"100%"}
           backgroundColor={"surface.01"}
+          
         />
         <Button
           padding={4}

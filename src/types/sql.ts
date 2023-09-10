@@ -118,21 +118,21 @@ export const OracleSQLCreateTable: CreateTableKeywords = {
   UNIQUE: "UNIQUE",
 }
 
-export const MySQLTypePriority = {
-  numeric: [ MySQLDataType.TINYINT, MySQLDataType.SMALLINT, MySQLDataType.INT, MySQLDataType.MEDIUMINT, MySQLDataType.BIGINT, MySQLDataType.DECIMAL],
-  string: [MySQLDataType.CHAR, MySQLDataType.VARCHAR, MySQLDataType.TEXT],
-  date: [MySQLDataType.DATE, MySQLDataType.TIME, MySQLDataType.DATETIME, MySQLDataType.TIMESTAMP],
-  boolean: [MySQLDataType.BOOLEAN],
-  binary: [MySQLDataType.BINARY, MySQLDataType.VARBINARY],
-  set: [MySQLDataType.SET],
-  blob: [MySQLDataType.BLOB],
-  bit: [MySQLDataType.BIT],
-}
+// export const MySQLTypePriority = {
+//   numeric: [ MySQLDataType.TINYINT, MySQLDataType.SMALLINT, MySQLDataType.INT, MySQLDataType.MEDIUMINT, MySQLDataType.BIGINT, MySQLDataType.DECIMAL],
+//   string: [MySQLDataType.CHAR, MySQLDataType.VARCHAR, MySQLDataType.TEXT],
+//   date: [MySQLDataType.DATE, MySQLDataType.TIME, MySQLDataType.DATETIME, MySQLDataType.TIMESTAMP],
+//   boolean: [MySQLDataType.BOOLEAN],
+//   binary: [MySQLDataType.BINARY, MySQLDataType.VARBINARY],
+//   set: [MySQLDataType.SET],
+//   blob: [MySQLDataType.BLOB],
+//   bit: [MySQLDataType.BIT],
+// }
 
-export const OracleTypePriority = {
-  numeric: [ OracleSQLDataType.BINARY_FLOAT, OracleSQLDataType.BINARY_DOUBLE, OracleSQLDataType.NUMBER],
-  string: [OracleSQLDataType.CHAR, OracleSQLDataType.VARCHAR, OracleSQLDataType.NCHAR, OracleSQLDataType.NVARCHAR],
-  date: [OracleSQLDataType.DATE, OracleSQLDataType.TIMESTAMP],
-  blob: [OracleSQLDataType.BLOB, OracleSQLDataType.CLOB, OracleSQLDataType.NCLOB, OracleSQLDataType.BFILE],
-  raw: [OracleSQLDataType.RAW, OracleSQLDataType.LONG_RAW],
-}
+// export const OracleTypePriority = {
+//   numeric: [ OracleSQLDataType.BINARY_FLOAT, OracleSQLDataType.BINARY_DOUBLE, OracleSQLDataType.NUMBER],
+//   string: [OracleSQLDataType.CHAR, OracleSQLDataType.VARCHAR, OracleSQLDataType.NCHAR, OracleSQLDataType.NVARCHAR],
+//   date: [OracleSQLDataType.DATE, OracleSQLDataType.TIMESTAMP],
+//   blob: [OracleSQLDataType.BLOB, OracleSQLDataType.CLOB, OracleSQLDataType.NCLOB, OracleSQLDataType.BFILE],
+//   raw: [OracleSQLDataType.RAW, OracleSQLDataType.LONG_RAW],
+// }

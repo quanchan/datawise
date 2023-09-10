@@ -1,4 +1,5 @@
 import { GenOptions } from "./genOpts";
+import { CustomType, defaultCustomType } from "./type";
 
 export type FieldConstraints = {
   notNull: boolean;
@@ -60,11 +61,13 @@ export enum Format {
 export type Tables = {
   tables: TableOptions[];
   format: Format;
+  newType: CustomType;
 };
 
 export const defaultTables: Tables = {
   tables: [{ ...defaultTableOptions }],
   format: Format.MySQL,
+  newType: defaultCustomType,
 };
 
 export const sqlReservedWords = [

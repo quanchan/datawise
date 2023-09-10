@@ -41,10 +41,28 @@ export const GenOptionsModal: React.FC<GenOptionsModalProps> = (props) => {
       namePrefix + "actualType",
       genOptions?.actualType || typeProcessor.getSQLType(values.format)
     );
-    setFieldValue(namePrefix + "maxLength", genOptions?.maxLength || typeProcessor.args[0]);
-    setFieldValue(namePrefix + "precision", genOptions?.precision || typeProcessor.args[0]);
-    setFieldValue(namePrefix + "scale", genOptions?.scale || typeProcessor.args[1]);
+    setFieldValue(
+      namePrefix + "maxLength",
+      genOptions?.maxLength || typeProcessor.args[0]
+    );
+    setFieldValue(
+      namePrefix + "precision",
+      genOptions?.precision || typeProcessor.args[0]
+    );
+    setFieldValue(
+      namePrefix + "scale",
+      genOptions?.scale || typeProcessor.args[1]
+    );
     setFieldValue(namePrefix + "excluded", genOptions?.excluded || []);
+    setFieldValue(namePrefix + "nullPercent", genOptions?.nullPercent || 0);
+    setFieldValue(
+      namePrefix + "phoneFaxFormat",
+      genOptions?.phoneFaxFormat || ""
+    );
+    setFieldValue(namePrefix + "minDate", genOptions?.minDate || "");
+    setFieldValue(namePrefix + "maxDate", genOptions?.maxDate || "");
+    setFieldValue(namePrefix + "minNumber", genOptions?.minNumber || "");
+    setFieldValue(namePrefix + "maxNumber", genOptions?.maxNumber || "");
   }, [type]);
 
   return (
@@ -62,13 +80,19 @@ export const GenOptionsModal: React.FC<GenOptionsModalProps> = (props) => {
           justifyContent={"flex-start"}
           mt={8}
         >
-          <HStack justifyContent={"space-between"} flexWrap={"wrap"} mx={8}>
+          <HStack
+            justifyContent={"space-between"}
+            flexWrap={"wrap"}
+            mx={8}
+            maxW={"1234px"}
+          >
             {gen_opts?.includes("actualType") && (
               <TextInput
                 value={genOptions?.actualType}
                 onChange={handleChange}
                 label="Actual Type"
                 disabled={true}
+                styles={{ m: 2 }}
               />
             )}
             {gen_opts?.includes("maxLength") && (
@@ -77,6 +101,7 @@ export const GenOptionsModal: React.FC<GenOptionsModalProps> = (props) => {
                 onChange={handleChange}
                 value={genOptions?.maxLength}
                 label={"String Max Length"}
+                styles={{ m: 2 }}
               />
             )}
             {gen_opts?.includes("precision") && (
@@ -87,6 +112,7 @@ export const GenOptionsModal: React.FC<GenOptionsModalProps> = (props) => {
                 label={"Precision"}
                 isNumber={true}
                 tooltip="The number of digits in a number. For example, the number 123.45 has a precision of 5."
+                styles={{ m: 2 }}
               />
             )}
             {gen_opts?.includes("scale") && (
@@ -97,15 +123,27 @@ export const GenOptionsModal: React.FC<GenOptionsModalProps> = (props) => {
                 label={"Scale"}
                 isNumber={true}
                 tooltip="The number of digits to the right of the decimal point in a number. For example, the number 123.45 has a scale of 2."
+                styles={{ m: 2 }}
               />
             )}
-            {gen_opts?.includes("maxNumber") && (
-              <TextInput
-                name={namePrefix + "maxNumber"}
+            {gen_opts?.includes("minDate") && (
+              <DateInput
+                name={namePrefix + "minDate"}
                 onChange={handleChange}
-                value={genOptions?.maxNumber}
-                label={"Max Value"}
-                isNumber={true}
+                value={genOptions?.minDate}
+                label={"Min Date"}
+                selectTime={gen_opts?.includes("time")}
+                styles={{ m: 2 }}
+              />
+            )}
+            {gen_opts?.includes("maxDate") && (
+              <DateInput
+                name={namePrefix + "maxDate"}
+                onChange={handleChange}
+                value={genOptions?.maxDate}
+                label={"Max Date"}
+                selectTime={gen_opts?.includes("time")}
+                styles={{ m: 2 }}
               />
             )}
             {gen_opts?.includes("minNumber") && (
@@ -115,6 +153,17 @@ export const GenOptionsModal: React.FC<GenOptionsModalProps> = (props) => {
                 value={genOptions?.minNumber}
                 label={"Min Value"}
                 isNumber={true}
+                styles={{ m: 2 }}
+              />
+            )}
+            {gen_opts?.includes("maxNumber") && (
+              <TextInput
+                name={namePrefix + "maxNumber"}
+                onChange={handleChange}
+                value={genOptions?.maxNumber}
+                label={"Max Value"}
+                isNumber={true}
+                styles={{ m: 2 }}
               />
             )}
             {gen_opts?.includes("nullPercent") && (
@@ -125,6 +174,7 @@ export const GenOptionsModal: React.FC<GenOptionsModalProps> = (props) => {
                 label={"Null Percentage"}
                 isNumber={true}
                 tooltip="The percentage of rows with NULL value "
+                styles={{ m: 2 }}
               />
             )}
             {gen_opts?.includes("phoneFaxFormat") && (
@@ -134,6 +184,7 @@ export const GenOptionsModal: React.FC<GenOptionsModalProps> = (props) => {
                 value={genOptions?.phoneFaxFormat}
                 label={"Phone/Fax Generation Format"}
                 tooltip="The format of the phone/fax number. # will be replaced with random number. For example, +61 (###) ###-####"
+                styles={{ m: 2 }}
               />
             )}
             {gen_opts?.includes("wordCasing") && (
@@ -143,18 +194,23 @@ export const GenOptionsModal: React.FC<GenOptionsModalProps> = (props) => {
                 value={genOptions?.wordCasing}
                 label={"Word Casing"}
                 options={[
-                  "Original",
-                  "Lowercase",
-                  "Uppercase",
-                  "All words capitalization",
-                  "First word capitalization",
+                  { value: "original", label: "Original" },
+                  { value: "lower", label: "Lowercase" },
+                  { value: "upper", label: "Uppercase" },
+                  { value: "capital", label: "All words capitalization" },
+                  { value: "first", label: "First word capitalization" },
                 ]}
+                styles={{ m: 2 }}
               />
             )}
-
-
           </HStack>
-          {gen_opts?.includes("excluded") && <ValuePoolInput name={namePrefix + "excluded"} type={type} excluded={genOptions?.excluded}/>}
+          {gen_opts?.includes("excluded") && (
+            <ValuePoolInput
+              name={namePrefix + "excluded"}
+              type={type}
+              excluded={genOptions?.excluded}
+            />
+          )}
         </VStack>
         <GenOptionsModalFooter onClose={onClose} />
       </VStack>

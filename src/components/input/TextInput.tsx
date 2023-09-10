@@ -6,6 +6,8 @@ export type TextInputProps = {
   value?: string | number;
   placeholder?: string;
   disabled?: boolean;
+  doubleLength?: boolean;
+  styles?: Record<string, any>;
 } & InputLabelProps;
 
 export const TextInput: React.FC<TextInputProps> = (props) => {
@@ -18,11 +20,13 @@ export const TextInput: React.FC<TextInputProps> = (props) => {
     value,
     placeholder,
     isNumber,
-    disabled
+    disabled,
+    doubleLength,
+    styles
   } = props;
 
   return (
-    <Box m={2}>
+    <Box {...styles}>
       <InputLabel
         name={name}
         label={label}
@@ -38,6 +42,7 @@ export const TextInput: React.FC<TextInputProps> = (props) => {
         name={name}
         placeholder={placeholder}
         disabled={disabled}
+        w={doubleLength ? "550px" : "286.5px"}
       />
     </Box>
   );

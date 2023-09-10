@@ -23,7 +23,7 @@ insert into entity_meta (id, display_name, description, table_name, standalone, 
 );
 
 insert into column_meta (display_name, description, example, column_name, data_type, gen_opts_name, entity_meta_id) values (
-  'First Name',
+  'Person First Name',
   '',
   'John, Mary',
   'first_name',
@@ -32,7 +32,7 @@ insert into column_meta (display_name, description, example, column_name, data_t
   1
 ),
 (
-  'Last Name',
+  'Person Last Name',
   '',
   'Smith, Jones',
   'last_name',
@@ -41,7 +41,7 @@ insert into column_meta (display_name, description, example, column_name, data_t
   1
 ),
 (
-  'Middle Name',
+  'Person Middle Name',
   '',
   'Grace, William',
   'middle_name',
@@ -50,7 +50,7 @@ insert into column_meta (display_name, description, example, column_name, data_t
   1
 ),
 (
-  'Initials',
+  'Person Name Initials',
   'First letters of a person fullname, separated by a dot',
   'J.S, M.J.W',
   'initials',
@@ -77,7 +77,7 @@ insert into column_meta (display_name, description, example, column_name, data_t
   1
 ),
 (
-  'Title',
+  'Person Formal Title',
   'Used to address individuals in various formal and informal contexts.',
   'Mr., Mrs., Ms., Dr., Prof.',
   'title',
@@ -131,11 +131,11 @@ INSERT INTO person (first_name, last_name, middle_name, initials, email_prefix, 
 INSERT INTO person (first_name, last_name, middle_name, initials, email_prefix, gender, title, entity_meta_id) VALUES ('Leo', 'Ortiz', 'Ava', 'LOA', 'leo.ortiz', 'Male', 'Mr.', 1);
 INSERT INTO person (first_name, last_name, middle_name, initials, email_prefix, gender, title, entity_meta_id) VALUES ('Elizabeth', 'Torres', 'Grace', 'ETG', 'eliz_torres', 'Female', 'Dr.', 1);
 INSERT INTO person (first_name, last_name, middle_name, initials, email_prefix, gender, title, entity_meta_id) VALUES ('Jack', 'Hernandez', 'Liam', 'JHL', 'jack_l.h', 'Male', 'Mr.', 1);
-INSERT INTO person (first_name, last_name, middle_name, initials, email_prefix, gender, title, entity_meta_id) VALUES ('Mila', 'Gutierrez', 'Emma', 'MGE', 'mila_e', 'Female', 'Mrs', 1);
+INSERT INTO person (first_name, last_name, middle_name, initials, email_prefix, gender, title, entity_meta_id) VALUES ('Mila', 'Gutierrez', 'Emma', 'MGE', 'mila_e', 'Female', 'Mrs.', 1);
 INSERT INTO person (first_name, last_name, middle_name, initials, email_prefix, gender, title, entity_meta_id) VALUES ('Wyatt', 'Vargas', 'Ethan', 'WVE', 'wyatt.v', 'Male', 'Dr.', 1);
-INSERT INTO person (first_name, last_name, middle_name, initials, email_prefix, gender, title, entity_meta_id) VALUES ('Chloe', 'Santiago', 'Isabella', 'CSI', 'chloe_s', 'Female', 'Mrs', 1);
+INSERT INTO person (first_name, last_name, middle_name, initials, email_prefix, gender, title, entity_meta_id) VALUES ('Chloe', 'Santiago', 'Isabella', 'CSI', 'chloe_s', 'Female', 'Mrs.', 1);
 INSERT INTO person (first_name, last_name, middle_name, initials, email_prefix, gender, title, entity_meta_id) VALUES ('Owen', 'Castillo', 'Benjamin', 'OCB', 'owenc', 'Male', 'Mr.', 1);
-INSERT INTO person (first_name, last_name, middle_name, initials, email_prefix, gender, title, entity_meta_id) VALUES ('Lily', 'Gomez', 'Olivia', 'LGO', 'lilyg123', 'Female', 'Mrs', 1);
+INSERT INTO person (first_name, last_name, middle_name, initials, email_prefix, gender, title, entity_meta_id) VALUES ('Lily', 'Gomez', 'Olivia', 'LGO', 'lilyg123', 'Female', 'Mrs.', 1);
 INSERT INTO person (first_name, last_name, middle_name, initials, email_prefix, gender, title, entity_meta_id) VALUES ('Samuel', 'Diaz', 'Ava', 'SDA', 'sam.diaz', 'Male', 'Mr.', 1);
 INSERT INTO person (first_name, last_name, middle_name, initials, email_prefix, gender, title, entity_meta_id) VALUES ('Aurora', 'Reyes', 'Sophia', 'ARS', 'aurora.reyes', 'Female', 'Ms.', 1);
 INSERT INTO person (first_name, last_name, middle_name, initials, email_prefix, gender, title, entity_meta_id) VALUES ('Haruki', 'Tanaka', 'Akira', 'HTA', 'harukitan', 'Male', 'Mr.', 1);

@@ -35,7 +35,7 @@ insert into
     )
 values
     (
-        'Name',
+        'Company Name',
         '',
         'TechWorld Corp.',
         'name',
@@ -53,7 +53,7 @@ values
         6
     ),
     (
-        'Industry',
+        'Company Industry',
         '',
         'Software Development',
         'industry',

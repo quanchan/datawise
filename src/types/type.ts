@@ -14,3 +14,19 @@ export type Type = {
   standalone: boolean,
   custom: boolean,
 }
+
+export type CustomType = {
+  name: string,
+  actualSQLType: string,
+  description: string,
+  values: string,
+  separator: string,
+}
+
+export const defaultCustomType: CustomType = {
+  name: "",
+  actualSQLType: "",
+  description: "",
+  values: "",
+  separator: 'comma',
+}

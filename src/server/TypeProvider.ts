@@ -1,5 +1,5 @@
 import db from "@/db";
-import { Type, allowedGenOptions } from "@/types";
+import { CustomType, Type, allowedGenOptions } from "@/types";
 import { column_meta as cm, entity_meta as em } from "@/db/schema";
 
 export class TypeProvider {
@@ -71,7 +71,7 @@ export class TypeProvider {
     },
   ];
 
-  public static addGenOptsToType(type?: Type): Type | undefined {
+  private static addGenOptsToType(type?: Type): Type | undefined {
     if (!type) {
       return type;
     }
@@ -102,6 +102,7 @@ export class TypeProvider {
     const allTypes = [...types, ...this.runtimeTypes];
     return allTypes.map((type: Type) => this.addGenOptsToType(type) as Type);
   }
+
   public static async getTypeById(id?: string): Promise<Type | undefined> {
     if (!id) {
       return undefined;
@@ -131,5 +132,64 @@ export class TypeProvider {
       }
     }
     return this.addGenOptsToType(type);
+  }
+
+  private static separatorMap: { [key: string]: string } = {
+    comma: ",",
+    semicolon: ";",
+    newline: "\n",
+  };
+
+  public static async createType(type: CustomType) {
+    const { name, actualSQLType, description, values, separator } = type;
+    const valuesArr = values
+      .split(TypeProvider.separatorMap[separator])
+      .map((v) => v.trim());
+    const column_name = name.toLowerCase().trim().replace(" ", "_");
+    const client = await db.pool.connect();
+    try {
+      await client.query("BEGIN");
+      await client.query(`
+      INSERT INTO ${em.n} (
+        ${em.display_name},
+        ${em.description},
+        ${em.table_name},
+        ${em.standalone},
+        ${em.custom}
+      ) VALUES (
+        '${name}',
+        '',
+        '${column_name}',
+        false,
+        true
+      );`);
+      const result = await client.query<{ id: number }>(
+        `SELECT ${em.id} FROM ${em.n} WHERE ${em.n_table_name} = '${column_name}'`
+      );
+      const entity_meta_id = result.rows[0].id;
+      await client.query(`
+      INSERT INTO ${cm.n} (
+        ${cm.display_name}, 
+        ${cm.description}, 
+        ${cm.example}, 
+        ${cm.data_type}, 
+        ${cm.column_name}, 
+        ${cm.entity_meta_id}, 
+        ${cm.gen_opts_name}
+      ) VALUES (
+        '${name}', 
+        '${description}', 
+        '${valuesArr.slice(0, 3).join(", ")}', 
+        '${actualSQLType}', 
+        '${column_name}', 
+        ${entity_meta_id}, 
+        'entityVarchar'
+      );`);
+    } catch (e) {
+      await client.query("ROLLBACK");
+      throw e;
+    } finally {
+      client.release();
+    }
   }
 }

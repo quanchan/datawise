@@ -10,14 +10,11 @@ export class TypeProcessor {
   }
 
   public get typeSQL(): string {
-    if (this._args.length > 0) {
-      return `${this._type.toUpperCase()}(${this._args.join(", ")})`;
-    }
-    return this._type;
+    return TypeProcessor.getDisplayType(this._type, this._args);
   }
 
   public get type(): string {
-    return this._type.toUpperCase();
+    return this._type;
   }
 
   public get args(): string[] {
@@ -50,4 +47,12 @@ export class TypeProcessor {
     const tm = OracleSQLTypeMap;
     return tm[this._type as keyof TypeMap];
   }
+
+  public static getDisplayType(type: string, args: string[]): string {
+    if (args.length > 0) {
+      return `${type}(${args.join(", ")})`;
+    }
+    return type;
+  }
+
 }

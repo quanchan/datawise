@@ -12,16 +12,16 @@ create table if not exists currency (
 insert into entity_meta 
     (id, display_name, description, table_name, standalone, custom)
 values 
-    (8, 'Currency', '', 'currency', true, false);
+    (8, 'Currency', '', 'currency', false, false);
 
 -- column_meta
 insert into column_meta 
     (display_name, description, example, column_name, data_type, gen_opts_name, entity_meta_id)
 values 
-    ('Currency code', 'Unique 3-letter code', 'USD, AUD, JPY', 'currency', 'varchar.255', 'entityVarchar', 8),
-    ('Name', 'Currency full name', 'United States Dollar, Australian Dollar, Indian Rupee', 'name', 'varchar.255', 'entityVarchar', 8),
-    ('Symbol', 'Currency symbol', '$, £, ¥', 'symbol', 'varchar.10', 'entityVarchar', 8),
-    ('Origin Country', 'Currency origin country', 'United States', 'origin_country', 'varchar.255', 'entityVarchar', 8);
+    ('Currency Code', 'Unique 3-letter code', 'USD, AUD, JPY', 'currency', 'varchar.255', 'entityVarchar', 8),
+    ('Currency Name', 'Currency full name', 'United States Dollar, Australian Dollar, Indian Rupee', 'name', 'varchar.255', 'entityVarchar', 8),
+    ('Currency Symbol', 'Currency symbol', '$, £, ¥', 'symbol', 'varchar.10', 'entityVarchar', 8),
+    ('Currency Origin Country', 'Currency origin country', 'United States', 'origin_country', 'varchar.255', 'entityVarchar', 8);
 
 INSERT INTO currency (currency, name, symbol, origin_country, entity_meta_id)
 VALUES

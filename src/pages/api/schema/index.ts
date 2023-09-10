@@ -1,6 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 import { Format, Tables, Type } from "@/types";
-import { MySQLGenerator, OracleSQLGenerator } from "@/server/sqlGenerator";
+import { MySQLGenerator, OracleSQLGenerator } from "@/server/SQLGenerator";
 
 export default async function handler(
   req: NextApiRequest,
@@ -18,6 +18,6 @@ export default async function handler(
         sql = await OracleSQLGenerator.generateAllTables(tables);
         break;
       }
-      res.status(200).send(sql);
+    res.status(200).send(sql);
     }
 }

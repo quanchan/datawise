@@ -17,7 +17,7 @@ insert into
         custom
     )
 values
-    (5, 'CreditCard', '', 'creditcard', false, false);
+    (5, 'Credit Card', '', 'creditcard', false, false);
 
 insert into
     column_meta (

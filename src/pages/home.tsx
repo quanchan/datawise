@@ -17,7 +17,13 @@ import React from "react";
 import { TableFieldsEditor } from "@/components/TableFieldsEditor";
 import { TableConstaintsEditor } from "@/components/TableConstaintsEditor";
 import { ArrayHelpers, FieldArray, Form, Formik } from "formik";
-import { Format, Tables, defaultTableOptions, defaultTables, sqlReservedWords } from "@/types";
+import {
+  Format,
+  Tables,
+  defaultTableOptions,
+  defaultTables,
+  sqlReservedWords,
+} from "@/types";
 import { AddButton } from "@/components/btn/AddButton";
 import { BsX } from "react-icons/bs";
 import {
@@ -30,6 +36,7 @@ import { ConfirmDeleteModal } from "@/components/modal/ConfirmDeleteModal";
 import { PreviewSQLModal } from "@/components/modal/PreviewSQLModal";
 import { BaseFooter } from "@/components/BaseFooter";
 import * as yup from "yup";
+import { CreateTypeModal } from "@/components/modal/CreateTypeModal";
 
 const initialValues: Tables = {
   ...defaultTables,
@@ -88,6 +95,7 @@ type ModalOpenStates = {
   generationOptions: boolean;
   visualiser: boolean;
   preview: boolean;
+  createType: boolean;
 };
 
 export default function Home() {
@@ -99,6 +107,7 @@ export default function Home() {
     generationOptions: false,
     visualiser: false,
     preview: false,
+    createType: false,
   });
   const [currentFieldIndex, setCurrentFieldIndex] = React.useState<number>(0);
   const [currentConstraintIndex, setCurrentConstraintIndex] =
@@ -278,6 +287,10 @@ export default function Home() {
               onCloseModal("chooseType");
               onOpenModal("generationOptions");
             }}
+            addCustomType={() => {
+              onCloseModal("chooseType");
+              onOpenModal("createType");
+            }}
             tableIndex={tabIndex}
             fieldIndex={currentFieldIndex}
           />
@@ -308,6 +321,13 @@ export default function Home() {
           <PreviewSQLModal
             isOpen={openModal.preview}
             onClose={() => onCloseModal("preview")}
+          />
+          <CreateTypeModal
+            isOpen={openModal.createType}
+            onClose={() => {
+              onOpenModal("chooseType");
+              onCloseModal("createType");
+            }}
           />
         </>
       )}

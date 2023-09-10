@@ -13,9 +13,9 @@ values
 
 insert into column_meta (display_name, description, example, column_name, data_type, gen_opts_name, entity_meta_id)
 values
-    ('Name', '', 'Pasta', 'name', 'varchar.255', 'entityVarchar', 15),
-    ('Ingredients', '', 'Flour, water, salt', 'ingredients', 'varchar.255', 'entityVarchar', 15),
-    ('Description', '', 'Delicious pasta dish', 'description', 'varchar.255', 'entityVarchar', 15);
+    ('Food Name', '', 'Pasta', 'name', 'varchar.255', 'entityVarchar', 15),
+    ('Food Ingredients', '', 'Flour, water, salt', 'ingredients', 'varchar.255', 'entityVarchar', 15),
+    ('Food Description', '', 'Delicious pasta dish', 'description', 'varchar.255', 'entityVarchar', 15);
 
 insert into food (name, ingredients, description, entity_meta_id)
 values ('Pasta Carbonara', 'Pasta, eggs, bacon, Parmesan cheese', 'Italian pasta dish', 15);
