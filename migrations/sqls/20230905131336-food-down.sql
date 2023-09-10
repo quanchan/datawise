@@ -2,7 +2,7 @@
 drop table food;
 
 delete from column_meta
-where entity_meta_id = 15;
+where entity_meta_table = 'food';
 
 delete from entity_meta
-where display_name = 'Food';
+where table_name = 'food';

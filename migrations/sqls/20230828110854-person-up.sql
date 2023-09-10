@@ -9,12 +9,11 @@ create table if not exists person
   email_prefix varchar(255) not null,
   gender varchar(10) not null,
   title varchar(10) not null,
-  entity_meta_id int not null,
-  constraint fk_entity_meta_id foreign key (entity_meta_id) references entity_meta(id) on delete cascade
+  entity_meta_table varchar(255) not null,
+  constraint fk_entity_meta_table foreign key (entity_meta_table) references entity_meta(table_name) on delete cascade
 );
 
-insert into entity_meta (id, display_name, description, table_name, standalone, custom) values (
-  1,
+insert into entity_meta (display_name, description, table_name, standalone, custom) values (
   'Person',
   '',
   'person',
@@ -22,14 +21,14 @@ insert into entity_meta (id, display_name, description, table_name, standalone, 
   false
 );
 
-insert into column_meta (display_name, description, example, column_name, data_type, gen_opts_name, entity_meta_id) values (
+insert into column_meta (display_name, description, example, column_name, data_type, gen_opts_name, entity_meta_table) values (
   'Person First Name',
   '',
   'John, Mary',
   'first_name',
   'varchar.255',
   'entityVarchar',
-  1
+  'person'
 ),
 (
   'Person Last Name',
@@ -38,7 +37,7 @@ insert into column_meta (display_name, description, example, column_name, data_t
   'last_name',
   'varchar.255',
   'entityVarchar',
-  1
+  'person'
 ),
 (
   'Person Middle Name',
@@ -47,7 +46,7 @@ insert into column_meta (display_name, description, example, column_name, data_t
   'middle_name',
   'varchar.255',
   'entityVarchar',
-  1
+  'person'
 ),
 (
   'Person Name Initials',
@@ -56,7 +55,7 @@ insert into column_meta (display_name, description, example, column_name, data_t
   'initials',
   'varchar.10',
   'entityVarchar',
-  1
+  'person'
 ),
 (
   'Email Prefix',
@@ -65,7 +64,7 @@ insert into column_meta (display_name, description, example, column_name, data_t
   'email_prefix',
   'varchar.255',
   'entityVarchar',
-  1
+  'person'
 ),
 (
   'Gender',
@@ -74,7 +73,7 @@ insert into column_meta (display_name, description, example, column_name, data_t
   'gender',
   'varchar.10',
   'entityVarchar',
-  1
+  'person'
 ),
 (
   'Person Formal Title',
@@ -83,68 +82,69 @@ insert into column_meta (display_name, description, example, column_name, data_t
   'title',
   'varchar.10',
   'entityVarchar',
-  1
+  'person'
 );
 
-INSERT INTO person (first_name, last_name, middle_name, initials, email_prefix, gender, title, entity_meta_id) VALUES ('John', 'Doe', 'Michael', 'JMD', 'jmdoe', 'Male', 'Mr.', 1);
-INSERT INTO person (first_name, last_name, middle_name, initials, email_prefix, gender, title, entity_meta_id) VALUES ('Jane', 'Smith', 'Elizabeth', 'JSE', 'janesmith', 'Female', 'Mrs.', 1);
-INSERT INTO person (first_name, last_name, middle_name, initials, email_prefix, gender, title, entity_meta_id) VALUES ('Robert', 'Johnson', 'Lee', 'RJL', 'robertjohnson', 'Male', 'Mr.', 1);
-INSERT INTO person (first_name, last_name, middle_name, initials, email_prefix, gender, title, entity_meta_id) VALUES ('Emily', 'Brown', 'Grace', 'EBG', 'ebrown', 'Non-Binary', 'Ms.', 1);
-INSERT INTO person (first_name, last_name, middle_name, initials, email_prefix, gender, title, entity_meta_id) VALUES ('David', 'Wilson', 'James', 'DWJ', 'djwilson', 'Male', 'Dr.', 1);
-INSERT INTO person (first_name, last_name, middle_name, initials, email_prefix, gender, title, entity_meta_id) VALUES ('Sarah', 'Taylor', NULL, 'ST', 'staylor123', 'Female', 'Ms.', 1);
-INSERT INTO person (first_name, last_name, middle_name, initials, email_prefix, gender, title, entity_meta_id) VALUES ('Michael', 'Anderson', 'Thomas', 'MAT', 'm.anderson', 'Male', 'Mr.', 1);
-INSERT INTO person (first_name, last_name, middle_name, initials, email_prefix, gender, title, entity_meta_id) VALUES ('Olivia', 'Martinez', 'Marie', 'OMM', 'oliviam', 'Female', 'Dr.', 1);
-INSERT INTO person (first_name, last_name, middle_name, initials, email_prefix, gender, title, entity_meta_id) VALUES ('William', 'White', 'Alexander', 'WWA', 'wwhite', 'Male', 'Mr.', 1);
-INSERT INTO person (first_name, last_name, middle_name, initials, email_prefix, gender, title, entity_meta_id) VALUES ('Sophia', 'Garcia', 'Isabella', 'SGI', 'sophiag123', 'Female', 'Mrs.', 1);
-INSERT INTO person (first_name, last_name, middle_name, initials, email_prefix, gender, title, entity_meta_id) VALUES ('Daniel', 'Miller', 'Joseph', 'DMJ', 'dm.joseph', 'Male', 'Mr.', 1);
-INSERT INTO person (first_name, last_name, middle_name, initials, email_prefix, gender, title, entity_meta_id) VALUES ('Ava', 'Wilson', 'Grace', 'AWG', 'ava_grace', 'Female', 'Ms.', 1);
-INSERT INTO person (first_name, last_name, middle_name, initials, email_prefix, gender, title, entity_meta_id) VALUES ('James', 'Anderson', 'Robert', 'JAR', 'jamesanderson123', 'Male', 'Mr.', 1);
-INSERT INTO person (first_name, last_name, middle_name, initials, email_prefix, gender, title, entity_meta_id) VALUES ('Sophie', 'Davis', 'Elizabeth', 'SDE', 'sophie.d', 'Female', 'Ms.', 1);
-INSERT INTO person (first_name, last_name, middle_name, initials, email_prefix, gender, title, entity_meta_id) VALUES ('Ethan', 'Clark', 'Michael', 'ECM', 'ethan.m.clark', 'Male', 'Mr.', 1);
-INSERT INTO person (first_name, last_name, middle_name, initials, email_prefix, gender, title, entity_meta_id) VALUES ('Oliver', 'Harris', 'William', 'OHW', 'oharris123', 'Male', 'Mr.', 1);
-INSERT INTO person (first_name, last_name, middle_name, initials, email_prefix, gender, title, entity_meta_id) VALUES ('Mia', 'Rodriguez', 'Isabella', 'MRI', 'mia_rodr', 'Non-Binary', 'Ms.', 1);
-INSERT INTO person (first_name, last_name, middle_name, initials, email_prefix, gender, title, entity_meta_id) VALUES ('Amelia', 'Lee', 'Emily', 'ALE', 'a.lee', 'Female', 'Ms.', 1);
-INSERT INTO person (first_name, last_name, middle_name, initials, email_prefix, gender, title, entity_meta_id) VALUES ('Benjamin', 'Garcia', 'Lucas', 'BGL', 'beng', 'Male', 'Mr.', 1);
-INSERT INTO person (first_name, last_name, middle_name, initials, email_prefix, gender, title, entity_meta_id) VALUES ('Emma', 'Martinez', 'Sophia', 'EMS', 'emma.m', 'Female', 'Ms.', 1);
-INSERT INTO person (first_name, last_name, middle_name, initials, email_prefix, gender, title, entity_meta_id) VALUES ('Liam', 'Brown', 'Alexander', 'LBA', 'liam_brown', 'Male', 'Mr.', 1);
-INSERT INTO person (first_name, last_name, middle_name, initials, email_prefix, gender, title, entity_meta_id) VALUES ('Charlotte', 'Smith', 'Grace', 'CSG', 'charlotte.grace', 'Female', 'Ms.', 1);
-INSERT INTO person (first_name, last_name, middle_name, initials, email_prefix, gender, title, entity_meta_id) VALUES ('Aiden', 'Johnson', 'Carter', 'AJC', 'aiden.c.j', 'Non-Binary', 'Mr.', 1);
-INSERT INTO person (first_name, last_name, middle_name, initials, email_prefix, gender, title, entity_meta_id) VALUES ('Ella', 'Williams', 'Madison', 'EWM', 'ellaw123', 'Female', 'Ms.', 1);
-INSERT INTO person (first_name, last_name, middle_name, initials, email_prefix, gender, title, entity_meta_id) VALUES ('Jackson', 'Taylor', 'Mason', 'JTM', 'jacksonm', 'Male', 'Mr.', 1);
-INSERT INTO person (first_name, last_name, middle_name, initials, email_prefix, gender, title, entity_meta_id) VALUES ('Harper', 'Jones', 'Ava', 'HJA', 'harper.j', 'Female', 'Ms.', 1);
-INSERT INTO person (first_name, last_name, middle_name, initials, email_prefix, gender, title, entity_meta_id) VALUES ('Sebastian', 'Moore', 'Henry', 'SMH', 'sebmoore', 'Non-Binary', 'Mr.', 1);
-INSERT INTO person (first_name, last_name, middle_name, initials, email_prefix, gender, title, entity_meta_id) VALUES ('Grace', 'Davis', 'Chloe', 'GDC', 'graced', 'Female', 'Ms.', 1);
-INSERT INTO person (first_name, last_name, middle_name, initials, email_prefix, gender, title, entity_meta_id) VALUES ('Noah', 'Walker', 'Ethan', 'NWE', 'noah.w', 'Male', 'Mr.', 1);
-INSERT INTO person (first_name, last_name, middle_name, initials, email_prefix, gender, title, entity_meta_id) VALUES ('Luna', 'Allen', 'Scarlett', 'LAS', 'luna.s', 'Non-Binary', 'Ms.', 1);
-INSERT INTO person (first_name, last_name, middle_name, initials, email_prefix, gender, title, entity_meta_id) VALUES ('Lucas', 'Young', 'Liam', 'LYL', 'l.young', 'Male', 'Mr.', 1);
-INSERT INTO person (first_name, last_name, middle_name, initials, email_prefix, gender, title, entity_meta_id) VALUES ('Evelyn', 'Rivera', 'Sofia', 'ERS', 'evelyn_rivera', 'Female', 'Prof.', 1);
-INSERT INTO person (first_name, last_name, middle_name, initials, email_prefix, gender, title, entity_meta_id) VALUES ('Logan', 'Cruz', 'Aiden', 'LCA', 'logan.a.cruz', 'Male', 'Mr.', 1);
-INSERT INTO person (first_name, last_name, middle_name, initials, email_prefix, gender, title, entity_meta_id) VALUES ('Aria', 'Flores', 'Mia', 'AFM', 'aria_mia', 'Female', 'Prof.', 1);
-INSERT INTO person (first_name, last_name, middle_name, initials, email_prefix, gender, title, entity_meta_id) VALUES ('Carter', 'Perez', 'Elijah', 'CPE', 'carter.p', 'Male', 'Mr.', 1);
-INSERT INTO person (first_name, last_name, middle_name, initials, email_prefix, gender, title, entity_meta_id) VALUES ('Avery', 'Lopez', 'Ella', 'ALE', 'a.lopez', 'Female', 'Prof.', 1);
-INSERT INTO person (first_name, last_name, middle_name, initials, email_prefix, gender, title, entity_meta_id) VALUES ('Jayden', 'Gonzalez', 'James', 'JGJ', 'jaydenj', 'Male', 'Mr.', 1);
-INSERT INTO person (first_name, last_name, middle_name, initials, email_prefix, gender, title, entity_meta_id) VALUES ('Layla', 'Sanchez', 'Liam', 'LSSL', 'layla.s', 'Female', 'Dr.', 1);
-INSERT INTO person (first_name, last_name, middle_name, initials, email_prefix, gender, title, entity_meta_id) VALUES ('Mateo', 'Rivera', 'Elena', 'MRE', 'mateorivera', 'Male', 'Mr.', 1);
-INSERT INTO person (first_name, last_name, middle_name, initials, email_prefix, gender, title, entity_meta_id) VALUES ('Nora', 'Perez', 'Oliver', 'NPO', 'nora.perez', 'Female', 'Dr.', 1);
-INSERT INTO person (first_name, last_name, middle_name, initials, email_prefix, gender, title, entity_meta_id) VALUES ('Gabriel', 'Ramirez', 'Alexander', 'GRA', 'gabrielr123', 'Male', 'Mr.', 1);
-INSERT INTO person (first_name, last_name, middle_name, initials, email_prefix, gender, title, entity_meta_id) VALUES ('Addison', 'Gomez', 'Lucas', 'AGL', 'addison.l', 'Female', 'Dr.', 1);
-INSERT INTO person (first_name, last_name, middle_name, initials, email_prefix, gender, title, entity_meta_id) VALUES ('Leo', 'Ortiz', 'Ava', 'LOA', 'leo.ortiz', 'Male', 'Mr.', 1);
-INSERT INTO person (first_name, last_name, middle_name, initials, email_prefix, gender, title, entity_meta_id) VALUES ('Elizabeth', 'Torres', 'Grace', 'ETG', 'eliz_torres', 'Female', 'Dr.', 1);
-INSERT INTO person (first_name, last_name, middle_name, initials, email_prefix, gender, title, entity_meta_id) VALUES ('Jack', 'Hernandez', 'Liam', 'JHL', 'jack_l.h', 'Male', 'Mr.', 1);
-INSERT INTO person (first_name, last_name, middle_name, initials, email_prefix, gender, title, entity_meta_id) VALUES ('Mila', 'Gutierrez', 'Emma', 'MGE', 'mila_e', 'Female', 'Mrs.', 1);
-INSERT INTO person (first_name, last_name, middle_name, initials, email_prefix, gender, title, entity_meta_id) VALUES ('Wyatt', 'Vargas', 'Ethan', 'WVE', 'wyatt.v', 'Male', 'Dr.', 1);
-INSERT INTO person (first_name, last_name, middle_name, initials, email_prefix, gender, title, entity_meta_id) VALUES ('Chloe', 'Santiago', 'Isabella', 'CSI', 'chloe_s', 'Female', 'Mrs.', 1);
-INSERT INTO person (first_name, last_name, middle_name, initials, email_prefix, gender, title, entity_meta_id) VALUES ('Owen', 'Castillo', 'Benjamin', 'OCB', 'owenc', 'Male', 'Mr.', 1);
-INSERT INTO person (first_name, last_name, middle_name, initials, email_prefix, gender, title, entity_meta_id) VALUES ('Lily', 'Gomez', 'Olivia', 'LGO', 'lilyg123', 'Female', 'Mrs.', 1);
-INSERT INTO person (first_name, last_name, middle_name, initials, email_prefix, gender, title, entity_meta_id) VALUES ('Samuel', 'Diaz', 'Ava', 'SDA', 'sam.diaz', 'Male', 'Mr.', 1);
-INSERT INTO person (first_name, last_name, middle_name, initials, email_prefix, gender, title, entity_meta_id) VALUES ('Aurora', 'Reyes', 'Sophia', 'ARS', 'aurora.reyes', 'Female', 'Ms.', 1);
-INSERT INTO person (first_name, last_name, middle_name, initials, email_prefix, gender, title, entity_meta_id) VALUES ('Haruki', 'Tanaka', 'Akira', 'HTA', 'harukitan', 'Male', 'Mr.', 1);
-INSERT INTO person (first_name, last_name, middle_name, initials, email_prefix, gender, title, entity_meta_id) VALUES ('Mei', 'Chen', 'Ling', 'MCL', 'meichen', 'Female', 'Mrs.', 1);
-INSERT INTO person (first_name, last_name, middle_name, initials, email_prefix, gender, title, entity_meta_id) VALUES ('Rajesh', 'Patel', 'Amit', 'RPA', 'raj_pat', 'Male', 'Mr.', 1);
-INSERT INTO person (first_name, last_name, middle_name, initials, email_prefix, gender, title, entity_meta_id) VALUES ('Sakura', 'Yamamoto', 'Hiroshi', 'SYH', 'sakura.h', 'Female', 'Ms.', 1);
-INSERT INTO person (first_name, last_name, middle_name, initials, email_prefix, gender, title, entity_meta_id) VALUES ('Ji-hoon', 'Kim', 'Min-jun', 'JHK', 'j.hoon', 'Male', 'Mr.', 1);
-INSERT INTO person (first_name, last_name, middle_name, initials, email_prefix, gender, title, entity_meta_id) VALUES ('Hyun-ju', 'Lee', 'Min-ji', 'HJLM', 'hyun_lee', 'Female', 'Mrs.', 1);
-INSERT INTO person (first_name, last_name, middle_name, initials, email_prefix, gender, title, entity_meta_id) VALUES ('Rajiv', 'Gupta', 'Vikram', 'RGV', 'rajiv.g', 'Male', 'Mr.', 1);
-INSERT INTO person (first_name, last_name, middle_name, initials, email_prefix, gender, title, entity_meta_id) VALUES ('Aaradhya', 'Rao', 'Amita', 'ARR', 'aaradhya', 'Female', 'Ms.', 1);
-INSERT INTO person (first_name, last_name, middle_name, initials, email_prefix, gender, title, entity_meta_id) VALUES ('Wei', 'Li', 'Chen', 'WLC', 'wei_li', 'Male', 'Mr.', 1);
-INSERT INTO person (first_name, last_name, middle_name, initials, email_prefix, gender, title, entity_meta_id) VALUES ('Yuki', 'Nakamura', 'Hana', 'YNH', 'yuki_h', 'Female', 'Mrs.', 1);
+INSERT INTO person (first_name, last_name, middle_name, initials, email_prefix, gender, title, entity_meta_table) VALUES 
+ ('John', 'Doe', 'Michael', 'JMD', 'jmdoe', 'Male', 'Mr.', 'person'),
+ ('Jane', 'Smith', 'Elizabeth', 'JSE', 'janesmith', 'Female', 'Mrs.', 'person'),
+ ('Robert', 'Johnson', 'Lee', 'RJL', 'robertjohnson', 'Male', 'Mr.', 'person'),
+ ('Emily', 'Brown', 'Grace', 'EBG', 'ebrown', 'Non-Binary', 'Ms.', 'person'),
+ ('David', 'Wilson', 'James', 'DWJ', 'djwilson', 'Male', 'Dr.', 'person'),
+ ('Sarah', 'Taylor', NULL, 'ST', 'staylor123', 'Female', 'Ms.', 'person'),
+ ('Michael', 'Anderson', 'Thomas', 'MAT', 'm.anderson', 'Male', 'Mr.', 'person'),
+ ('Olivia', 'Martinez', 'Marie', 'OMM', 'oliviam', 'Female', 'Dr.', 'person'),
+ ('William', 'White', 'Alexander', 'WWA', 'wwhite', 'Male', 'Mr.', 'person'),
+ ('Sophia', 'Garcia', 'Isabella', 'SGI', 'sophiag123', 'Female', 'Mrs.', 'person'),
+ ('Daniel', 'Miller', 'Joseph', 'DMJ', 'dm.joseph', 'Male', 'Mr.', 'person'),
+ ('Ava', 'Wilson', 'Grace', 'AWG', 'ava_grace', 'Female', 'Ms.', 'person'),
+ ('James', 'Anderson', 'Robert', 'JAR', 'jamesanderson123', 'Male', 'Mr.', 'person'),
+ ('Sophie', 'Davis', 'Elizabeth', 'SDE', 'sophie.d', 'Female', 'Ms.', 'person'),
+ ('Ethan', 'Clark', 'Michael', 'ECM', 'ethan.m.clark', 'Male', 'Mr.', 'person'),
+ ('Oliver', 'Harris', 'William', 'OHW', 'oharris123', 'Male', 'Mr.', 'person'),
+ ('Mia', 'Rodriguez', 'Isabella', 'MRI', 'mia_rodr', 'Non-Binary', 'Ms.', 'person'),
+ ('Amelia', 'Lee', 'Emily', 'ALE', 'a.lee', 'Female', 'Ms.', 'person'),
+ ('Benjamin', 'Garcia', 'Lucas', 'BGL', 'beng', 'Male', 'Mr.', 'person'),
+ ('Emma', 'Martinez', 'Sophia', 'EMS', 'emma.m', 'Female', 'Ms.', 'person'),
+ ('Liam', 'Brown', 'Alexander', 'LBA', 'liam_brown', 'Male', 'Mr.', 'person'),
+ ('Charlotte', 'Smith', 'Grace', 'CSG', 'charlotte.grace', 'Female', 'Ms.', 'person'),
+ ('Aiden', 'Johnson', 'Carter', 'AJC', 'aiden.c.j', 'Non-Binary', 'Mr.', 'person'),
+ ('Ella', 'Williams', 'Madison', 'EWM', 'ellaw123', 'Female', 'Ms.', 'person'),
+ ('Jackson', 'Taylor', 'Mason', 'JTM', 'jacksonm', 'Male', 'Mr.', 'person'),
+ ('Harper', 'Jones', 'Ava', 'HJA', 'harper.j', 'Female', 'Ms.', 'person'),
+ ('Sebastian', 'Moore', 'Henry', 'SMH', 'sebmoore', 'Non-Binary', 'Mr.', 'person'),
+ ('Grace', 'Davis', 'Chloe', 'GDC', 'graced', 'Female', 'Ms.', 'person'),
+ ('Noah', 'Walker', 'Ethan', 'NWE', 'noah.w', 'Male', 'Mr.', 'person'),
+ ('Luna', 'Allen', 'Scarlett', 'LAS', 'luna.s', 'Non-Binary', 'Ms.', 'person'),
+ ('Lucas', 'Young', 'Liam', 'LYL', 'l.young', 'Male', 'Mr.', 'person'),
+ ('Evelyn', 'Rivera', 'Sofia', 'ERS', 'evelyn_rivera', 'Female', 'Prof.', 'person'),
+ ('Logan', 'Cruz', 'Aiden', 'LCA', 'logan.a.cruz', 'Male', 'Mr.', 'person'),
+ ('Aria', 'Flores', 'Mia', 'AFM', 'aria_mia', 'Female', 'Prof.', 'person'),
+ ('Carter', 'Perez', 'Elijah', 'CPE', 'carter.p', 'Male', 'Mr.', 'person'),
+ ('Avery', 'Lopez', 'Ella', 'ALE', 'a.lopez', 'Female', 'Prof.', 'person'),
+ ('Jayden', 'Gonzalez', 'James', 'JGJ', 'jaydenj', 'Male', 'Mr.', 'person'),
+ ('Layla', 'Sanchez', 'Liam', 'LSSL', 'layla.s', 'Female', 'Dr.', 'person'),
+ ('Mateo', 'Rivera', 'Elena', 'MRE', 'mateorivera', 'Male', 'Mr.', 'person'),
+ ('Nora', 'Perez', 'Oliver', 'NPO', 'nora.perez', 'Female', 'Dr.', 'person'),
+ ('Gabriel', 'Ramirez', 'Alexander', 'GRA', 'gabrielr123', 'Male', 'Mr.', 'person'),
+ ('Addison', 'Gomez', 'Lucas', 'AGL', 'addison.l', 'Female', 'Dr.', 'person'),
+ ('Leo', 'Ortiz', 'Ava', 'LOA', 'leo.ortiz', 'Male', 'Mr.', 'person'),
+ ('Elizabeth', 'Torres', 'Grace', 'ETG', 'eliz_torres', 'Female', 'Dr.', 'person'),
+ ('Jack', 'Hernandez', 'Liam', 'JHL', 'jack_l.h', 'Male', 'Mr.', 'person'),
+ ('Mila', 'Gutierrez', 'Emma', 'MGE', 'mila_e', 'Female', 'Mrs.', 'person'),
+ ('Wyatt', 'Vargas', 'Ethan', 'WVE', 'wyatt.v', 'Male', 'Dr.', 'person'),
+ ('Chloe', 'Santiago', 'Isabella', 'CSI', 'chloe_s', 'Female', 'Mrs.', 'person'),
+ ('Owen', 'Castillo', 'Benjamin', 'OCB', 'owenc', 'Male', 'Mr.', 'person'),
+ ('Lily', 'Gomez', 'Olivia', 'LGO', 'lilyg123', 'Female', 'Mrs.', 'person'),
+ ('Samuel', 'Diaz', 'Ava', 'SDA', 'sam.diaz', 'Male', 'Mr.', 'person'),
+ ('Aurora', 'Reyes', 'Sophia', 'ARS', 'aurora.reyes', 'Female', 'Ms.', 'person'),
+ ('Haruki', 'Tanaka', 'Akira', 'HTA', 'harukitan', 'Male', 'Mr.', 'person'),
+ ('Mei', 'Chen', 'Ling', 'MCL', 'meichen', 'Female', 'Mrs.', 'person'),
+ ('Rajesh', 'Patel', 'Amit', 'RPA', 'raj_pat', 'Male', 'Mr.', 'person'),
+ ('Sakura', 'Yamamoto', 'Hiroshi', 'SYH', 'sakura.h', 'Female', 'Ms.', 'person'),
+ ('Ji-hoon', 'Kim', 'Min-jun', 'JHK', 'j.hoon', 'Male', 'Mr.', 'person'),
+ ('Hyun-ju', 'Lee', 'Min-ji', 'HJLM', 'hyun_lee', 'Female', 'Mrs.', 'person'),
+ ('Rajiv', 'Gupta', 'Vikram', 'RGV', 'rajiv.g', 'Male', 'Mr.', 'person'),
+ ('Aaradhya', 'Rao', 'Amita', 'ARR', 'aaradhya', 'Female', 'Ms.', 'person'),
+ ('Wei', 'Li', 'Chen', 'WLC', 'wei_li', 'Male', 'Mr.', 'person'),
+ ('Yuki', 'Nakamura', 'Hana', 'YNH', 'yuki_h', 'Female', 'Mrs.', 'person');

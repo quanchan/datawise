@@ -1,20 +1,18 @@
 /* Replace with your SQL commands */
-create table
-  if not exists location (
-    id serial primary key, -- An automatic primary key for easier referencing
-    street_address varchar(255) not null,
-    suburb varchar(100),
-    state_province varchar(100),
-    postcode varchar(20),
-    country varchar(100) not null,
-    region varchar(100),
-    entity_meta_id int not null,
-    constraint fk_entity_meta_id foreign key (entity_meta_id) references entity_meta (id) on delete cascade
+create table if not exists location (
+  id serial primary key, -- An automatic primary key for easier referencing
+  street_address varchar(255) not null,
+  suburb varchar(100),
+  state_province varchar(100),
+  postcode varchar(20),
+  country varchar(100) not null,
+  region varchar(100),
+  entity_meta_table varchar(255) not null,
+  constraint fk_entity_meta_table foreign key (entity_meta_table) references entity_meta(table_name) on delete cascade
   );
 
 insert into
   entity_meta (
-    id,
     display_name,
     description,
     table_name,
@@ -22,7 +20,7 @@ insert into
     custom
   )
 values
-  (3, 'Location', '', 'location', false, false);
+  ('Location', '', 'location', false, false);
 
 insert into
   column_meta (
@@ -32,7 +30,7 @@ insert into
     column_name,
     data_type,
     gen_opts_name,
-    entity_meta_id
+    entity_meta_table
   )
 values
   (
@@ -42,7 +40,7 @@ values
     'street_address',
     'varchar.255',
     'entityVarchar',
-    3
+    'location'
   ),
   (
     'Suburb',
@@ -51,7 +49,7 @@ values
     'suburb',
     'varchar.100',
     'entityVarchar',
-    3
+    'location'
   ),
   (
     'State/Province',
@@ -60,7 +58,7 @@ values
     'state_province',
     'varchar.100',
     'entityVarchar',
-    3
+    'location'
   ),
   (
     'Postcode',
@@ -69,7 +67,7 @@ values
     'postcode',
     'varchar.20',
     'entityVarchar',
-    3
+    'location'
   ),
   (
     'Country',
@@ -78,7 +76,7 @@ values
     'country',
     'varchar.100',
     'entityVarchar',
-    3
+    'location'
   ),
   (
     'Region',
@@ -87,7 +85,7 @@ values
     'region',
     'varchar.100',
     'entityVarchar',
-    3
+    'location'
   );
 
 insert into
@@ -98,7 +96,7 @@ insert into
     postcode,
     country,
     region,
-    entity_meta_id
+    entity_meta_table
   )
 values
   (
@@ -108,20 +106,8 @@ values
     '90001',
     'USA',
     'North America',
-    3
-  );
-
-insert into
-  location (
-    street_address,
-    suburb,
-    state_province,
-    postcode,
-    country,
-    region,
-    entity_meta_id
-  )
-values
+    'location'
+  ),
   (
     '45 Queen St',
     'Central Business District',
@@ -129,20 +115,8 @@ values
     '4000',
     'Australia',
     'Oceania',
-    3
-  );
-
-insert into
-  location (
-    street_address,
-    suburb,
-    state_province,
-    postcode,
-    country,
-    region,
-    entity_meta_id
-  )
-values
+    'location'
+  ),
   (
     '15 Jinnah Road',
     'Saddar',
@@ -150,20 +124,8 @@ values
     '75500',
     'Pakistan',
     'Asia',
-    3
-  );
-
-insert into
-  location (
-    street_address,
-    suburb,
-    state_province,
-    postcode,
-    country,
-    region,
-    entity_meta_id
-  )
-values
+    'location'
+  ),
   (
     '78 King Edward Street',
     'Oxford',
@@ -171,20 +133,8 @@ values
     'OX1 4HB',
     'UK',
     'Europe',
-    3
-  );
-
-insert into
-  location (
-    street_address,
-    suburb,
-    state_province,
-    postcode,
-    country,
-    region,
-    entity_meta_id
-  )
-values
+    'location'
+  ),
   (
     '22 Rue de Rivoli',
     'Le Marais',
@@ -192,20 +142,8 @@ values
     '75004',
     'France',
     'Europe',
-    3
-  );
-
-insert into
-  location (
-    street_address,
-    suburb,
-    state_province,
-    postcode,
-    country,
-    region,
-    entity_meta_id
-  )
-values
+    'location'
+  ),
   (
     '1007 Mountain Drive',
     'Gotham',
@@ -213,20 +151,8 @@ values
     '07310',
     'USA',
     'North America',
-    3
-  );
-
-insert into
-  location (
-    street_address,
-    suburb,
-    state_province,
-    postcode,
-    country,
-    region,
-    entity_meta_id
-  )
-values
+    'location'
+  ),
   (
     '200 Ocean Drive',
     'Copacabana',
@@ -234,20 +160,8 @@ values
     '22070-020',
     'Brazil',
     'South America',
-    3
-  );
-
-insert into
-  location (
-    street_address,
-    suburb,
-    state_province,
-    postcode,
-    country,
-    region,
-    entity_meta_id
-  )
-values
+    'location'
+  ),
   (
     '3-5 Rämistrasse',
     'Zurich Center',
@@ -255,20 +169,8 @@ values
     '8001',
     'Switzerland',
     'Europe',
-    3
-  );
-
-insert into
-  location (
-    street_address,
-    suburb,
-    state_province,
-    postcode,
-    country,
-    region,
-    entity_meta_id
-  )
-values
+    'location'
+  ),
   (
     '14 Red Square',
     'Tverskoy',
@@ -276,20 +178,8 @@ values
     '101000',
     'Russia',
     'Europe',
-    3
-  );
-
-insert into
-  location (
-    street_address,
-    suburb,
-    state_province,
-    postcode,
-    country,
-    region,
-    entity_meta_id
-  )
-values
+    'location'
+  ),
   (
     '25 Nile Corniche',
     'Cairo',
@@ -297,20 +187,8 @@ values
     '11221',
     'Egypt',
     'Africa',
-    3
-  );
-
-insert into
-  location (
-    street_address,
-    suburb,
-    state_province,
-    postcode,
-    country,
-    region,
-    entity_meta_id
-  )
-values
+    'location'
+  ),
   (
     '89 Ocean View',
     'Green Point',
@@ -318,20 +196,8 @@ values
     '8051',
     'South Africa',
     'Africa',
-    3
-  );
-
-insert into
-  location (
-    street_address,
-    suburb,
-    state_province,
-    postcode,
-    country,
-    region,
-    entity_meta_id
-  )
-values
+    'location'
+  ),
   (
     '12 Shinjuku St',
     'Shinjuku',
@@ -339,20 +205,8 @@ values
     '160-0022',
     'Japan',
     'Asia',
-    3
-  );
-
-insert into
-  location (
-    street_address,
-    suburb,
-    state_province,
-    postcode,
-    country,
-    region,
-    entity_meta_id
-  )
-values
+    'location'
+  ),
   (
     '5 Rajpath Marg',
     'New Delhi',
@@ -360,20 +214,8 @@ values
     '110001',
     'India',
     'Asia',
-    3
-  );
-
-insert into
-  location (
-    street_address,
-    suburb,
-    state_province,
-    postcode,
-    country,
-    region,
-    entity_meta_id
-  )
-values
+    'location'
+  ),
   (
     '200 Han St',
     'Gangnam',
@@ -381,20 +223,8 @@ values
     '06066',
     'South Korea',
     'Asia',
-    3
-  );
-
-insert into
-  location (
-    street_address,
-    suburb,
-    state_province,
-    postcode,
-    country,
-    region,
-    entity_meta_id
-  )
-values
+    'location'
+  ),
   (
     '44 Calle Mayor',
     'Sol',
@@ -402,20 +232,8 @@ values
     '28013',
     'Spain',
     'Europe',
-    3
-  );
-
-insert into
-  location (
-    street_address,
-    suburb,
-    state_province,
-    postcode,
-    country,
-    region,
-    entity_meta_id
-  )
-values
+    'location'
+  ),
   (
     '10 Via Roma',
     'Centro',
@@ -423,20 +241,8 @@ values
     '90133',
     'Italy',
     'Europe',
-    3
-  );
-
-insert into
-  location (
-    street_address,
-    suburb,
-    state_province,
-    postcode,
-    country,
-    region,
-    entity_meta_id
-  )
-values
+    'location'
+  ),
   (
     '60 Paseo de la Reforma',
     'Juarez',
@@ -444,20 +250,8 @@ values
     '06500',
     'Mexico',
     'North America',
-    3
-  );
-
-insert into
-  location (
-    street_address,
-    suburb,
-    state_province,
-    postcode,
-    country,
-    region,
-    entity_meta_id
-  )
-values
+    'location'
+  ),
   (
     '18 Jalan Bukit Bintang',
     'Kuala Lumpur',
@@ -465,20 +259,8 @@ values
     '55100',
     'Malaysia',
     'Asia',
-    3
-  );
-
-insert into
-  location (
-    street_address,
-    suburb,
-    state_province,
-    postcode,
-    country,
-    region,
-    entity_meta_id
-  )
-values
+    'location'
+  ),
   (
     '33 Queen Street',
     'Auckland Central',
@@ -486,20 +268,8 @@ values
     '1010',
     'New Zealand',
     'Oceania',
-    3
-  );
-
-insert into
-  location (
-    street_address,
-    suburb,
-    state_province,
-    postcode,
-    country,
-    region,
-    entity_meta_id
-  )
-values
+    'location'
+  ),
   (
     '90 Avenue Road',
     'Yorkville',
@@ -507,20 +277,8 @@ values
     'M5R 2H2',
     'Canada',
     'North America',
-    3
-  );
-
-insert into
-  location (
-    street_address,
-    suburb,
-    state_province,
-    postcode,
-    country,
-    region,
-    entity_meta_id
-  )
-values
+    'location'
+  ),
   (
     '67 Tahlia Street',
     'Riyadh',
@@ -528,20 +286,8 @@ values
     '12241',
     'Saudi Arabia',
     'Asia',
-    3
-  );
-
-insert into
-  location (
-    street_address,
-    suburb,
-    state_province,
-    postcode,
-    country,
-    region,
-    entity_meta_id
-  )
-values
+    'location'
+  ),
   (
     '25 Sheikh Zayed Rd',
     'Downtown Dubai',
@@ -549,20 +295,8 @@ values
     '31303',
     'UAE',
     'Asia',
-    3
-  );
-
-insert into
-  location (
-    street_address,
-    suburb,
-    state_province,
-    postcode,
-    country,
-    region,
-    entity_meta_id
-  )
-values
+    'location'
+  ),
   (
     '8 Orchard Rd',
     'Orchard',
@@ -570,20 +304,8 @@ values
     '238879',
     'Singapore',
     'Asia',
-    3
-  );
-
-insert into
-  location (
-    street_address,
-    suburb,
-    state_province,
-    postcode,
-    country,
-    region,
-    entity_meta_id
-  )
-values
+    'location'
+  ),
   (
     '28 Kurfürstendamm',
     'Charlottenburg',
@@ -591,20 +313,8 @@ values
     '10719',
     'Germany',
     'Europe',
-    3
-  );
-
-insert into
-  location (
-    street_address,
-    suburb,
-    state_province,
-    postcode,
-    country,
-    region,
-    entity_meta_id
-  )
-values
+    'location'
+  ),
   (
     '70 Wangfujing St',
     'Dongcheng',
@@ -612,20 +322,8 @@ values
     '100006',
     'China',
     'Asia',
-    3
-  );
-
-insert into
-  location (
-    street_address,
-    suburb,
-    state_province,
-    postcode,
-    country,
-    region,
-    entity_meta_id
-  )
-values
+    'location'
+  ),
   (
     '50 Avenida Paulista',
     'Bela Vista',
@@ -633,20 +331,8 @@ values
     '01310-000',
     'Brazil',
     'South America',
-    3
-  );
-
-insert into
-  location (
-    street_address,
-    suburb,
-    state_province,
-    postcode,
-    country,
-    region,
-    entity_meta_id
-  )
-values
+    'location'
+  ),
   (
     '38 Khreschatyk St',
     'Pechersk',
@@ -654,20 +340,8 @@ values
     '01001',
     'Ukraine',
     'Europe',
-    3
-  );
-
-insert into
-  location (
-    street_address,
-    suburb,
-    state_province,
-    postcode,
-    country,
-    region,
-    entity_meta_id
-  )
-values
+    'location'
+  ),
   (
     '19 Istiklal Ave',
     'Beyoglu',
@@ -675,20 +349,8 @@ values
     '34435',
     'Turkey',
     'Europe',
-    3
-  );
-
-insert into
-  location (
-    street_address,
-    suburb,
-    state_province,
-    postcode,
-    country,
-    region,
-    entity_meta_id
-  )
-values
+    'location'
+  ),
   (
     '5 Syntagma Sq',
     'Syntagma',
@@ -696,20 +358,8 @@ values
     '10563',
     'Greece',
     'Europe',
-    3
-  );
-
-insert into
-  location (
-    street_address,
-    suburb,
-    state_province,
-    postcode,
-    country,
-    region,
-    entity_meta_id
-  )
-values
+    'location'
+  ),
   (
     '40 Dam Square',
     'Centrum',
@@ -717,20 +367,8 @@ values
     '1012 NP',
     'Netherlands',
     'Europe',
-    3
-  );
-
-insert into
-  location (
-    street_address,
-    suburb,
-    state_province,
-    postcode,
-    country,
-    region,
-    entity_meta_id
-  )
-values
+    'location'
+  ),
   (
     '30 Karl Johans gate',
     'Sentrum',
@@ -738,20 +376,8 @@ values
     '0159',
     'Norway',
     'Europe',
-    3
-  );
-
-insert into
-  location (
-    street_address,
-    suburb,
-    state_province,
-    postcode,
-    country,
-    region,
-    entity_meta_id
-  )
-values
+    'location'
+  ),
   (
     '27 Drottninggatan',
     'Norrmalm',
@@ -759,20 +385,8 @@ values
     '111 51',
     'Sweden',
     'Europe',
-    3
-  );
-
-insert into
-  location (
-    street_address,
-    suburb,
-    state_province,
-    postcode,
-    country,
-    region,
-    entity_meta_id
-  )
-values
+    'location'
+  ),
   (
     '100 Stroget',
     'Indre By',
@@ -780,20 +394,8 @@ values
     '1550',
     'Denmark',
     'Europe',
-    3
-  );
-
-insert into
-  location (
-    street_address,
-    suburb,
-    state_province,
-    postcode,
-    country,
-    region,
-    entity_meta_id
-  )
-values
+    'location'
+  ),
   (
     '5 Vaci Utca',
     'Belváros',
@@ -801,20 +403,8 @@ values
     '1052',
     'Hungary',
     'Europe',
-    3
-  );
-
-insert into
-  location (
-    street_address,
-    suburb,
-    state_province,
-    postcode,
-    country,
-    region,
-    entity_meta_id
-  )
-values
+    'location'
+  ),
   (
     '15 Nevsky Prospect',
     'Tsentralny',
@@ -822,20 +412,8 @@ values
     '191186',
     'Russia',
     'Europe',
-    3
-  );
-
-insert into
-  location (
-    street_address,
-    suburb,
-    state_province,
-    postcode,
-    country,
-    region,
-    entity_meta_id
-  )
-values
+    'location'
+  ),
   (
     '2 Esplanadi',
     'Kluuvi',
@@ -843,20 +421,8 @@ values
     '00130',
     'Finland',
     'Europe',
-    3
-  );
-
-insert into
-  location (
-    street_address,
-    suburb,
-    state_province,
-    postcode,
-    country,
-    region,
-    entity_meta_id
-  )
-values
+    'location'
+  ),
   (
     '3 Krakowskie Przedmiescie',
     'Srodmiescie',
@@ -864,20 +430,8 @@ values
     '00-071',
     'Poland',
     'Europe',
-    3
-  );
-
-insert into
-  location (
-    street_address,
-    suburb,
-    state_province,
-    postcode,
-    country,
-    region,
-    entity_meta_id
-  )
-values
+    'location'
+  ),
   (
     '4 Mariahilfer Strasse',
     'Neubau',
@@ -885,20 +439,8 @@ values
     '1070',
     'Austria',
     'Europe',
-    3
-  );
-
-insert into
-  location (
-    street_address,
-    suburb,
-    state_province,
-    postcode,
-    country,
-    region,
-    entity_meta_id
-  )
-values
+    'location'
+  ),
   (
     '50 Wenceslas Square',
     'Nove Mesto',
@@ -906,20 +448,8 @@ values
     '110 00',
     'Czech Republic',
     'Europe',
-    3
-  );
-
-insert into
-  location (
-    street_address,
-    suburb,
-    state_province,
-    postcode,
-    country,
-    region,
-    entity_meta_id
-  )
-values
+    'location'
+  ),
   (
     '7 Gran Via',
     'Centro',
@@ -927,20 +457,8 @@ values
     '28013',
     'Spain',
     'Europe',
-    3
-  );
-
-insert into
-  location (
-    street_address,
-    suburb,
-    state_province,
-    postcode,
-    country,
-    region,
-    entity_meta_id
-  )
-values
+    'location'
+  ),
   (
     '66 S Michigan Ave',
     'Chicago',
@@ -948,20 +466,8 @@ values
     '60603',
     'USA',
     'North America',
-    3
-  );
-
-insert into
-  location (
-    street_address,
-    suburb,
-    state_province,
-    postcode,
-    country,
-    region,
-    entity_meta_id
-  )
-values
+    'location'
+  ),
   (
     '15 Clifton Rd',
     'Karachi',
@@ -969,20 +475,8 @@ values
     '75600',
     'Pakistan',
     'Asia',
-    3
-  );
-
-insert into
-  location (
-    street_address,
-    suburb,
-    state_province,
-    postcode,
-    country,
-    region,
-    entity_meta_id
-  )
-values
+    'location'
+  ),
   (
     '3 Corniche Road',
     'Abu Dhabi',
@@ -990,20 +484,8 @@ values
     '51133',
     'UAE',
     'Asia',
-    3
-  );
-
-insert into
-  location (
-    street_address,
-    suburb,
-    state_province,
-    postcode,
-    country,
-    region,
-    entity_meta_id
-  )
-values
+    'location'
+  ),
   (
     '101 Chapel St',
     'Melbourne',
@@ -1011,20 +493,8 @@ values
     '3181',
     'Australia',
     'Oceania',
-    3
-  );
-
-insert into
-  location (
-    street_address,
-    suburb,
-    state_province,
-    postcode,
-    country,
-    region,
-    entity_meta_id
-  )
-values
+    'location'
+  ),
   (
     '22 Rue de Paris',
     'Monte Carlo',
@@ -1032,20 +502,8 @@ values
     '98000',
     'Monaco',
     'Europe',
-    3
-  );
-
-insert into
-  location (
-    street_address,
-    suburb,
-    state_province,
-    postcode,
-    country,
-    region,
-    entity_meta_id
-  )
-values
+    'location'
+  ),
   (
     '40 Bulevardul Unirii',
     'Bucharest',
@@ -1053,20 +511,8 @@ values
     '030167',
     'Romania',
     'Europe',
-    3
-  );
-
-insert into
-  location (
-    street_address,
-    suburb,
-    state_province,
-    postcode,
-    country,
-    region,
-    entity_meta_id
-  )
-values
+    'location'
+  ),
   (
     '5 Kingsway',
     'London',
@@ -1074,20 +520,8 @@ values
     'WC2B 6',
     'United Kingdom',
     'Europe',
-    3
-  );
-
-insert into
-  location (
-    street_address,
-    suburb,
-    state_province,
-    postcode,
-    country,
-    region,
-    entity_meta_id
-  )
-values
+    'location'
+  ),
   (
     '17 Rue du Faubourg Saint-Antoine',
     'Paris',
@@ -1095,20 +529,8 @@ values
     '75011',
     'France',
     'Europe',
-    3
-  );
-
-insert into
-  location (
-    street_address,
-    suburb,
-    state_province,
-    postcode,
-    country,
-    region,
-    entity_meta_id
-  )
-values
+    'location'
+  ),
   (
     '9 Lungomare della Libertà',
     'Rimini',
@@ -1116,20 +538,8 @@ values
     '47921',
     'Italy',
     'Europe',
-    3
-  );
-
-insert into
-  location (
-    street_address,
-    suburb,
-    state_province,
-    postcode,
-    country,
-    region,
-    entity_meta_id
-  )
-values
+    'location'
+  ),
   (
     '31 Avenida 9 de Julio',
     'Buenos Aires',
@@ -1137,20 +547,8 @@ values
     'C1009',
     'Argentina',
     'South America',
-    3
-  );
-
-insert into
-  location (
-    street_address,
-    suburb,
-    state_province,
-    postcode,
-    country,
-    region,
-    entity_meta_id
-  )
-values
+    'location'
+  ),
   (
     '99 Kloof Street',
     'Cape Town',
@@ -1158,20 +556,8 @@ values
     '8001',
     'South Africa',
     'Africa',
-    3
-  );
-
-insert into
-  location (
-    street_address,
-    suburb,
-    state_province,
-    postcode,
-    country,
-    region,
-    entity_meta_id
-  )
-values
+    'location'
+  ),
   (
     '55 Calle Ocho',
     'Miami',
@@ -1179,20 +565,8 @@ values
     '33135',
     'USA',
     'North America',
-    3
-  );
-
-insert into
-  location (
-    street_address,
-    suburb,
-    state_province,
-    postcode,
-    country,
-    region,
-    entity_meta_id
-  )
-values
+    'location'
+  ),
   (
     '7 Nevizade Street',
     'Istanbul',
@@ -1200,20 +574,8 @@ values
     '34435',
     'Turkey',
     'Asia',
-    3
-  );
-
-insert into
-  location (
-    street_address,
-    suburb,
-    state_province,
-    postcode,
-    country,
-    region,
-    entity_meta_id
-  )
-values
+    'location'
+  ),
   (
     '12 Avenida Central',
     'San Jose',
@@ -1221,20 +583,8 @@ values
     '1000',
     'Costa Rica',
     'North America',
-    3
-  );
-
-insert into
-  location (
-    street_address,
-    suburb,
-    state_province,
-    postcode,
-    country,
-    region,
-    entity_meta_id
-  )
-values
+    'location'
+  ),
   (
     '88 Langstrasse',
     'Zurich',
@@ -1242,20 +592,8 @@ values
     '8004',
     'Switzerland',
     'Europe',
-    3
-  );
-
-insert into
-  location (
-    street_address,
-    suburb,
-    state_province,
-    postcode,
-    country,
-    region,
-    entity_meta_id
-  )
-values
+    'location'
+  ),
   (
     '44 Weteringschans',
     'Amsterdam',
@@ -1263,20 +601,8 @@ values
     '1017 SH',
     'Netherlands',
     'Europe',
-    3
-  );
-
-insert into
-  location (
-    street_address,
-    suburb,
-    state_province,
-    postcode,
-    country,
-    region,
-    entity_meta_id
-  )
-values
+    'location'
+  ),
   (
     '60 Baggot Street',
     'Dublin',
@@ -1284,20 +610,8 @@ values
     'D02',
     'Ireland',
     'Europe',
-    3
-  );
-
-insert into
-  location (
-    street_address,
-    suburb,
-    state_province,
-    postcode,
-    country,
-    region,
-    entity_meta_id
-  )
-values
+    'location'
+  ),
   (
     '10 Rue de Laeken',
     'Brussels',
@@ -1305,20 +619,8 @@ values
     '1000',
     'Belgium',
     'Europe',
-    3
-  );
-
-insert into
-  location (
-    street_address,
-    suburb,
-    state_province,
-    postcode,
-    country,
-    region,
-    entity_meta_id
-  )
-values
+    'location'
+  ),
   (
     '25 Princes Street',
     'Edinburgh',
@@ -1326,20 +628,8 @@ values
     'EH2 2',
     'United Kingdom',
     'Europe',
-    3
-  );
-
-insert into
-  location (
-    street_address,
-    suburb,
-    state_province,
-    postcode,
-    country,
-    region,
-    entity_meta_id
-  )
-values
+    'location'
+  ),
   (
     '100 Calle de Serrano',
     'Madrid',
@@ -1347,20 +637,8 @@ values
     '28006',
     'Spain',
     'Europe',
-    3
-  );
-
-insert into
-  location (
-    street_address,
-    suburb,
-    state_province,
-    postcode,
-    country,
-    region,
-    entity_meta_id
-  )
-values
+    'location'
+  ),
   (
     '7 Bahnhofstrasse',
     'Zurich',
@@ -1368,20 +646,8 @@ values
     '8001',
     'Switzerland',
     'Europe',
-    3
-  );
-
-insert into
-  location (
-    street_address,
-    suburb,
-    state_province,
-    postcode,
-    country,
-    region,
-    entity_meta_id
-  )
-values
+    'location'
+  ),
   (
     '66 Dizengoff Street',
     'Tel Aviv',
@@ -1389,20 +655,8 @@ values
     '64332',
     'Israel',
     'Asia',
-    3
-  );
-
-insert into
-  location (
-    street_address,
-    suburb,
-    state_province,
-    postcode,
-    country,
-    region,
-    entity_meta_id
-  )
-values
+    'location'
+  ),
   (
     '8 Avenida Reforma',
     'Guatemala City',
@@ -1410,20 +664,8 @@ values
     '01010',
     'Guatemala',
     'North America',
-    3
-  );
-
-insert into
-  location (
-    street_address,
-    suburb,
-    state_province,
-    postcode,
-    country,
-    region,
-    entity_meta_id
-  )
-values
+    'location'
+  ),
   (
     '45 Nyhavn',
     'Copenhagen',
@@ -1431,20 +673,8 @@ values
     '1051',
     'Denmark',
     'Europe',
-    3
-  );
-
-insert into
-  location (
-    street_address,
-    suburb,
-    state_province,
-    postcode,
-    country,
-    region,
-    entity_meta_id
-  )
-values
+    'location'
+  ),
   (
     '16 Norrmalmstorg',
     'Stockholm',
@@ -1452,20 +682,8 @@ values
     '111 46',
     'Sweden',
     'Europe',
-    3
-  );
-
-insert into
-  location (
-    street_address,
-    suburb,
-    state_province,
-    postcode,
-    country,
-    region,
-    entity_meta_id
-  )
-values
+    'location'
+  ),
   (
     '3 Karl Marx Allee',
     'Berlin',
@@ -1473,20 +691,8 @@ values
     '10178',
     'Germany',
     'Europe',
-    3
-  );
-
-insert into
-  location (
-    street_address,
-    suburb,
-    state_province,
-    postcode,
-    country,
-    region,
-    entity_meta_id
-  )
-values
+    'location'
+  ),
   (
     '22 Aker Brygge',
     'Oslo',
@@ -1494,20 +700,8 @@ values
     '0250',
     'Norway',
     'Europe',
-    3
-  );
-
-insert into
-  location (
-    street_address,
-    suburb,
-    state_province,
-    postcode,
-    country,
-    region,
-    entity_meta_id
-  )
-values
+    'location'
+  ),
   (
     '12 King Street',
     'Sydney',
@@ -1515,20 +709,8 @@ values
     '2000',
     'Australia',
     'Oceania',
-    3
-  );
-
-insert into
-  location (
-    street_address,
-    suburb,
-    state_province,
-    postcode,
-    country,
-    region,
-    entity_meta_id
-  )
-values
+    'location'
+  ),
   (
     '15 Queen Avenue',
     'Brisbane',
@@ -1536,20 +718,8 @@ values
     '4000',
     'Australia',
     'Oceania',
-    3
-  );
-
-insert into
-  location (
-    street_address,
-    suburb,
-    state_province,
-    postcode,
-    country,
-    region,
-    entity_meta_id
-  )
-values
+    'location'
+  ),
   (
     '32 High Road',
     'Melbourne',
@@ -1557,20 +727,8 @@ values
     '3000',
     'Australia',
     'Oceania',
-    3
-  );
-
-insert into
-  location (
-    street_address,
-    suburb,
-    state_province,
-    postcode,
-    country,
-    region,
-    entity_meta_id
-  )
-values
+    'location'
+  ),
   (
     '29 Low Street',
     'Perth',
@@ -1578,20 +736,8 @@ values
     '6000',
     'Australia',
     'Oceania',
-    3
-  );
-
-insert into
-  location (
-    street_address,
-    suburb,
-    state_province,
-    postcode,
-    country,
-    region,
-    entity_meta_id
-  )
-values
+    'location'
+  ),
   (
     '90 North Avenue',
     'Adelaide',
@@ -1599,20 +745,8 @@ values
     '5000',
     'Australia',
     'Oceania',
-    3
-  );
-
-insert into
-  location (
-    street_address,
-    suburb,
-    state_province,
-    postcode,
-    country,
-    region,
-    entity_meta_id
-  )
-values
+    'location'
+  ),
   (
     '100 South Lane',
     'Sydney',
@@ -1620,20 +754,8 @@ values
     '2000',
     'Australia',
     'Oceania',
-    3
-  );
-
-insert into
-  location (
-    street_address,
-    suburb,
-    state_province,
-    postcode,
-    country,
-    region,
-    entity_meta_id
-  )
-values
+    'location'
+  ),
   (
     '56 West Way',
     'Brisbane',
@@ -1641,20 +763,8 @@ values
     '4000',
     'Australia',
     'Oceania',
-    3
-  );
-
-insert into
-  location (
-    street_address,
-    suburb,
-    state_province,
-    postcode,
-    country,
-    region,
-    entity_meta_id
-  )
-values
+    'location'
+  ),
   (
     '89 East Drive',
     'Melbourne',
@@ -1662,20 +772,8 @@ values
     '3000',
     'Australia',
     'Oceania',
-    3
-  );
-
-insert into
-  location (
-    street_address,
-    suburb,
-    state_province,
-    postcode,
-    country,
-    region,
-    entity_meta_id
-  )
-values
+    'location'
+  ),
   (
     '17 Park Lane',
     'Sydney',
@@ -1683,20 +781,8 @@ values
     '2000',
     'Australia',
     'Oceania',
-    3
-  );
-
-insert into
-  location (
-    street_address,
-    suburb,
-    state_province,
-    postcode,
-    country,
-    region,
-    entity_meta_id
-  )
-values
+    'location'
+  ),
   (
     '44 Bay Road',
     'Brisbane',
@@ -1704,20 +790,8 @@ values
     '4000',
     'Australia',
     'Oceania',
-    3
-  );
-
-insert into
-  location (
-    street_address,
-    suburb,
-    state_province,
-    postcode,
-    country,
-    region,
-    entity_meta_id
-  )
-values
+    'location'
+  ),
   (
     '11 River Drive',
     'Melbourne',
@@ -1725,20 +799,8 @@ values
     '3000',
     'Australia',
     'Oceania',
-    3
-  );
-
-insert into
-  location (
-    street_address,
-    suburb,
-    state_province,
-    postcode,
-    country,
-    region,
-    entity_meta_id
-  )
-values
+    'location'
+  ),
   (
     '28 Mountain View Rd',
     'Perth',
@@ -1746,20 +808,8 @@ values
     '6000',
     'Australia',
     'Oceania',
-    3
-  );
-
-insert into
-  location (
-    street_address,
-    suburb,
-    state_province,
-    postcode,
-    country,
-    region,
-    entity_meta_id
-  )
-values
+    'location'
+  ),
   (
     '92 Elm Street',
     'Adelaide',
@@ -1767,20 +817,8 @@ values
     '5000',
     'Australia',
     'Oceania',
-    3
-  );
-
-insert into
-  location (
-    street_address,
-    suburb,
-    state_province,
-    postcode,
-    country,
-    region,
-    entity_meta_id
-  )
-values
+    'location'
+  ),
   (
     '31 Ocean Avenue',
     'Sydney',
@@ -1788,20 +826,8 @@ values
     '2000',
     'Australia',
     'Oceania',
-    3
-  );
-
-insert into
-  location (
-    street_address,
-    suburb,
-    state_province,
-    postcode,
-    country,
-    region,
-    entity_meta_id
-  )
-values
+    'location'
+  ),
   (
     '55 Pine Rd',
     'Brisbane',
@@ -1809,20 +835,8 @@ values
     '4000',
     'Australia',
     'Oceania',
-    3
-  );
-
-insert into
-  location (
-    street_address,
-    suburb,
-    state_province,
-    postcode,
-    country,
-    region,
-    entity_meta_id
-  )
-values
+    'location'
+  ),
   (
     '67 Maple Drive',
     'Melbourne',
@@ -1830,20 +844,8 @@ values
     '3000',
     'Australia',
     'Oceania',
-    3
-  );
-
-insert into
-  location (
-    street_address,
-    suburb,
-    state_province,
-    postcode,
-    country,
-    region,
-    entity_meta_id
-  )
-values
+    'location'
+  ),
   (
     '14 Oak Street',
     'Perth',
@@ -1851,20 +853,8 @@ values
     '6000',
     'Australia',
     'Oceania',
-    3
-  );
-
-insert into
-  location (
-    street_address,
-    suburb,
-    state_province,
-    postcode,
-    country,
-    region,
-    entity_meta_id
-  )
-values
+    'location'
+  ),
   (
     '99 Birch Lane',
     'Adelaide',
@@ -1872,20 +862,8 @@ values
     '5000',
     'Australia',
     'Oceania',
-    3
-  );
-
-insert into
-  location (
-    street_address,
-    suburb,
-    state_province,
-    postcode,
-    country,
-    region,
-    entity_meta_id
-  )
-values
+    'location'
+  ),
   (
     '66 Cedar Rd',
     'Sydney',
@@ -1893,20 +871,8 @@ values
     '2000',
     'Australia',
     'Oceania',
-    3
-  );
-
-insert into
-  location (
-    street_address,
-    suburb,
-    state_province,
-    postcode,
-    country,
-    region,
-    entity_meta_id
-  )
-values
+    'location'
+  ),
   (
     '23 Spruce Avenue',
     'Brisbane',
@@ -1914,20 +880,8 @@ values
     '4000',
     'Australia',
     'Oceania',
-    3
-  );
-
-insert into
-  location (
-    street_address,
-    suburb,
-    state_province,
-    postcode,
-    country,
-    region,
-    entity_meta_id
-  )
-values
+    'location'
+  ),
   (
     '41 Redwood Drive',
     'Melbourne',
@@ -1935,20 +889,8 @@ values
     '3000',
     'Australia',
     'Oceania',
-    3
-  );
-
-insert into
-  location (
-    street_address,
-    suburb,
-    state_province,
-    postcode,
-    country,
-    region,
-    entity_meta_id
-  )
-values
+    'location'
+  ),
   (
     '58 Aspen Street',
     'Perth',
@@ -1956,20 +898,8 @@ values
     '6000',
     'Australia',
     'Oceania',
-    3
-  );
-
-insert into
-  location (
-    street_address,
-    suburb,
-    state_province,
-    postcode,
-    country,
-    region,
-    entity_meta_id
-  )
-values
+    'location'
+  ),
   (
     '39 Fir Lane',
     'Adelaide',
@@ -1977,20 +907,8 @@ values
     '5000',
     'Australia',
     'Oceania',
-    3
-  );
-
-insert into
-  location (
-    street_address,
-    suburb,
-    state_province,
-    postcode,
-    country,
-    region,
-    entity_meta_id
-  )
-values
+    'location'
+  ),
   (
     '76 Pinecone Rd',
     'Sydney',
@@ -1998,20 +916,8 @@ values
     '2000',
     'Australia',
     'Oceania',
-    3
-  );
-
-insert into
-  location (
-    street_address,
-    suburb,
-    state_province,
-    postcode,
-    country,
-    region,
-    entity_meta_id
-  )
-values
+    'location'
+  ),
   (
     '32 Willow Way',
     'Brisbane',
@@ -2019,20 +925,8 @@ values
     '4000',
     'Australia',
     'Oceania',
-    3
-  );
-
-insert into
-  location (
-    street_address,
-    suburb,
-    state_province,
-    postcode,
-    country,
-    region,
-    entity_meta_id
-  )
-values
+    'location'
+  ),
   (
     '53 Evergreen Dr',
     'Melbourne',
@@ -2040,20 +934,8 @@ values
     '3000',
     'Australia',
     'Oceania',
-    3
-  );
-
-insert into
-  location (
-    street_address,
-    suburb,
-    state_province,
-    postcode,
-    country,
-    region,
-    entity_meta_id
-  )
-values
+    'location'
+  ),
   (
     '72 Sycamore St',
     'Perth',
@@ -2061,20 +943,8 @@ values
     '6000',
     'Australia',
     'Oceania',
-    3
-  );
-
-insert into
-  location (
-    street_address,
-    suburb,
-    state_province,
-    postcode,
-    country,
-    region,
-    entity_meta_id
-  )
-values
+    'location'
+  ),
   (
     '11 Cedar Close',
     'Adelaide',
@@ -2082,20 +952,8 @@ values
     '5000',
     'Australia',
     'Oceania',
-    3
-  );
-
-insert into
-  location (
-    street_address,
-    suburb,
-    state_province,
-    postcode,
-    country,
-    region,
-    entity_meta_id
-  )
-values
+    'location'
+  ),
   (
     '43 Magnolia Mews',
     'Sydney',
@@ -2103,20 +961,8 @@ values
     '2000',
     'Australia',
     'Oceania',
-    3
-  );
-
-insert into
-  location (
-    street_address,
-    suburb,
-    state_province,
-    postcode,
-    country,
-    region,
-    entity_meta_id
-  )
-values
+    'location'
+  ),
   (
     '17 Larch Lane',
     'Brisbane',
@@ -2124,20 +970,8 @@ values
     '4000',
     'Australia',
     'Oceania',
-    3
-  );
-
-insert into
-  location (
-    street_address,
-    suburb,
-    state_province,
-    postcode,
-    country,
-    region,
-    entity_meta_id
-  )
-values
+    'location'
+  ),
   (
     '29 Pecan Place',
     'Melbourne',
@@ -2145,20 +979,8 @@ values
     '3000',
     'Australia',
     'Oceania',
-    3
-  );
-
-insert into
-  location (
-    street_address,
-    suburb,
-    state_province,
-    postcode,
-    country,
-    region,
-    entity_meta_id
-  )
-values
+    'location'
+  ),
   (
     '93 Teak Terrace',
     'Perth',
@@ -2166,20 +988,8 @@ values
     '6000',
     'Australia',
     'Oceania',
-    3
-  );
-
-insert into
-  location (
-    street_address,
-    suburb,
-    state_province,
-    postcode,
-    country,
-    region,
-    entity_meta_id
-  )
-values
+    'location'
+  ),
   (
     '58 Palm Path',
     'Adelaide',
@@ -2187,20 +997,8 @@ values
     '5000',
     'Australia',
     'Oceania',
-    3
-  );
-
-insert into
-  location (
-    street_address,
-    suburb,
-    state_province,
-    postcode,
-    country,
-    region,
-    entity_meta_id
-  )
-values
+    'location'
+  ),
   (
     '67 Beech Blvd',
     'Sydney',
@@ -2208,20 +1006,8 @@ values
     '2000',
     'Australia',
     'Oceania',
-    3
-  );
-
-insert into
-  location (
-    street_address,
-    suburb,
-    state_province,
-    postcode,
-    country,
-    region,
-    entity_meta_id
-  )
-values
+    'location'
+  ),
   (
     '82 Cherry Chase',
     'Brisbane',
@@ -2229,20 +1015,8 @@ values
     '4000',
     'Australia',
     'Oceania',
-    3
-  );
-
-insert into
-  location (
-    street_address,
-    suburb,
-    state_province,
-    postcode,
-    country,
-    region,
-    entity_meta_id
-  )
-values
+    'location'
+  ),
   (
     '91 Alder Alcove',
     'Melbourne',
@@ -2250,20 +1024,8 @@ values
     '3000',
     'Australia',
     'Oceania',
-    3
-  );
-
-insert into
-  location (
-    street_address,
-    suburb,
-    state_province,
-    postcode,
-    country,
-    region,
-    entity_meta_id
-  )
-values
+    'location'
+  ),
   (
     '12 Dogwood Drive',
     'Perth',
@@ -2271,20 +1033,8 @@ values
     '6000',
     'Australia',
     'Oceania',
-    3
-  );
-
-insert into
-  location (
-    street_address,
-    suburb,
-    state_province,
-    postcode,
-    country,
-    region,
-    entity_meta_id
-  )
-values
+    'location'
+  ),
   (
     '34 Elm End',
     'Adelaide',
@@ -2292,20 +1042,8 @@ values
     '5000',
     'Australia',
     'Oceania',
-    3
-  );
-
-insert into
-  location (
-    street_address,
-    suburb,
-    state_province,
-    postcode,
-    country,
-    region,
-    entity_meta_id
-  )
-values
+    'location'
+  ),
   (
     '75 Fir Fringe',
     'Sydney',
@@ -2313,20 +1051,8 @@ values
     '2000',
     'Australia',
     'Oceania',
-    3
-  );
-
-insert into
-  location (
-    street_address,
-    suburb,
-    state_province,
-    postcode,
-    country,
-    region,
-    entity_meta_id
-  )
-values
+    'location'
+  ),
   (
     '66 Larch Loop',
     'Brisbane',
@@ -2334,20 +1060,8 @@ values
     '4000',
     'Australia',
     'Oceania',
-    3
-  );
-
-insert into
-  location (
-    street_address,
-    suburb,
-    state_province,
-    postcode,
-    country,
-    region,
-    entity_meta_id
-  )
-values
+    'location'
+  ),
   (
     '57 Maple Mews',
     'Melbourne',
@@ -2355,20 +1069,8 @@ values
     '3000',
     'Australia',
     'Oceania',
-    3
-  );
-
-insert into
-  location (
-    street_address,
-    suburb,
-    state_province,
-    postcode,
-    country,
-    region,
-    entity_meta_id
-  )
-values
+    'location'
+  ),
   (
     '88 Oak Oval',
     'Perth',
@@ -2376,20 +1078,8 @@ values
     '6000',
     'Australia',
     'Oceania',
-    3
-  );
-
-insert into
-  location (
-    street_address,
-    suburb,
-    state_province,
-    postcode,
-    country,
-    region,
-    entity_meta_id
-  )
-values
+    'location'
+  ),
   (
     '99 Pine Path',
     'Adelaide',
@@ -2397,20 +1087,8 @@ values
     '5000',
     'Australia',
     'Oceania',
-    3
-  );
-
-insert into
-  location (
-    street_address,
-    suburb,
-    state_province,
-    postcode,
-    country,
-    region,
-    entity_meta_id
-  )
-values
+    'location'
+  ),
   (
     '70 Redwood Ridge',
     'Sydney',
@@ -2418,20 +1096,8 @@ values
     '2000',
     'Australia',
     'Oceania',
-    3
-  );
-
-insert into
-  location (
-    street_address,
-    suburb,
-    state_province,
-    postcode,
-    country,
-    region,
-    entity_meta_id
-  )
-values
+    'location'
+  ),
   (
     '59 Spruce Street',
     'Brisbane',
@@ -2439,20 +1105,8 @@ values
     '4000',
     'Australia',
     'Oceania',
-    3
-  );
-
-insert into
-  location (
-    street_address,
-    suburb,
-    state_province,
-    postcode,
-    country,
-    region,
-    entity_meta_id
-  )
-values
+    'location'
+  ),
   (
     '44 Teak Trail',
     'Melbourne',
@@ -2460,20 +1114,8 @@ values
     '3000',
     'Australia',
     'Oceania',
-    3
-  );
-
-insert into
-  location (
-    street_address,
-    suburb,
-    state_province,
-    postcode,
-    country,
-    region,
-    entity_meta_id
-  )
-values
+    'location'
+  ),
   (
     '33 Willow Way',
     'Perth',
@@ -2481,20 +1123,8 @@ values
     '6000',
     'Australia',
     'Oceania',
-    3
-  );
-
-insert into
-  location (
-    street_address,
-    suburb,
-    state_province,
-    postcode,
-    country,
-    region,
-    entity_meta_id
-  )
-values
+    'location'
+  ),
   (
     '1200 Broadway St',
     'New York',
@@ -2502,20 +1132,8 @@ values
     '10001',
     'USA',
     'North America',
-    3
-  );
-
-insert into
-  location (
-    street_address,
-    suburb,
-    state_province,
-    postcode,
-    country,
-    region,
-    entity_meta_id
-  )
-values
+    'location'
+  ),
   (
     '500 Sunset Blvd',
     'Los Angeles',
@@ -2523,20 +1141,8 @@ values
     '90028',
     'USA',
     'North America',
-    3
-  );
-
-insert into
-  location (
-    street_address,
-    suburb,
-    state_province,
-    postcode,
-    country,
-    region,
-    entity_meta_id
-  )
-values
+    'location'
+  ),
   (
     '2900 N Lamar Blvd',
     'Austin',
@@ -2544,20 +1150,8 @@ values
     '78705',
     'USA',
     'North America',
-    3
-  );
-
-insert into
-  location (
-    street_address,
-    suburb,
-    state_province,
-    postcode,
-    country,
-    region,
-    entity_meta_id
-  )
-values
+    'location'
+  ),
   (
     '4500 W North Ave',
     'Chicago',
@@ -2565,20 +1159,8 @@ values
     '60639',
     'USA',
     'North America',
-    3
-  );
-
-insert into
-  location (
-    street_address,
-    suburb,
-    state_province,
-    postcode,
-    country,
-    region,
-    entity_meta_id
-  )
-values
+    'location'
+  ),
   (
     '1700 Wynkoop St',
     'Denver',
@@ -2586,20 +1168,8 @@ values
     '80202',
     'USA',
     'North America',
-    3
-  );
-
-insert into
-  location (
-    street_address,
-    suburb,
-    state_province,
-    postcode,
-    country,
-    region,
-    entity_meta_id
-  )
-values
+    'location'
+  ),
   (
     '350 Fifth Ave',
     'New York',
@@ -2607,20 +1177,8 @@ values
     '10118',
     'USA',
     'North America',
-    3
-  );
-
-insert into
-  location (
-    street_address,
-    suburb,
-    state_province,
-    postcode,
-    country,
-    region,
-    entity_meta_id
-  )
-values
+    'location'
+  ),
   (
     '3800 S Las Vegas Blvd',
     'Las Vegas',
@@ -2628,20 +1186,8 @@ values
     '89109',
     'USA',
     'North America',
-    3
-  );
-
-insert into
-  location (
-    street_address,
-    suburb,
-    state_province,
-    postcode,
-    country,
-    region,
-    entity_meta_id
-  )
-values
+    'location'
+  ),
   (
     '1000 Elysian Park Ave',
     'Los Angeles',
@@ -2649,20 +1195,8 @@ values
     '90012',
     'USA',
     'North America',
-    3
-  );
-
-insert into
-  location (
-    street_address,
-    suburb,
-    state_province,
-    postcode,
-    country,
-    region,
-    entity_meta_id
-  )
-values
+    'location'
+  ),
   (
     '2200 N. Lamar St',
     'Dallas',
@@ -2670,20 +1204,8 @@ values
     '75202',
     'USA',
     'North America',
-    3
-  );
-
-insert into
-  location (
-    street_address,
-    suburb,
-    state_province,
-    postcode,
-    country,
-    region,
-    entity_meta_id
-  )
-values
+    'location'
+  ),
   (
     '2400 18th St NW',
     'Washington',
@@ -2691,20 +1213,8 @@ values
     '20009',
     'USA',
     'North America',
-    3
-  );
-
-insert into
-  location (
-    street_address,
-    suburb,
-    state_province,
-    postcode,
-    country,
-    region,
-    entity_meta_id
-  )
-values
+    'location'
+  ),
   (
     '200 Joe Nuxhall Way',
     'Cincinnati',
@@ -2712,20 +1222,8 @@ values
     '45202',
     'USA',
     'North America',
-    3
-  );
-
-insert into
-  location (
-    street_address,
-    suburb,
-    state_province,
-    postcode,
-    country,
-    region,
-    entity_meta_id
-  )
-values
+    'location'
+  ),
   (
     '500 David J Stern Walk',
     'Sacramento',
@@ -2733,20 +1231,8 @@ values
     '95814',
     'USA',
     'North America',
-    3
-  );
-
-insert into
-  location (
-    street_address,
-    suburb,
-    state_province,
-    postcode,
-    country,
-    region,
-    entity_meta_id
-  )
-values
+    'location'
+  ),
   (
     '1900 Benjamin Franklin Pkwy',
     'Philadelphia',
@@ -2754,20 +1240,8 @@ values
     '19103',
     'USA',
     'North America',
-    3
-  );
-
-insert into
-  location (
-    street_address,
-    suburb,
-    state_province,
-    postcode,
-    country,
-    region,
-    entity_meta_id
-  )
-values
+    'location'
+  ),
   (
     '1400 P St NW',
     'Washington',
@@ -2775,20 +1249,8 @@ values
     '20005',
     'USA',
     'North America',
-    3
-  );
-
-insert into
-  location (
-    street_address,
-    suburb,
-    state_province,
-    postcode,
-    country,
-    region,
-    entity_meta_id
-  )
-values
+    'location'
+  ),
   (
     '1800 Gattis School Rd',
     'Round Rock',
@@ -2796,20 +1258,8 @@ values
     '78664',
     'USA',
     'North America',
-    3
-  );
-
-insert into
-  location (
-    street_address,
-    suburb,
-    state_province,
-    postcode,
-    country,
-    region,
-    entity_meta_id
-  )
-values
+    'location'
+  ),
   (
     '1600 Amphitheatre Pkwy',
     'Mountain View',
@@ -2817,20 +1267,8 @@ values
     '94043',
     'USA',
     'North America',
-    3
-  );
-
-insert into
-  location (
-    street_address,
-    suburb,
-    state_province,
-    postcode,
-    country,
-    region,
-    entity_meta_id
-  )
-values
+    'location'
+  ),
   (
     '2600 Benjamin Franklin Pkwy',
     'Philadelphia',
@@ -2838,20 +1276,8 @@ values
     '19130',
     'USA',
     'North America',
-    3
-  );
-
-insert into
-  location (
-    street_address,
-    suburb,
-    state_province,
-    postcode,
-    country,
-    region,
-    entity_meta_id
-  )
-values
+    'location'
+  ),
   (
     '4200 N. Lamar Blvd',
     'Austin',
@@ -2859,20 +1285,8 @@ values
     '78756',
     'USA',
     'North America',
-    3
-  );
-
-insert into
-  location (
-    street_address,
-    suburb,
-    state_province,
-    postcode,
-    country,
-    region,
-    entity_meta_id
-  )
-values
+    'location'
+  ),
   (
     '3200 Las Vegas Blvd S',
     'Las Vegas',
@@ -2880,20 +1294,8 @@ values
     '89109',
     'USA',
     'North America',
-    3
-  );
-
-insert into
-  location (
-    street_address,
-    suburb,
-    state_province,
-    postcode,
-    country,
-    region,
-    entity_meta_id
-  )
-values
+    'location'
+  ),
   (
     '2300 16th St',
     'San Francisco',
@@ -2901,20 +1303,8 @@ values
     '94103',
     'USA',
     'North America',
-    3
-  );
-
-insert into
-  location (
-    street_address,
-    suburb,
-    state_province,
-    postcode,
-    country,
-    region,
-    entity_meta_id
-  )
-values
+    'location'
+  ),
   (
     '700 E Grand Ave',
     'Chicago',
@@ -2922,20 +1312,8 @@ values
     '60611',
     'USA',
     'North America',
-    3
-  );
-
-insert into
-  location (
-    street_address,
-    suburb,
-    state_province,
-    postcode,
-    country,
-    region,
-    entity_meta_id
-  )
-values
+    'location'
+  ),
   (
     '2900 W Alameda Ave',
     'Burbank',
@@ -2943,20 +1321,8 @@ values
     '91505',
     'USA',
     'North America',
-    3
-  );
-
-insert into
-  location (
-    street_address,
-    suburb,
-    state_province,
-    postcode,
-    country,
-    region,
-    entity_meta_id
-  )
-values
+    'location'
+  ),
   (
     '2800 E Observatory Rd',
     'Los Angeles',
@@ -2964,20 +1330,8 @@ values
     '90027',
     'USA',
     'North America',
-    3
-  );
-
-insert into
-  location (
-    street_address,
-    suburb,
-    state_province,
-    postcode,
-    country,
-    region,
-    entity_meta_id
-  )
-values
+    'location'
+  ),
   (
     '3100 N Broadway',
     'Chicago',
@@ -2985,20 +1339,8 @@ values
     '60657',
     'USA',
     'North America',
-    3
-  );
-
-insert into
-  location (
-    street_address,
-    suburb,
-    state_province,
-    postcode,
-    country,
-    region,
-    entity_meta_id
-  )
-values
+    'location'
+  ),
   (
     '3300 S Las Vegas Blvd',
     'Las Vegas',
@@ -3006,20 +1348,8 @@ values
     '89109',
     'USA',
     'North America',
-    3
-  );
-
-insert into
-  location (
-    street_address,
-    suburb,
-    state_province,
-    postcode,
-    country,
-    region,
-    entity_meta_id
-  )
-values
+    'location'
+  ),
   (
     '1100 4th St SW',
     'Washington',
@@ -3027,20 +1357,8 @@ values
     '20024',
     'USA',
     'North America',
-    3
-  );
-
-insert into
-  location (
-    street_address,
-    suburb,
-    state_province,
-    postcode,
-    country,
-    region,
-    entity_meta_id
-  )
-values
+    'location'
+  ),
   (
     '3600 Presidential Blvd',
     'Austin',
@@ -3048,20 +1366,8 @@ values
     '78719',
     'USA',
     'North America',
-    3
-  );
-
-insert into
-  location (
-    street_address,
-    suburb,
-    state_province,
-    postcode,
-    country,
-    region,
-    entity_meta_id
-  )
-values
+    'location'
+  ),
   (
     '3400 W Olive Ave',
     'Burbank',
@@ -3069,20 +1375,8 @@ values
     '91505',
     'USA',
     'North America',
-    3
-  );
-
-insert into
-  location (
-    street_address,
-    suburb,
-    state_province,
-    postcode,
-    country,
-    region,
-    entity_meta_id
-  )
-values
+    'location'
+  ),
   (
     '3700 W Flamingo Rd',
     'Las Vegas',
@@ -3090,20 +1384,8 @@ values
     '89103',
     'USA',
     'North America',
-    3
-  );
-
-insert into
-  location (
-    street_address,
-    suburb,
-    state_province,
-    postcode,
-    country,
-    region,
-    entity_meta_id
-  )
-values
+    'location'
+  ),
   (
     '1400 S Congress Ave',
     'Austin',
@@ -3111,20 +1393,8 @@ values
     '78704',
     'USA',
     'North America',
-    3
-  );
-
-insert into
-  location (
-    street_address,
-    suburb,
-    state_province,
-    postcode,
-    country,
-    region,
-    entity_meta_id
-  )
-values
+    'location'
+  ),
   (
     '2100 14th St NW',
     'Washington',
@@ -3132,20 +1402,8 @@ values
     '20009',
     'USA',
     'North America',
-    3
-  );
-
-insert into
-  location (
-    street_address,
-    suburb,
-    state_province,
-    postcode,
-    country,
-    region,
-    entity_meta_id
-  )
-values
+    'location'
+  ),
   (
     '300 Universal City Plaza',
     'Los Angeles',
@@ -3153,20 +1411,8 @@ values
     '91608',
     'USA',
     'North America',
-    3
-  );
-
-insert into
-  location (
-    street_address,
-    suburb,
-    state_province,
-    postcode,
-    country,
-    region,
-    entity_meta_id
-  )
-values
+    'location'
+  ),
   (
     '4400 Sharon Rd',
     'Charlotte',
@@ -3174,20 +1420,8 @@ values
     '28211',
     'USA',
     'North America',
-    3
-  );
-
-insert into
-  location (
-    street_address,
-    suburb,
-    state_province,
-    postcode,
-    country,
-    region,
-    entity_meta_id
-  )
-values
+    'location'
+  ),
   (
     '5500 Grossmont Center Dr',
     'La Mesa',
@@ -3195,20 +1429,8 @@ values
     '91942',
     'USA',
     'North America',
-    3
-  );
-
-insert into
-  location (
-    street_address,
-    suburb,
-    state_province,
-    postcode,
-    country,
-    region,
-    entity_meta_id
-  )
-values
+    'location'
+  ),
   (
     '2500 E 2nd Ave',
     'Denver',
@@ -3216,20 +1438,8 @@ values
     '80206',
     'USA',
     'North America',
-    3
-  );
-
-insert into
-  location (
-    street_address,
-    suburb,
-    state_province,
-    postcode,
-    country,
-    region,
-    entity_meta_id
-  )
-values
+    'location'
+  ),
   (
     '6400 S Fiddlers Green Cir',
     'Greenwood Village',
@@ -3237,20 +1447,8 @@ values
     '80111',
     'USA',
     'North America',
-    3
-  );
-
-insert into
-  location (
-    street_address,
-    suburb,
-    state_province,
-    postcode,
-    country,
-    region,
-    entity_meta_id
-  )
-values
+    'location'
+  ),
   (
     '5400 Kirkwood Blvd SW',
     'Cedar Rapids',
@@ -3258,20 +1456,8 @@ values
     '52404',
     'USA',
     'North America',
-    3
-  );
-
-insert into
-  location (
-    street_address,
-    suburb,
-    state_province,
-    postcode,
-    country,
-    region,
-    entity_meta_id
-  )
-values
+    'location'
+  ),
   (
     '6800 Westward Beach Rd',
     'Malibu',
@@ -3279,20 +1465,8 @@ values
     '90265',
     'USA',
     'North America',
-    3
-  );
-
-insert into
-  location (
-    street_address,
-    suburb,
-    state_province,
-    postcode,
-    country,
-    region,
-    entity_meta_id
-  )
-values
+    'location'
+  ),
   (
     '5800 Universal Blvd',
     'Orlando',
@@ -3300,20 +1474,8 @@ values
     '32819',
     'USA',
     'North America',
-    3
-  );
-
-insert into
-  location (
-    street_address,
-    suburb,
-    state_province,
-    postcode,
-    country,
-    region,
-    entity_meta_id
-  )
-values
+    'location'
+  ),
   (
     '1 Rue du Montparnasse',
     'Paris',
@@ -3321,20 +1483,8 @@ values
     '75006',
     'France',
     'Europe',
-    3
-  );
-
-insert into
-  location (
-    street_address,
-    suburb,
-    state_province,
-    postcode,
-    country,
-    region,
-    entity_meta_id
-  )
-values
+    'location'
+  ),
   (
     '2 Via Dante',
     'Milan',
@@ -3342,20 +1492,8 @@ values
     '20121',
     'Italy',
     'Europe',
-    3
-  );
-
-insert into
-  location (
-    street_address,
-    suburb,
-    state_province,
-    postcode,
-    country,
-    region,
-    entity_meta_id
-  )
-values
+    'location'
+  ),
   (
     '3 Calle Gran Vía',
     'Madrid',
@@ -3363,20 +1501,8 @@ values
     '28013',
     'Spain',
     'Europe',
-    3
-  );
-
-insert into
-  location (
-    street_address,
-    suburb,
-    state_province,
-    postcode,
-    country,
-    region,
-    entity_meta_id
-  )
-values
+    'location'
+  ),
   (
     '4 King St',
     'London',
@@ -3384,20 +1510,8 @@ values
     'WC2E 8HJ',
     'UK',
     'Europe',
-    3
-  );
-
-insert into
-  location (
-    street_address,
-    suburb,
-    state_province,
-    postcode,
-    country,
-    region,
-    entity_meta_id
-  )
-values
+    'location'
+  ),
   (
     '5 Bahnhofstrasse',
     'Zurich',
@@ -3405,20 +1519,8 @@ values
     '8001',
     'Switzerland',
     'Europe',
-    3
-  );
-
-insert into
-  location (
-    street_address,
-    suburb,
-    state_province,
-    postcode,
-    country,
-    region,
-    entity_meta_id
-  )
-values
+    'location'
+  ),
   (
     '6 Unter den Linden',
     'Berlin',
@@ -3426,20 +1528,8 @@ values
     '10117',
     'Germany',
     'Europe',
-    3
-  );
-
-insert into
-  location (
-    street_address,
-    suburb,
-    state_province,
-    postcode,
-    country,
-    region,
-    entity_meta_id
-  )
-values
+    'location'
+  ),
   (
     '7 Nevsky Prospekt',
     'Saint Petersburg',
@@ -3447,20 +1537,8 @@ values
     '191186',
     'Russia',
     'Europe',
-    3
-  );
-
-insert into
-  location (
-    street_address,
-    suburb,
-    state_province,
-    postcode,
-    country,
-    region,
-    entity_meta_id
-  )
-values
+    'location'
+  ),
   (
     '8 Andrássy út',
     'Budapest',
@@ -3468,20 +1546,8 @@ values
     '1062',
     'Hungary',
     'Europe',
-    3
-  );
-
-insert into
-  location (
-    street_address,
-    suburb,
-    state_province,
-    postcode,
-    country,
-    region,
-    entity_meta_id
-  )
-values
+    'location'
+  ),
   (
     '9 Rua Garrett',
     'Lisbon',
@@ -3489,20 +1555,8 @@ values
     '1200-203',
     'Portugal',
     'Europe',
-    3
-  );
-
-insert into
-  location (
-    street_address,
-    suburb,
-    state_province,
-    postcode,
-    country,
-    region,
-    entity_meta_id
-  )
-values
+    'location'
+  ),
   (
     '10 Karl Johans gate',
     'Oslo',
@@ -3510,20 +1564,8 @@ values
     '0154',
     'Norway',
     'Europe',
-    3
-  );
-
-insert into
-  location (
-    street_address,
-    suburb,
-    state_province,
-    postcode,
-    country,
-    region,
-    entity_meta_id
-  )
-values
+    'location'
+  ),
   (
     '11 Rue du Montparnasse',
     'Paris',
@@ -3531,20 +1573,8 @@ values
     '75006',
     'France',
     'Europe',
-    3
-  );
-
-insert into
-  location (
-    street_address,
-    suburb,
-    state_province,
-    postcode,
-    country,
-    region,
-    entity_meta_id
-  )
-values
+    'location'
+  ),
   (
     '12 Via Dante',
     'Milan',
@@ -3552,20 +1582,8 @@ values
     '20121',
     'Italy',
     'Europe',
-    3
-  );
-
-insert into
-  location (
-    street_address,
-    suburb,
-    state_province,
-    postcode,
-    country,
-    region,
-    entity_meta_id
-  )
-values
+    'location'
+  ),
   (
     '13 Calle Gran Vía',
     'Madrid',
@@ -3573,20 +1591,8 @@ values
     '28013',
     'Spain',
     'Europe',
-    3
-  );
-
-insert into
-  location (
-    street_address,
-    suburb,
-    state_province,
-    postcode,
-    country,
-    region,
-    entity_meta_id
-  )
-values
+    'location'
+  ),
   (
     '14 King St',
     'London',
@@ -3594,20 +1600,8 @@ values
     'WC2E 8HJ',
     'UK',
     'Europe',
-    3
-  );
-
-insert into
-  location (
-    street_address,
-    suburb,
-    state_province,
-    postcode,
-    country,
-    region,
-    entity_meta_id
-  )
-values
+    'location'
+  ),
   (
     '15 Bahnhofstrasse',
     'Zurich',
@@ -3615,20 +1609,8 @@ values
     '8001',
     'Switzerland',
     'Europe',
-    3
-  );
-
-insert into
-  location (
-    street_address,
-    suburb,
-    state_province,
-    postcode,
-    country,
-    region,
-    entity_meta_id
-  )
-values
+    'location'
+  ),
   (
     '16 Unter den Linden',
     'Berlin',
@@ -3636,20 +1618,8 @@ values
     '10117',
     'Germany',
     'Europe',
-    3
-  );
-
-insert into
-  location (
-    street_address,
-    suburb,
-    state_province,
-    postcode,
-    country,
-    region,
-    entity_meta_id
-  )
-values
+    'location'
+  ),
   (
     '17 Nevsky Prospekt',
     'Saint Petersburg',
@@ -3657,20 +1627,8 @@ values
     '191186',
     'Russia',
     'Europe',
-    3
-  );
-
-insert into
-  location (
-    street_address,
-    suburb,
-    state_province,
-    postcode,
-    country,
-    region,
-    entity_meta_id
-  )
-values
+    'location'
+  ),
   (
     '18 Andrássy út',
     'Budapest',
@@ -3678,20 +1636,8 @@ values
     '1062',
     'Hungary',
     'Europe',
-    3
-  );
-
-insert into
-  location (
-    street_address,
-    suburb,
-    state_province,
-    postcode,
-    country,
-    region,
-    entity_meta_id
-  )
-values
+    'location'
+  ),
   (
     '19 Rua Garrett',
     'Lisbon',
@@ -3699,20 +1645,8 @@ values
     '1200-203',
     'Portugal',
     'Europe',
-    3
-  );
-
-insert into
-  location (
-    street_address,
-    suburb,
-    state_province,
-    postcode,
-    country,
-    region,
-    entity_meta_id
-  )
-values
+    'location'
+  ),
   (
     '20 Karl Johans gate',
     'Oslo',
@@ -3720,20 +1654,8 @@ values
     '0154',
     'Norway',
     'Europe',
-    3
-  );
-
-insert into
-  location (
-    street_address,
-    suburb,
-    state_province,
-    postcode,
-    country,
-    region,
-    entity_meta_id
-  )
-values
+    'location'
+  ),
   (
     '21 Rue du Montparnasse',
     'Paris',
@@ -3741,20 +1663,8 @@ values
     '75006',
     'France',
     'Europe',
-    3
-  );
-
-insert into
-  location (
-    street_address,
-    suburb,
-    state_province,
-    postcode,
-    country,
-    region,
-    entity_meta_id
-  )
-values
+    'location'
+  ),
   (
     '22 Via Dante',
     'Milan',
@@ -3762,20 +1672,8 @@ values
     '20121',
     'Italy',
     'Europe',
-    3
-  );
-
-insert into
-  location (
-    street_address,
-    suburb,
-    state_province,
-    postcode,
-    country,
-    region,
-    entity_meta_id
-  )
-values
+    'location'
+  ),
   (
     '23 Calle Gran Vía',
     'Madrid',
@@ -3783,20 +1681,8 @@ values
     '28013',
     'Spain',
     'Europe',
-    3
-  );
-
-insert into
-  location (
-    street_address,
-    suburb,
-    state_province,
-    postcode,
-    country,
-    region,
-    entity_meta_id
-  )
-values
+    'location'
+  ),
   (
     '24 King St',
     'London',
@@ -3804,20 +1690,8 @@ values
     'WC2E 8HJ',
     'UK',
     'Europe',
-    3
-  );
-
-insert into
-  location (
-    street_address,
-    suburb,
-    state_province,
-    postcode,
-    country,
-    region,
-    entity_meta_id
-  )
-values
+    'location'
+  ),
   (
     '25 Bahnhofstrasse',
     'Zurich',
@@ -3825,20 +1699,8 @@ values
     '8001',
     'Switzerland',
     'Europe',
-    3
-  );
-
-insert into
-  location (
-    street_address,
-    suburb,
-    state_province,
-    postcode,
-    country,
-    region,
-    entity_meta_id
-  )
-values
+    'location'
+  ),
   (
     '26 Unter den Linden',
     'Berlin',
@@ -3846,20 +1708,8 @@ values
     '10117',
     'Germany',
     'Europe',
-    3
-  );
-
-insert into
-  location (
-    street_address,
-    suburb,
-    state_province,
-    postcode,
-    country,
-    region,
-    entity_meta_id
-  )
-values
+    'location'
+  ),
   (
     '27 Nevsky Prospekt',
     'Saint Petersburg',
@@ -3867,20 +1717,8 @@ values
     '191186',
     'Russia',
     'Europe',
-    3
-  );
-
-insert into
-  location (
-    street_address,
-    suburb,
-    state_province,
-    postcode,
-    country,
-    region,
-    entity_meta_id
-  )
-values
+    'location'
+  ),
   (
     '28 Andrássy út',
     'Budapest',
@@ -3888,20 +1726,8 @@ values
     '1062',
     'Hungary',
     'Europe',
-    3
-  );
-
-insert into
-  location (
-    street_address,
-    suburb,
-    state_province,
-    postcode,
-    country,
-    region,
-    entity_meta_id
-  )
-values
+    'location'
+  ),
   (
     '29 Rua Garrett',
     'Lisbon',
@@ -3909,20 +1735,8 @@ values
     '1200-203',
     'Portugal',
     'Europe',
-    3
-  );
-
-insert into
-  location (
-    street_address,
-    suburb,
-    state_province,
-    postcode,
-    country,
-    region,
-    entity_meta_id
-  )
-values
+    'location'
+  ),
   (
     '30 Karl Johans gate',
     'Oslo',
@@ -3930,20 +1744,8 @@ values
     '0154',
     'Norway',
     'Europe',
-    3
-  );
-
-insert into
-  location (
-    street_address,
-    suburb,
-    state_province,
-    postcode,
-    country,
-    region,
-    entity_meta_id
-  )
-values
+    'location'
+  ),
   (
     '31 Rue du Montparnasse',
     'Paris',
@@ -3951,20 +1753,8 @@ values
     '75006',
     'France',
     'Europe',
-    3
-  );
-
-insert into
-  location (
-    street_address,
-    suburb,
-    state_province,
-    postcode,
-    country,
-    region,
-    entity_meta_id
-  )
-values
+    'location'
+  ),
   (
     '32 Via Dante',
     'Milan',
@@ -3972,20 +1762,8 @@ values
     '20121',
     'Italy',
     'Europe',
-    3
-  );
-
-insert into
-  location (
-    street_address,
-    suburb,
-    state_province,
-    postcode,
-    country,
-    region,
-    entity_meta_id
-  )
-values
+    'location'
+  ),
   (
     '33 Calle Gran Vía',
     'Madrid',
@@ -3993,20 +1771,8 @@ values
     '28013',
     'Spain',
     'Europe',
-    3
-  );
-
-insert into
-  location (
-    street_address,
-    suburb,
-    state_province,
-    postcode,
-    country,
-    region,
-    entity_meta_id
-  )
-values
+    'location'
+  ),
   (
     '34 King St',
     'London',
@@ -4014,20 +1780,8 @@ values
     'WC2E 8HJ',
     'UK',
     'Europe',
-    3
-  );
-
-insert into
-  location (
-    street_address,
-    suburb,
-    state_province,
-    postcode,
-    country,
-    region,
-    entity_meta_id
-  )
-values
+    'location'
+  ),
   (
     '35 Bahnhofstrasse',
     'Zurich',
@@ -4035,20 +1789,8 @@ values
     '8001',
     'Switzerland',
     'Europe',
-    3
-  );
-
-insert into
-  location (
-    street_address,
-    suburb,
-    state_province,
-    postcode,
-    country,
-    region,
-    entity_meta_id
-  )
-values
+    'location'
+  ),
   (
     '36 Unter den Linden',
     'Berlin',
@@ -4056,20 +1798,8 @@ values
     '10117',
     'Germany',
     'Europe',
-    3
-  );
-
-insert into
-  location (
-    street_address,
-    suburb,
-    state_province,
-    postcode,
-    country,
-    region,
-    entity_meta_id
-  )
-values
+    'location'
+  ),
   (
     '37 Nevsky Prospekt',
     'Saint Petersburg',
@@ -4077,20 +1807,8 @@ values
     '191186',
     'Russia',
     'Europe',
-    3
-  );
-
-insert into
-  location (
-    street_address,
-    suburb,
-    state_province,
-    postcode,
-    country,
-    region,
-    entity_meta_id
-  )
-values
+    'location'
+  ),
   (
     '38 Andrássy út',
     'Budapest',
@@ -4098,20 +1816,8 @@ values
     '1062',
     'Hungary',
     'Europe',
-    3
-  );
-
-insert into
-  location (
-    street_address,
-    suburb,
-    state_province,
-    postcode,
-    country,
-    region,
-    entity_meta_id
-  )
-values
+    'location'
+  ),
   (
     '39 Rua Garrett',
     'Lisbon',
@@ -4119,20 +1825,8 @@ values
     '1200-203',
     'Portugal',
     'Europe',
-    3
-  );
-
-insert into
-  location (
-    street_address,
-    suburb,
-    state_province,
-    postcode,
-    country,
-    region,
-    entity_meta_id
-  )
-values
+    'location'
+  ),
   (
     '40 Karl Johans gate',
     'Oslo',
@@ -4140,20 +1834,8 @@ values
     '0154',
     'Norway',
     'Europe',
-    3
-  );
-
-insert into
-  location (
-    street_address,
-    suburb,
-    state_province,
-    postcode,
-    country,
-    region,
-    entity_meta_id
-  )
-values
+    'location'
+  ),
   (
     '41 Rue du Montparnasse',
     'Paris',
@@ -4161,20 +1843,8 @@ values
     '75006',
     'France',
     'Europe',
-    3
-  );
-
-insert into
-  location (
-    street_address,
-    suburb,
-    state_province,
-    postcode,
-    country,
-    region,
-    entity_meta_id
-  )
-values
+    'location'
+  ),
   (
     '42 Via Dante',
     'Milan',
@@ -4182,20 +1852,8 @@ values
     '20121',
     'Italy',
     'Europe',
-    3
-  );
-
-insert into
-  location (
-    street_address,
-    suburb,
-    state_province,
-    postcode,
-    country,
-    region,
-    entity_meta_id
-  )
-values
+    'location'
+  ),
   (
     '43 Calle Gran Vía',
     'Madrid',
@@ -4203,20 +1861,8 @@ values
     '28013',
     'Spain',
     'Europe',
-    3
-  );
-
-insert into
-  location (
-    street_address,
-    suburb,
-    state_province,
-    postcode,
-    country,
-    region,
-    entity_meta_id
-  )
-values
+    'location'
+  ),
   (
     '44 King St',
     'London',
@@ -4224,20 +1870,8 @@ values
     'WC2E 8HJ',
     'UK',
     'Europe',
-    3
-  );
-
-insert into
-  location (
-    street_address,
-    suburb,
-    state_province,
-    postcode,
-    country,
-    region,
-    entity_meta_id
-  )
-values
+    'location'
+  ),
   (
     '45 Bahnhofstrasse',
     'Zurich',
@@ -4245,20 +1879,8 @@ values
     '8001',
     'Switzerland',
     'Europe',
-    3
-  );
-
-insert into
-  location (
-    street_address,
-    suburb,
-    state_province,
-    postcode,
-    country,
-    region,
-    entity_meta_id
-  )
-values
+    'location'
+  ),
   (
     '46 Unter den Linden',
     'Berlin',
@@ -4266,20 +1888,8 @@ values
     '10117',
     'Germany',
     'Europe',
-    3
-  );
-
-insert into
-  location (
-    street_address,
-    suburb,
-    state_province,
-    postcode,
-    country,
-    region,
-    entity_meta_id
-  )
-values
+    'location'
+  ),
   (
     '47 Nevsky Prospekt',
     'Saint Petersburg',
@@ -4287,20 +1897,8 @@ values
     '191186',
     'Russia',
     'Europe',
-    3
-  );
-
-insert into
-  location (
-    street_address,
-    suburb,
-    state_province,
-    postcode,
-    country,
-    region,
-    entity_meta_id
-  )
-values
+    'location'
+  ),
   (
     '48 Andrássy út',
     'Budapest',
@@ -4308,20 +1906,8 @@ values
     '1062',
     'Hungary',
     'Europe',
-    3
-  );
-
-insert into
-  location (
-    street_address,
-    suburb,
-    state_province,
-    postcode,
-    country,
-    region,
-    entity_meta_id
-  )
-values
+    'location'
+  ),
   (
     '49 Rua Garrett',
     'Lisbon',
@@ -4329,20 +1915,8 @@ values
     '1200-203',
     'Portugal',
     'Europe',
-    3
-  );
-
-insert into
-  location (
-    street_address,
-    suburb,
-    state_province,
-    postcode,
-    country,
-    region,
-    entity_meta_id
-  )
-values
+    'location'
+  ),
   (
     '50 Karl Johans gate',
     'Oslo',
@@ -4350,5 +1924,5 @@ values
     '0154',
     'Norway',
     'Europe',
-    3
+    'location'
   );

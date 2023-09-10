@@ -2,7 +2,7 @@
 drop table job_role;
 
 delete from column_meta
-where entity_meta_id = 12;
+where entity_meta_table = 'job_role';
 
 delete from entity_meta
-where display_name = 'Job Role';
+where table_name = 'job_role';

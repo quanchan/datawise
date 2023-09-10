@@ -2,7 +2,7 @@
 drop table product;
 
 delete from column_meta
-where entity_meta_id = 14;
+where entity_meta_table = 'product';
 
 delete from entity_meta
-where display_name = 'Product';
+where table_name = 'product';

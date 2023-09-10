@@ -2,7 +2,7 @@
 drop table creditcard;
 
 delete from column_meta
-where entity_meta_id = 5;
+where entity_meta_table = 'creditcard';
 
 delete from entity_meta
-where display_name = 'Credit Card';
+where table_name = 'creditcard';

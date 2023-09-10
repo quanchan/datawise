@@ -2,7 +2,7 @@
 drop table soft_skill;
 
 delete from column_meta
-where entity_meta_id = 11;
+where entity_meta_table = 'soft_skill';
 
 delete from entity_meta
-where display_name = 'Soft Skill';
+where table_name = 'soft_skill';

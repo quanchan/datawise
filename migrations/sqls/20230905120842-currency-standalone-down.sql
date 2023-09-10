@@ -2,7 +2,7 @@
 drop table currency;
 
 delete from column_meta
-where entity_meta_id = 8;
+where entity_meta_table = 'currency';
 
 delete from entity_meta
-where display_name = 'Currency';
+where table_name = 'currency';

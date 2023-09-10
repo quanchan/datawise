@@ -97,7 +97,7 @@ export class TypeProvider {
       ${em.n_custom} as custom
     FROM ${cm.n}
     JOIN ${em.n} 
-    ON ${cm.n_entity_meta_id} = ${em.n_id};
+    ON ${cm.n_entity_meta_table} = ${em.n_table_name};
     `);
     const allTypes = [...types, ...this.runtimeTypes];
     return allTypes.map((type: Type) => this.addGenOptsToType(type) as Type);
@@ -124,7 +124,7 @@ export class TypeProvider {
           ${em.n_custom} as custom
         FROM ${cm.n}
         JOIN ${em.n} 
-        ON ${cm.n_entity_meta_id} = ${em.n_id}
+        ON ${cm.n_entity_meta_table} = ${em.n_table_name};
         WHERE ${cm.n_id} = ${id};
       `);
       if (types.length !== 0) {
@@ -163,10 +163,6 @@ export class TypeProvider {
         false,
         true
       );`);
-      const result = await client.query<{ id: number }>(
-        `SELECT ${em.id} FROM ${em.n} WHERE ${em.n_table_name} = '${column_name}'`
-      );
-      const entity_meta_id = result.rows[0].id;
       await client.query(`
       INSERT INTO ${cm.n} (
         ${cm.display_name}, 
@@ -174,7 +170,7 @@ export class TypeProvider {
         ${cm.example}, 
         ${cm.data_type}, 
         ${cm.column_name}, 
-        ${cm.entity_meta_id}, 
+        ${cm.entity_meta_table}, 
         ${cm.gen_opts_name}
       ) VALUES (
         '${name}', 
@@ -182,7 +178,7 @@ export class TypeProvider {
         '${valuesArr.slice(0, 3).join(", ")}', 
         '${actualSQLType}', 
         '${column_name}', 
-        ${entity_meta_id}, 
+        ${column_name}, 
         'entityVarchar'
       );`);
     } catch (e) {
