@@ -35,7 +35,7 @@ values
     '',
     'Software Engineer, Nurse, Dentist',
     'job_role',
-    'varchar.255',
+    'varchar(255)',
     'entityVarchar',
     'job_role'
   );

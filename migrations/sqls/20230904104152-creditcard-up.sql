@@ -34,7 +34,7 @@ values
     'Type of the Credit Card',
     'Visa, MasterCard, American Express',
     'card_type',
-    'varchar.255',
+    'varchar(255)',
     'entityVarchar',
     'creditcard'
   ),
@@ -43,7 +43,7 @@ values
     'Credit Card Number',
     '1234-5678-9012-3456',
     'card_num',
-    'varchar.19',
+    'varchar(19)',
     'entityVarchar',
     'creditcard'
   );

@@ -38,7 +38,7 @@ values
 		'',
 		'TechWorld Corp.',
 		'name',
-		'varchar.255',
+		'varchar(255)',
 		'entityVarchar',
 		'company'
 	),
@@ -47,7 +47,7 @@ values
 		'',
 		'BN123456789',
 		'business_number',
-		'varchar.50',
+		'varchar(50)',
 		'entityVarchar',
 		'company'
 	),
@@ -56,7 +56,7 @@ values
 		'',
 		'Software Development',
 		'industry',
-		'varchar.100',
+		'varchar(100)',
 		'entityVarchar',
 		'company'
 	);

@@ -39,7 +39,7 @@ values
 		'Registration number of the car',
 		'XYZ123',
 		'rego',
-		'varchar.10',
+		'varchar(10)',
 		'entityVarchar',
 		'car'
 	),
@@ -48,7 +48,7 @@ values
 		'Model of the car',
 		'Hyundai i30, BMW X5',
 		'model',
-		'varchar.50',
+		'varchar(50)',
 		'entityVarchar',
 		'car'
 	),
@@ -57,7 +57,7 @@ values
 		'Total number of seats (including driver) of the car',
 		'4, 5, 2, 7',
 		'seats',
-		'number.3',
+		'number(3)',
 		'entityNumber',
 		'car'
 	),
@@ -66,7 +66,7 @@ values
 		'Weight of the car in KG',
 		'1000',
 		'weight',
-		'number.6',
+		'number(6)',
 		'entityNumber',
 		'car'
 	),
@@ -75,7 +75,7 @@ values
 		'Engine/Fuel Type',
 		'petrol, electric, diesel',
 		'engine_type',
-		'varchar.100',
+		'varchar(100)',
 		'entityVarchar',
 		'car'
 	),
@@ -84,7 +84,7 @@ values
 		'Manufacturer of the car',
 		'Toyota',
 		'make',
-		'varchar.50',
+		'varchar(50)',
 		'entityVarchar',
 		'car'
 	),
@@ -93,7 +93,7 @@ values
 		'Body type of the car',
 		'sedan, hatch, SUV',
 		'type',
-		'varchar.50',
+		'varchar(50)',
 		'entityVarchar',
 		'car'
 	);

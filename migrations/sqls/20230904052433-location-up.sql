@@ -38,7 +38,7 @@ values
     'Complete Address of the Location',
     '123 Main St',
     'street_address',
-    'varchar.255',
+    'varchar(255)',
     'entityVarchar',
     'location'
   ),
@@ -47,7 +47,7 @@ values
     'Suburb of the Location',
     'Central, Redfern, Burwood',
     'suburb',
-    'varchar.100',
+    'varchar(100)',
     'entityVarchar',
     'location'
   ),
@@ -56,7 +56,7 @@ values
     'State or Province of the Location',
     'NSW, VIC',
     'state_province',
-    'varchar.100',
+    'varchar(100)',
     'entityVarchar',
     'location'
   ),
@@ -65,7 +65,7 @@ values
     'Postal Code of the Location',
     '90001',
     'postcode',
-    'varchar.20',
+    'varchar(20)',
     'entityVarchar',
     'location'
   ),
@@ -74,7 +74,7 @@ values
     'Country of the Location',
     'USA, Australia',
     'country',
-    'varchar.100',
+    'varchar(100)',
     'entityVarchar',
     'location'
   ),
@@ -83,7 +83,7 @@ values
     'Region of the Location',
     'Asia, Europe, North America, South America, Africa, Oceania',
     'region',
-    'varchar.100',
+    'varchar(100)',
     'entityVarchar',
     'location'
   );

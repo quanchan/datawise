@@ -10,6 +10,6 @@ export default async function handler(
   if (req.method == "POST") {
     const newType = req.body as CustomType;
     await TypeProvider.createType(newType);
-    res.status(200);
+    res.status(200).send("Success!");
   }
 }

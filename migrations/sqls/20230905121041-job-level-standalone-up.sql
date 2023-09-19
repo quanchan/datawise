@@ -35,7 +35,7 @@ values
         '',
         'Junior, Mid, Senior, ',
         'job_level',
-        'varchar.255',
+        'varchar(255)',
         'entityVarchar',
         'job_level'
     );

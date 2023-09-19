@@ -34,7 +34,7 @@ export type TableConstraints = {
   condition: string;
 };
 
-export const defaultTableConstaints: TableConstraints = {
+export const defaultTableConstraints: TableConstraints = {
   name: "Constraint_1",
   condition: "",
 };
@@ -50,7 +50,7 @@ export const defaultTableOptions: TableOptions = {
   name: "Table_1",
   rowQuantity: 50,
   fields: [{ ...defaultField }],
-  constraints: [{ ...defaultTableConstaints }],
+  constraints: [{ ...defaultTableConstraints }],
 };
 
 export enum Format {

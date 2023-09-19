@@ -35,7 +35,7 @@ values
     '',
     'Communication',
     'soft_skill',
-    'varchar.255',
+    'varchar(255)',
     'entityVarchar',
     'soft_skill'
   );

@@ -21,7 +21,7 @@ export const ValuePoolInput: React.FC<ValuePoolInputProps> = (
     queryFn: () =>
       axios
         .get(
-          `/api/types/values?column=${type?.column_name}&table=${type?.entity_table_name}`
+          `/api/types/values?column=${type?.column_name}&table=${type?.entity_meta_table}`
         )
         .then((res) => res.data),
   });

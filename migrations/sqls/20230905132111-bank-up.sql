@@ -26,7 +26,7 @@ values
     'Bank Name',
     'Bank name',
     'name',
-    'varchar.255',
+    'varchar(255)',
     'entityVarchar',
     'bank'
   ),
@@ -34,7 +34,7 @@ values
     'Bank Description',
     '',
     'description',
-    'varchar.255',
+    'varchar(255)',
     'entityVarchar',
     'bank'
   );

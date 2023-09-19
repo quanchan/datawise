@@ -41,7 +41,7 @@ values
 		'',
 		'Spouse',
 		'dependent_relationship',
-		'varchar.255',
+		'varchar(255)',
 		'entityVarchar',
 		'dependent_relationship'
 	);

@@ -1,6 +1,13 @@
 import { GenOptions } from "./genOpts";
 
 export type Type = {
+  gen_opts?: (keyof GenOptions)[],
+  entity_display_name: string,
+  standalone: boolean,
+  custom: boolean,
+} & ColumnMeta
+
+export type ColumnMeta = {
   id: string,
   display_name: string,
   column_name: string,
@@ -8,11 +15,7 @@ export type Type = {
   data_type: string,
   example: string,
   gen_opts_name?: string,
-  gen_opts?: (keyof GenOptions)[],
-  entity_display_name: string,
-  entity_table_name: string,
-  standalone: boolean,
-  custom: boolean,
+  entity_meta_table: string,
 }
 
 export type CustomType = {
@@ -28,5 +31,5 @@ export const defaultCustomType: CustomType = {
   actualSQLType: "",
   description: "",
   values: "",
-  separator: 'comma',
+  separator: "",
 }

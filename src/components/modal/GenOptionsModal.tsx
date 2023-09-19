@@ -6,7 +6,7 @@ import {
   GenOptionsModalFooter,
 } from "@/components/modal";
 import { useFormikContext } from "formik";
-import { Tables } from "@/types";
+import { Tables, WordCasingOptions } from "@/types";
 import { TextInput, DateInput, SelectInput } from "@/components/input";
 import { ValuePoolInput } from "../input/ValuePoolInput";
 import { Type } from "@/types";
@@ -25,8 +25,8 @@ export const GenOptionsModal: React.FC<GenOptionsModalProps> = (props) => {
   const { onClose, tableIndex, fieldIndex, isOpen } = props;
   const { values, handleChange, setFieldValue } = useFormikContext<Tables>();
   const fieldData = values.tables[tableIndex].fields[fieldIndex];
-  const genOptions = fieldData.genOptions;
-  const typeId = fieldData.type;
+  const genOptions = fieldData?.genOptions;
+  const typeId = fieldData?.type;
   const { data: type } = useQuery<Type | undefined>({
     queryKey: [`typeData${typeId}`],
     queryFn: () =>
@@ -193,13 +193,7 @@ export const GenOptionsModal: React.FC<GenOptionsModalProps> = (props) => {
                 onChange={handleChange}
                 value={genOptions?.wordCasing}
                 label={"Word Casing"}
-                options={[
-                  { value: "original", label: "Original" },
-                  { value: "lower", label: "Lowercase" },
-                  { value: "upper", label: "Uppercase" },
-                  { value: "capital", label: "All words capitalization" },
-                  { value: "first", label: "First word capitalization" },
-                ]}
+                options={WordCasingOptions}
                 styles={{ m: 2 }}
               />
             )}

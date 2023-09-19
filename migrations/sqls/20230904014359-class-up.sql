@@ -35,7 +35,7 @@ values
     'Name of the subject',
     'Mathematics',
     'subject_name',
-    'varchar.255',
+    'varchar(255)',
     'entityVarchar',
     'class'
   ),
@@ -44,7 +44,7 @@ values
     'Field of Study associated with the subject',
     'Science',
     'field',
-    'varchar.255',
+    'varchar(255)',
     'entityVarchar',
     'class'
   ),
@@ -53,7 +53,7 @@ values
     'Unique code for the subject',
     'MATH101',
     'subject_code',
-    'varchar.10',
+    'varchar(10)',
     'entityVarchar',
     'class'
   );

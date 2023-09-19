@@ -35,7 +35,7 @@ values
     '',
     'Pasta, Margherita Pizza, Chicken Alfredo',
     'name',
-    'varchar.255',
+    'varchar(255)',
     'entityVarchar',
     'food'
   ),
@@ -44,7 +44,7 @@ values
     '',
     'Flour, water, salt',
     'ingredients',
-    'varchar.255',
+    'varchar(255)',
     'entityVarchar',
     'food'
   ),
@@ -53,7 +53,7 @@ values
     '',
     'Delicious pasta dish',
     'description',
-    'varchar.255',
+    'varchar(255)',
     'entityVarchar',
     'food'
   );

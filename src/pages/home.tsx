@@ -15,8 +15,8 @@ import {
 } from "@chakra-ui/react";
 import React from "react";
 import { TableFieldsEditor } from "@/components/TableFieldsEditor";
-import { TableConstaintsEditor } from "@/components/TableConstaintsEditor";
-import { ArrayHelpers, FieldArray, Form, Formik } from "formik";
+import { TableConstraintsEditor } from "@/components/TableConstraintsEditor";
+import { ArrayHelpers, ErrorMessage, FieldArray, Form, Formik } from "formik";
 import {
   Format,
   Tables,
@@ -44,6 +44,32 @@ const initialValues: Tables = {
 
 const sqlFieldNamePattern = /^[a-zA-Z][a-zA-Z0-9_]*$/;
 
+yup.addMethod(yup.array, 'unique', function (field, message) {
+  return this.test('unique', message, function (array) {
+    if (!array) {
+      return true;
+    }
+    const uniquedata = Array.from(
+      new Set(array.map((row) => row[field]?.toLowerCase())),
+    );
+    const isunique = array.length === uniquedata.length;
+    if (isunique) {
+      return true;
+    }
+    const index = array.findIndex(
+      (row, i) => row[field]?.toLowerCase() !== uniquedata[i],
+    );
+    if (array[index][field] === '') {
+      return true;
+    }
+    return this.createError({
+      path: `${this.path}.${index}.${field}`,
+      message,
+    });
+  });
+});
+
+
 const validationSchema = yup.object().shape({
   tables: yup.array().of(
     yup.object().shape({
@@ -69,7 +95,7 @@ const validationSchema = yup.object().shape({
             .required("Field name is required"),
           type: yup.string().required("Type is required"),
         })
-      ),
+      ).unique("name", "Field name needs to be unique"),
       constraints: yup.array().of(
         yup.object().shape({
           name: yup
@@ -83,9 +109,9 @@ const validationSchema = yup.object().shape({
               "Reserved SQL keyword used as field name"
             ),
         })
-      ),
+      ).unique("name", "Constraint name needs to be unique"),
     })
-  ),
+  ).unique("name", "Table name needs to be unique"),
 });
 
 type ModalOpenStates = {
@@ -241,7 +267,7 @@ export default function Home() {
                             onChooseType={onChooseType}
                             onEditOptions={onEditOptions}
                           />
-                          <TableConstaintsEditor
+                          <TableConstraintsEditor
                             tableIndex={index}
                             onEditConstraint={onEditConstraint}
                           />

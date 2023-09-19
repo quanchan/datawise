@@ -11,14 +11,14 @@ import {
 } from "@chakra-ui/react";
 import { useFormikContext, ErrorMessage } from "formik";
 import { RiDeleteBinLine } from "react-icons/ri";
-export type TableConstaintControlProps = {
+export type TableConstraintControlProps = {
   onRemove: () => void;
   tableIndex: number;
   constraintIndex: number;
   onEditConstraint: (index: number) => void;
 };
 
-export const TableConstaintControl: React.FC<TableConstaintControlProps> = (
+export const TableConstraintControl: React.FC<TableConstraintControlProps> = (
   props
 ) => {
   const { onRemove, tableIndex, constraintIndex, onEditConstraint } = props;

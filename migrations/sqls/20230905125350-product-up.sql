@@ -38,7 +38,7 @@ VALUES
     '',
     'Widget',
     'product_name',
-    'varchar.255',
+    'varchar(255)',
     'entityVarchar',
     'product'
   ),
@@ -47,7 +47,7 @@ VALUES
     '',
     '1234567890',
     'qr_code',
-    'varchar.50',
+    'varchar(50)',
     'entityVarchar',
     'product'
   ),
@@ -56,7 +56,7 @@ VALUES
     '',
     'Electronics',
     'category_name',
-    'varchar.255',
+    'varchar(255)',
     'entityVarchar',
     'product'
   ),
@@ -65,7 +65,7 @@ VALUES
     '',
     'A high-quality widget.',
     'product_description',
-    'varchar.500',
+    'varchar(500)',
     'entityVarchar',
     'product'
   ),
@@ -74,7 +74,7 @@ VALUES
     '',
     'ABC Electronics',
     'supplier_name',
-    'varchar.255',
+    'varchar(255)',
     'entityVarchar',
     'product'
   );

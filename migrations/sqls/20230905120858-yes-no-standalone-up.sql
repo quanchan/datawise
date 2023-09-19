@@ -35,7 +35,7 @@ values
     '',
     'Yes',
     'yesno',
-    'varchar.255',
+    'varchar(255)',
     'entityVarchar',
     'yesno'
   );

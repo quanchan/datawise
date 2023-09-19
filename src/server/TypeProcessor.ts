@@ -4,7 +4,8 @@ export class TypeProcessor {
   private _type: string;
   private _args: string[];
   constructor(type: string = "") {
-    const [typeString, ...args] = type.split(".");
+    type = type.replace("(", ",").replace(")", "");
+    const [typeString, ...args] = type.split(",");
     this._type = typeString;
     this._args = args;
   }

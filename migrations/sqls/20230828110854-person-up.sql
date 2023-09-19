@@ -26,7 +26,7 @@ insert into column_meta (display_name, description, example, column_name, data_t
   '',
   'John, Mary',
   'first_name',
-  'varchar.255',
+  'varchar(255)',
   'entityVarchar',
   'person'
 ),
@@ -35,7 +35,7 @@ insert into column_meta (display_name, description, example, column_name, data_t
   '',
   'Smith, Jones',
   'last_name',
-  'varchar.255',
+  'varchar(255)',
   'entityVarchar',
   'person'
 ),
@@ -44,7 +44,7 @@ insert into column_meta (display_name, description, example, column_name, data_t
   '',
   'Grace, William',
   'middle_name',
-  'varchar.255',
+  'varchar(255)',
   'entityVarchar',
   'person'
 ),
@@ -53,7 +53,7 @@ insert into column_meta (display_name, description, example, column_name, data_t
   'First letters of a person fullname, separated by a dot',
   'J.S, M.J.W',
   'initials',
-  'varchar.10',
+  'varchar(10)',
   'entityVarchar',
   'person'
 ),
@@ -62,7 +62,7 @@ insert into column_meta (display_name, description, example, column_name, data_t
   'Email username created from person fullname',
   'johnsmith, maryjwatson',
   'email_prefix',
-  'varchar.255',
+  'varchar(255)',
   'entityVarchar',
   'person'
 ),
@@ -71,7 +71,7 @@ insert into column_meta (display_name, description, example, column_name, data_t
   'Can be Male, Female or Non-Binary. Can be shorten to M, F and N',
   'Male, Female, Non-Binary',
   'gender',
-  'varchar.10',
+  'varchar(10)',
   'entityVarchar',
   'person'
 ),
@@ -80,7 +80,7 @@ insert into column_meta (display_name, description, example, column_name, data_t
   'Used to address individuals in various formal and informal contexts.',
   'Mr., Mrs., Ms., Dr., Prof.',
   'title',
-  'varchar.10',
+  'varchar(10)',
   'entityVarchar',
   'person'
 );

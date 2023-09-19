@@ -1,5 +1,5 @@
 import db from "@/db";
-import { CustomType, Type, allowedGenOptions } from "@/types";
+import { ColumnMeta, CustomType, Type, allowedGenOptions } from "@/types";
 import { column_meta as cm, entity_meta as em } from "@/db/schema";
 
 export class TypeProvider {
@@ -9,11 +9,11 @@ export class TypeProvider {
       display_name: "Random Integer",
       description: "Random integer generated with user-defined options",
       example: "1, 2, 3, 4, 5",
-      data_type: "int",
+      data_type: "number",
       gen_opts_name: "randomInt",
       column_name: "",
       entity_display_name: "",
-      entity_table_name: "",
+      entity_meta_table: "",
       standalone: true,
       custom: false,
     },
@@ -22,11 +22,11 @@ export class TypeProvider {
       display_name: "Random Decimal",
       description: "Random decimal generated with user-defined options",
       example: "1.23, 4.56, 7.89",
-      data_type: "decimal",
+      data_type: "number",
       gen_opts_name: "randomDecimal",
       column_name: "",
       entity_display_name: "",
-      entity_table_name: "",
+      entity_meta_table: "",
       standalone: true,
       custom: false,
     },
@@ -39,7 +39,7 @@ export class TypeProvider {
       gen_opts_name: "randomDateTime",
       column_name: "",
       entity_display_name: "",
-      entity_table_name: "",
+      entity_meta_table: "",
       standalone: true,
       custom: false,
     },
@@ -52,7 +52,7 @@ export class TypeProvider {
       gen_opts_name: "randomDate",
       column_name: "",
       entity_display_name: "",
-      entity_table_name: "",
+      entity_meta_table: "",
       standalone: true,
       custom: false,
     },
@@ -61,11 +61,11 @@ export class TypeProvider {
       display_name: "Random Phone/Fax",
       description: "Random phone/fax generated with user-defined options",
       example: "+81 3 1234 5678",
-      data_type: "varchar.255",
+      data_type: "varchar(255)",
       gen_opts_name: "randomPhoneFax",
       column_name: "",
       entity_display_name: "",
-      entity_table_name: "",
+      entity_meta_table: "",
       standalone: true,
       custom: false,
     },
@@ -92,7 +92,7 @@ export class TypeProvider {
       ${cm.n_column_name} as column_name,
       ${cm.n_gen_opts_name} as gen_opts_name,
       ${em.n_display_name} as entity_display_name,
-      ${em.n_table_name} as entity_table_name,
+      ${em.n_table_name} as entity_meta_table,
       ${em.n_standalone} as standalone,
       ${em.n_custom} as custom
     FROM ${cm.n}
@@ -119,12 +119,12 @@ export class TypeProvider {
           ${cm.n_column_name} as column_name,
           ${cm.n_gen_opts_name} as gen_opts_name,
           ${em.n_display_name} as entity_display_name,
-          ${em.n_table_name} as entity_table_name,
+          ${em.n_table_name} as entity_meta_table,
           ${em.n_standalone} as standalone,
           ${em.n_custom} as custom
         FROM ${cm.n}
         JOIN ${em.n} 
-        ON ${cm.n_entity_meta_table} = ${em.n_table_name};
+        ON ${cm.n_entity_meta_table} = ${em.n_table_name}
         WHERE ${cm.n_id} = ${id};
       `);
       if (types.length !== 0) {
@@ -145,6 +145,7 @@ export class TypeProvider {
     const valuesArr = values
       .split(TypeProvider.separatorMap[separator])
       .map((v) => v.trim());
+    console.log(valuesArr);
     const column_name = name.toLowerCase().trim().replace(" ", "_");
     const client = await db.pool.connect();
     try {
@@ -178,14 +179,64 @@ export class TypeProvider {
         '${valuesArr.slice(0, 3).join(", ")}', 
         '${actualSQLType}', 
         '${column_name}', 
-        ${column_name}, 
+        '${column_name}', 
         'entityVarchar'
       );`);
+      await client.query(`
+      CREATE TABLE IF NOT EXISTS ${column_name} (
+        id SERIAL PRIMARY KEY,
+        ${column_name} ${actualSQLType},
+        entity_meta_table VARCHAR(255) NOT NULL,
+        CONSTRAINT fk_entity_meta_table FOREIGN KEY (entity_meta_table) REFERENCES ${em.n}(table_name) ON DELETE CASCADE
+      );`);
+      const promises = valuesArr.map(
+        async (value: string) =>
+          await client.query(`
+            INSERT INTO ${column_name} (
+              ${column_name},
+              entity_meta_table
+            ) VALUES (
+              '${value}',
+              '${column_name}'
+            );`)
+      );
+      await Promise.all(promises);
+      await client.query("COMMIT");
     } catch (e) {
       await client.query("ROLLBACK");
       throw e;
     } finally {
       client.release();
+    }
+  }
+
+  public static async getColumnMetaById(id?: string): Promise<ColumnMeta | undefined> {
+    if (!id) {
+      return undefined;
+    }
+    let type = this.runtimeTypes.find((type) => type.id === id);
+    if (type) {
+      return this.convertTypeToColumnMeta(type);
+    }
+    const column_meta = await db.query(`
+      SELECT * FROM ${cm.n} WHERE ${cm.n_id} = ${id};
+    `);
+    if (column_meta.length === 0) {
+      return undefined;
+    }
+    return column_meta[0];
+  }
+
+  private static convertTypeToColumnMeta(type: Type): ColumnMeta {
+    return {
+      id: type.id,
+      display_name: type.display_name,
+      description: type.description,
+      example: type.example,
+      data_type: type.data_type,
+      column_name: type.column_name,
+      gen_opts_name: type.gen_opts_name,
+      entity_meta_table: type.entity_meta_table,
     }
   }
 }

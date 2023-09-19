@@ -35,7 +35,7 @@ values
     'Popular website',
     'www.example.com',
     'webpage',
-    'varchar.255',
+    'varchar(255)',
     'entityVarchar',
     'webpage'
   );

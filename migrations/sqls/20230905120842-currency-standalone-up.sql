@@ -38,7 +38,7 @@ values
     'Unique 3-letter code',
     'USD, AUD, JPY',
     'currency',
-    'varchar.255',
+    'varchar(255)',
     'entityVarchar',
     'currency'
   ),
@@ -47,7 +47,7 @@ values
     'Currency full name',
     'United States Dollar, Australian Dollar, Indian Rupee',
     'name',
-    'varchar.255',
+    'varchar(255)',
     'entityVarchar',
     'currency'
   ),
@@ -56,7 +56,7 @@ values
     'Currency symbol',
     '$, £, ¥',
     'symbol',
-    'varchar.10',
+    'varchar(10)',
     'entityVarchar',
     'currency'
   ),
@@ -65,7 +65,7 @@ values
     'Currency origin country',
     'United States',
     'origin_country',
-    'varchar.255',
+    'varchar(255)',
     'entityVarchar',
     'currency'
   );

@@ -43,6 +43,7 @@ export const CreateTypeModal: React.FC<CreateTypeModalProps> = (props) => {
     queryClient.invalidateQueries({ queryKey: ["typesData"] });
     onClose();
   };
+  const newType = values.newType;
   return (
     <BaseModal isOpen={isOpen} onClose={onClose}>
       <VStack width={"100vw"} mb={20} alignItems={"center"} textAlign={"left"}>
@@ -63,17 +64,20 @@ export const CreateTypeModal: React.FC<CreateTypeModalProps> = (props) => {
               onChange={handleChange}
               name={namePrefix + "name"}
               label="Type Name"
+              value={newType.name}
             />
             <TextInput
               onChange={handleChange}
               name={namePrefix + "actualSQLType"}
               label="Actual SQL Type"
+              value={newType.actualSQLType}
             />
             <TextInput
               onChange={handleChange}
               name={namePrefix + "description"}
               label="Description"
               doubleLength={true}
+              value={newType.description}
             />
           </HStack>
           <Text mt={4} mb={2} fontWeight={"semibold"} fontSize={"md"}>
@@ -94,9 +98,9 @@ export const CreateTypeModal: React.FC<CreateTypeModalProps> = (props) => {
                   { value: "newline", label: 'NEW LINE ("\\n")' },
                   { value: "comma", label: 'COMMA (",")' },
                 ]}
+                value={newType.separator}
               />
               <Text
-                onChange={handleChange}
                 mt={4}
                 mb={2}
                 fontWeight={"semibold"}
@@ -108,6 +112,7 @@ export const CreateTypeModal: React.FC<CreateTypeModalProps> = (props) => {
                 onChange={handleChange}
                 name={namePrefix + "values"}
                 h={"50vh"}
+                value={newType.values}
               />
             </TabPanel>
           </TabPanels>
