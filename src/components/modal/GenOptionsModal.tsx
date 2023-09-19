@@ -134,6 +134,7 @@ export const GenOptionsModal: React.FC<GenOptionsModalProps> = (props) => {
                 label={"Min Date"}
                 selectTime={gen_opts?.includes("time")}
                 styles={{ m: 2 }}
+                setFieldValue={setFieldValue}
               />
             )}
             {gen_opts?.includes("maxDate") && (
@@ -144,6 +145,7 @@ export const GenOptionsModal: React.FC<GenOptionsModalProps> = (props) => {
                 label={"Max Date"}
                 selectTime={gen_opts?.includes("time")}
                 styles={{ m: 2 }}
+                setFieldValue={setFieldValue}
               />
             )}
             {gen_opts?.includes("minNumber") && (
