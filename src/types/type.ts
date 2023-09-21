@@ -26,10 +26,15 @@ export type CustomType = {
   separator: string,
 }
 
+export const separatorOptions = [
+  { value: "newline", label: 'NEW LINE ("\\n")' },
+  { value: "comma", label: 'COMMA (",")' },
+];
+
 export const defaultCustomType: CustomType = {
   name: "",
   actualSQLType: "",
   description: "",
   values: "",
-  separator: "",
+  separator: separatorOptions[0].value,
 }
