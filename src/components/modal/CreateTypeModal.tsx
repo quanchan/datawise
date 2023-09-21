@@ -16,7 +16,7 @@ import { SelectInput, TextInput } from "../input";
 import { useEffect, useState } from "react";
 import { BaseFooter } from "../BaseFooter";
 import { useFormikContext } from "formik";
-import { Tables, defaultCustomType } from "@/types";
+import { Tables, defaultCustomType, separatorOptions } from "@/types";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import axios from "axios";
 
@@ -94,10 +94,7 @@ export const CreateTypeModal: React.FC<CreateTypeModalProps> = (props) => {
                 onChange={handleChange}
                 label="Separator"
                 name={namePrefix + "separator"}
-                options={[
-                  { value: "newline", label: 'NEW LINE ("\\n")' },
-                  { value: "comma", label: 'COMMA (",")' },
-                ]}
+                options={separatorOptions}
                 value={newType.separator}
               />
               <Text
