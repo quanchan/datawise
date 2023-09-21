@@ -10,7 +10,9 @@ export type GenOptions = {
   phoneFaxFormat?: string,
   emailFormat?: string,
   minDate?: string,
+  minDateInclusive?: boolean,
   maxDate?: string,
+  maxDateInclusive?: boolean,
   excluded?: string[],
   withEntity?: boolean,
   nullPercent?: number,
@@ -27,8 +29,8 @@ export const allowedGenOptions: AllowedGenOptions = {
   entityNumber: ["actualType", "excluded", "minNumber", "maxNumber", "minNumberInclusive", "maxNumberInclusive", "nullPercent", "precision", "scale", "withEntity"],
   randomInt: ["actualType", "minNumber", "maxNumber", "nullPercent", "precision", "minNumber", "maxNumber", "minNumberInclusive", "maxNumberInclusive", "distribution"],
   randomDecimal: ["actualType", "minNumber", "maxNumber", "nullPercent", "precision", "scale", "minNumber", "maxNumber", "minNumberInclusive", "maxNumberInclusive", "distribution"],
-  randomDate: ["actualType", "minDate", "maxDate", "nullPercent"],
-  randomDateTime: ["actualType", "minDate", "maxDate", "nullPercent", "time"],
+  randomDate: ["actualType", "minDate", "maxDate", "minDateInclusive", "maxDateInclusive","nullPercent"],
+  randomDateTime: ["actualType", "minDate", "maxDate", "minDateInclusive", "maxDateInclusive", "nullPercent", "time"],
   randomPhoneFax: ["actualType", "phoneFaxFormat", "nullPercent"],
 } 
 
