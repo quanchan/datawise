@@ -41,12 +41,12 @@ export class TypeProcessor {
 
   private _getMySQLType(): string {
     const tm = MySQLTypeMap;
-    return tm[this._type as keyof TypeMap];
+    return tm[this._type as keyof TypeMap].toUpperCase();
   }
 
   private _getOracleSQLType(): string {
     const tm = OracleSQLTypeMap;
-    return tm[this._type as keyof TypeMap];
+    return tm[this._type as keyof TypeMap].toUpperCase();
   }
 
   public static getDisplayType(type: string, args: string[]): string {

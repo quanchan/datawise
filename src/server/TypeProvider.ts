@@ -107,9 +107,10 @@ export class TypeProvider {
     if (!id) {
       return undefined;
     }
-    let type = this.runtimeTypes.find((type) => type.id === id);
-    if (!type) {
-      const types = await db.query<Type[]>(`
+    try {
+      let type = this.runtimeTypes.find((type) => type.id === id);
+      if (!type) {
+        const types = await db.query<Type[]>(`
         SELECT 
           ${cm.n_id} as id, 
           ${cm.n_display_name} as display_name, 
@@ -127,11 +128,14 @@ export class TypeProvider {
         ON ${cm.n_entity_meta_table} = ${em.n_table_name}
         WHERE ${cm.n_id} = ${id};
       `);
-      if (types.length !== 0) {
-        type = types[0];
+        if (types.length !== 0) {
+          type = types[0];
+        }
       }
+      return this.addGenOptsToType(type);
+    } catch (e) {
+      return undefined;
     }
-    return this.addGenOptsToType(type);
   }
 
   private static separatorMap: { [key: string]: string } = {
@@ -145,7 +149,6 @@ export class TypeProvider {
     const valuesArr = values
       .split(TypeProvider.separatorMap[separator])
       .map((v) => v.trim());
-    console.log(valuesArr);
     const column_name = name.toLowerCase().trim().replace(" ", "_");
     const client = await db.pool.connect();
     try {
@@ -210,7 +213,9 @@ export class TypeProvider {
     }
   }
 
-  public static async getColumnMetaById(id?: string): Promise<ColumnMeta | undefined> {
+  public static async getColumnMetaById(
+    id?: string
+  ): Promise<ColumnMeta | undefined> {
     if (!id) {
       return undefined;
     }
@@ -237,6 +242,6 @@ export class TypeProvider {
       column_name: type.column_name,
       gen_opts_name: type.gen_opts_name,
       entity_meta_table: type.entity_meta_table,
-    }
+    };
   }
 }

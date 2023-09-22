@@ -33,7 +33,7 @@ export const FieldControl: React.FC<FieldControlProps> = (props) => {
 
   const { data: typeObj } = useQuery<Type | undefined>({
     queryKey: [`typeData${data.type}`],
-    queryFn: () => axios.get(`/api/types/id?id=${data.type}`).then((res) => res.data),
+    queryFn: () => axios.get(`/api/types/id?id=${data.type || ""}`).then((res) => res.data),
   });
 
   return (

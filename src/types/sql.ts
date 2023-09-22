@@ -1,6 +1,5 @@
 export type TypeMap = {
-  int: string;
-  decimal: string;
+  number: string;
   datetime: string;
   timestamp: string;
   boolean: string;
@@ -10,8 +9,7 @@ export type TypeMap = {
 }
 
 export const MySQLTypeMap: TypeMap = {
-  int: "DECIMAL",
-  decimal: "DECIMAL",
+  number: "DECIMAL",
   datetime: "DATETIME",
   timestamp: "TIMESTAMP",
   boolean: "BOOLEAN",
@@ -21,8 +19,7 @@ export const MySQLTypeMap: TypeMap = {
 }
 
 export const OracleSQLTypeMap: TypeMap = {
-  int: "NUMBER",
-  decimal: "NUMBER",
+  number: "NUMBER",
   datetime: "DATE",
   timestamp: "TIMESTAMP",
   boolean: "NUMBER",

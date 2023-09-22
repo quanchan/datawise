@@ -22,6 +22,10 @@ export type GenOptions = {
   time?: boolean,
 }
 
+export const defaultGenOptions: GenOptions = {
+  actualType: "",
+}
+
 export type AllowedGenOptions = Record<string, (keyof GenOptions)[]>;
 
 export const allowedGenOptions: AllowedGenOptions = {

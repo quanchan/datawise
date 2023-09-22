@@ -35,11 +35,10 @@ export const GenOptionsModal: React.FC<GenOptionsModalProps> = (props) => {
   const gen_opts = type?.gen_opts;
   const namePrefix = `tables.${tableIndex}.fields.${fieldIndex}.genOptions.`;
   const typeProcessor = new TypeProcessor(type?.data_type);
-
   React.useEffect(() => {
     setFieldValue(
       namePrefix + "actualType",
-      genOptions?.actualType || typeProcessor.getSQLType(values.format)
+      genOptions?.actualType || type?.data_type
     );
     setFieldValue(
       namePrefix + "maxLength",
@@ -63,7 +62,11 @@ export const GenOptionsModal: React.FC<GenOptionsModalProps> = (props) => {
     setFieldValue(namePrefix + "maxDate", genOptions?.maxDate || "");
     setFieldValue(namePrefix + "minNumber", genOptions?.minNumber || "");
     setFieldValue(namePrefix + "maxNumber", genOptions?.maxNumber || "");
-  }, [type]);
+    setFieldValue(namePrefix + "minDateInclusive", genOptions?.minDateInclusive || false);
+    setFieldValue(namePrefix + "maxDateInclusive", genOptions?.maxDateInclusive || false);
+    setFieldValue(namePrefix + "minNumberInclusive", genOptions?.minNumberInclusive || false);
+    setFieldValue(namePrefix + "maxNumberInclusive", genOptions?.maxNumberInclusive || false);
+  }, [type, gen_opts]);
 
   return (
     <BaseModal isOpen={isOpen} onClose={onClose}>
@@ -93,6 +96,7 @@ export const GenOptionsModal: React.FC<GenOptionsModalProps> = (props) => {
                 label="Actual Type"
                 disabled={true}
                 styles={{ m: 2 }}
+                tooltip={`This is the arbitrary type that this data belongs to. In your selected format, tt will be mapped to this type: ${typeProcessor.getSQLType(values.format)}`}
               />
             )}
             {gen_opts?.includes("maxLength") && (
@@ -135,6 +139,7 @@ export const GenOptionsModal: React.FC<GenOptionsModalProps> = (props) => {
                 selectTime={gen_opts?.includes("time")}
                 styles={{ m: 2 }}
                 setFieldValue={setFieldValue}
+                inclusiveChecked={genOptions?.minDateInclusive}
               />
             )}
             {gen_opts?.includes("maxDate") && (
@@ -146,6 +151,7 @@ export const GenOptionsModal: React.FC<GenOptionsModalProps> = (props) => {
                 selectTime={gen_opts?.includes("time")}
                 styles={{ m: 2 }}
                 setFieldValue={setFieldValue}
+                inclusiveChecked={genOptions?.maxDateInclusive}
               />
             )}
             {gen_opts?.includes("minNumber") && (
@@ -156,6 +162,7 @@ export const GenOptionsModal: React.FC<GenOptionsModalProps> = (props) => {
                 label={"Min Value"}
                 isNumber={true}
                 styles={{ m: 2 }}
+                inclusiveChecked={genOptions?.minNumberInclusive}
               />
             )}
             {gen_opts?.includes("maxNumber") && (
@@ -166,6 +173,7 @@ export const GenOptionsModal: React.FC<GenOptionsModalProps> = (props) => {
                 label={"Max Value"}
                 isNumber={true}
                 styles={{ m: 2 }}
+                inclusiveChecked={genOptions?.maxNumberInclusive}
               />
             )}
             {gen_opts?.includes("nullPercent") && (

@@ -29,7 +29,7 @@ export const TypeCard: React.FC<TypeCardProps> = (props) => {
         <br />
         Example: {" " + type.example}
         <br />
-        SQL Type: {" " + typeProcessor.typeSQL}
+        SQL Type: {" " + typeProcessor.typeSQL.toUpperCase()}
       </CardBody>
     </Card>
   );

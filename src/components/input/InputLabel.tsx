@@ -12,7 +12,6 @@ export type InputLabelProps = {
 
 export const InputLabel: React.FC<InputLabelProps> = (props) => {
   const { name, label, onChange, inclusiveChecked, tooltip } = props;
-
   return (
     <HStack mb={2} justifyContent={"space-between"} maxWidth={"286.5px"}>
       <Text
@@ -35,7 +34,7 @@ export const InputLabel: React.FC<InputLabelProps> = (props) => {
       {inclusiveChecked !== undefined && (
         <Checkbox
           flexDirection={"row-reverse"}
-          checked={inclusiveChecked}
+          isChecked={inclusiveChecked}
           onChange={onChange}
           name={name + "Inclusive"}
         >

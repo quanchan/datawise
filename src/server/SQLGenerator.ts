@@ -28,7 +28,6 @@ class SQLGenerator {
       const { notNull, unique, primaryKey } = fconstraints;
       const type_meta = await TypeProvider.getTypeById(type);
       const actualType = this.generateType(genOptions, type_meta?.gen_opts_name);
-      console.log(genOptions)
       sql += `\t${fname} ${actualType}`;
       if (!notNull) {
         sql += ` ${kw.NULL}`;

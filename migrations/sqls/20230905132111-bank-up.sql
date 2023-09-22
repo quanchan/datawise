@@ -16,6 +16,7 @@ insert into
   column_meta (
     display_name,
     description,
+    example,
     column_name,
     data_type,
     gen_opts_name,
@@ -25,6 +26,7 @@ values
   (
     'Bank Name',
     'Bank name',
+    'Commonwealth Bank, Westpac Banking Corporation',
     'name',
     'varchar(255)',
     'entityVarchar',
@@ -32,7 +34,8 @@ values
   ),
   (
     'Bank Description',
-    '',
+    'Brief description of the bank',
+    'A diversified financial services group',
     'description',
     'varchar(255)',
     'entityVarchar',

@@ -16,7 +16,7 @@ import {
 } from "@chakra-ui/react";
 import React, { useState, useMemo } from "react";
 import { TypeCard } from "@/components/TypeCard";
-import { Type, Tables } from "@/types";
+import { Type, Tables, defaultGenOptions } from "@/types";
 import { BaseTopBar } from "@/components/BaseTopBar";
 import {
   BaseModal,
@@ -75,6 +75,10 @@ export const ChooseTypeModal: React.FC<ChooseTypeModalProps> = (props) => {
   }, [data]);
 
   const onSave = () => {
+    setFieldValue(
+      `tables.${tableIndex}.fields.${fieldIndex}.genOptions`,
+      defaultGenOptions
+    )
     setFieldValue(
       `tables.${tableIndex}.fields.${fieldIndex}.type`,
       selectedType
