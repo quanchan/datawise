@@ -25,7 +25,6 @@ export type FieldControlProps = {
 };
 
 export const FieldControl: React.FC<FieldControlProps> = (props) => {
-
   const { values, handleChange } = useFormikContext<Tables>();
   const { onRemove, tableIndex, fieldIndex, onChooseType, onEditOptions } =
     props;
@@ -33,7 +32,8 @@ export const FieldControl: React.FC<FieldControlProps> = (props) => {
 
   const { data: typeObj } = useQuery<Type | undefined>({
     queryKey: [`typeData${data.type}`],
-    queryFn: () => axios.get(`/api/types/id?id=${data.type || ""}`).then((res) => res.data),
+    queryFn: () =>
+      axios.get(`/api/types/id?id=${data.type || ""}`).then((res) => res.data),
   });
 
   return (
@@ -64,7 +64,6 @@ export const FieldControl: React.FC<FieldControlProps> = (props) => {
           onChange={handleChange}
           w={"100%"}
           backgroundColor={"surface.01"}
-          
         />
         <Button
           padding={4}
@@ -115,6 +114,17 @@ export const FieldControl: React.FC<FieldControlProps> = (props) => {
       </HStack>
       <ErrorMessage
         name={`tables.${tableIndex}.fields.${fieldIndex}.name`}
+        component={Text}
+        color="red.500"
+      />
+      <ErrorMessage
+        name={`tables.${tableIndex}.fields.${fieldIndex}.type`}
+        component={Text}
+        color="red.500"
+      />
+
+      <ErrorMessage
+        name={`tables.${tableIndex}.fields.${fieldIndex}.defaultValue`}
         component={Text}
         color="red.500"
       />

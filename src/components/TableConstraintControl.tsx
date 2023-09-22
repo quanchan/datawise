@@ -87,6 +87,11 @@ export const TableConstraintControl: React.FC<TableConstraintControlProps> = (
         component={Text}
         color="red.500"
       />
+      <ErrorMessage
+        name={`tables.${tableIndex}.constraints.${constraintIndex}.condition`}
+        component={Text}
+        color="red.500"
+      />
     </VStack>
   );
 };

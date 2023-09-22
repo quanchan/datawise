@@ -16,7 +16,7 @@ import {
 import React from "react";
 import { TableFieldsEditor } from "@/components/TableFieldsEditor";
 import { TableConstraintsEditor } from "@/components/TableConstraintsEditor";
-import { ArrayHelpers, ErrorMessage, FieldArray, Form, Formik } from "formik";
+import { ArrayHelpers, ErrorMessage, FieldArray, Form, Formik, FormikTouched } from "formik";
 import {
   Format,
   Tables,
@@ -108,6 +108,7 @@ const validationSchema = yup.object().shape({
               sqlReservedWords,
               "Reserved SQL keyword used as field name"
             ),
+          condition: yup.string().required("Condition is required"),
         })
       ).unique("name", "Constraint name needs to be unique"),
     })
@@ -194,7 +195,7 @@ export default function Home() {
       }}
       validationSchema={validationSchema}
     >
-      {({ values, handleChange }) => (
+      {({ values, handleChange, validateForm, setTouched, touched }) => (
         <>
           <Form>
             <VStack
@@ -296,7 +297,16 @@ export default function Home() {
                   variant={"outline"}
                   fontSize={"xs"}
                   fontWeight={"bold"}
-                  onClick={() => onOpenModal("preview")}
+                  onClick={async () => {
+                    const errors = await validateForm();
+                    const possibleErrors = Object.keys(errors);
+                    if (possibleErrors.length === 0) {
+                      onOpenModal("preview")
+                    } else {
+                      setTouched({ ...touched, ...errors } as FormikTouched<Tables>);
+                    }
+
+                  }}
                 >
                   Preview
                 </Button>

@@ -50,6 +50,7 @@ export class TypeProcessor {
   }
 
   public static getDisplayType(type: string, args: string[]): string {
+    type = type.toUpperCase();
     if (args.length > 0) {
       return `${type}(${args.join(", ")})`;
     }
