@@ -98,7 +98,7 @@ export const FieldControl: React.FC<FieldControlProps> = (props) => {
           name={`tables.${tableIndex}.fields.${fieldIndex}.defaultValue`}
           onChange={handleChange}
         />
-        <Button variant={"primary"} onClick={() => onEditOptions(fieldIndex)}>
+       <Button variant={"primary"} onClick={() => onEditOptions(fieldIndex)} isDisabled={!data.type}>
           Options
         </Button>
         <Box>
