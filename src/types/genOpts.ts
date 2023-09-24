@@ -14,7 +14,7 @@ export type GenOptions = {
   maxDate?: string,
   maxDateInclusive?: boolean,
   excluded?: string[],
-  withEntity?: boolean,
+  withEntity?: string,
   nullPercent?: number,
   wordCasing?: string,
   stringFormat?: string,
@@ -28,7 +28,7 @@ export const defaultGenOptions: GenOptions = {
 
 export type AllowedGenOptions = Record<string, (keyof GenOptions)[]>;
 
-export const allowedGenOptions: AllowedGenOptions = {
+export const AllowedGenOptionsMap: AllowedGenOptions = {
   entityVarchar: ["actualType", "excluded", "wordCasing", "maxLength", "nullPercent", "withEntity"],
   entityNumber: ["actualType", "excluded", "minNumber", "maxNumber", "minNumberInclusive", "maxNumberInclusive", "nullPercent", "precision", "scale", "withEntity"],
   randomInt: ["actualType", "minNumber", "maxNumber", "nullPercent", "precision", "minNumber", "maxNumber", "minNumberInclusive", "maxNumberInclusive", "distribution"],
@@ -52,4 +52,9 @@ export const WordCasingOptions = [
   { value: WordCasing.upper, label: "Uppercase" },
   { value: WordCasing.capital, label: "All words capitalization" },
   { value: WordCasing.first, label: "First word capitalization" },
+];
+
+export const YesNoOptions = [
+  { value: 'y', label: "Yes" },
+  { value: 'n', label: "No" },
 ];

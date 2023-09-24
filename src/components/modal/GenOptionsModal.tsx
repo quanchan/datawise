@@ -6,7 +6,7 @@ import {
   GenOptionsModalFooter,
 } from "@/components/modal";
 import { useFormikContext } from "formik";
-import { Tables, WordCasingOptions } from "@/types";
+import { Tables, WordCasing, WordCasingOptions, YesNoOptions } from "@/types";
 import { TextInput, DateInput, SelectInput } from "@/components/input";
 import { ValuePoolInput } from "../input/ValuePoolInput";
 import { Type } from "@/types";
@@ -38,7 +38,7 @@ export const GenOptionsModal: React.FC<GenOptionsModalProps> = (props) => {
   React.useEffect(() => {
     setFieldValue(
       namePrefix + "actualType",
-      genOptions?.actualType || type?.data_type
+      genOptions?.actualType || typeProcessor.type
     );
     setFieldValue(
       namePrefix + "maxLength",
@@ -66,6 +66,8 @@ export const GenOptionsModal: React.FC<GenOptionsModalProps> = (props) => {
     setFieldValue(namePrefix + "maxDateInclusive", genOptions?.maxDateInclusive || false);
     setFieldValue(namePrefix + "minNumberInclusive", genOptions?.minNumberInclusive || false);
     setFieldValue(namePrefix + "maxNumberInclusive", genOptions?.maxNumberInclusive || false);
+    setFieldValue(namePrefix + "wordCasing", genOptions?.wordCasing || WordCasing.original);
+    setFieldValue(namePrefix + "withEntity", genOptions?.withEntity || "n");
   }, [type, gen_opts]);
 
   return (
@@ -84,7 +86,7 @@ export const GenOptionsModal: React.FC<GenOptionsModalProps> = (props) => {
           mt={8}
         >
           <HStack
-            justifyContent={"space-between"}
+            justifyContent={"flex-start "}
             flexWrap={"wrap"}
             mx={8}
             maxW={"1234px"}
@@ -98,6 +100,17 @@ export const GenOptionsModal: React.FC<GenOptionsModalProps> = (props) => {
                 styles={{ m: 2 }}
                 tooltip={`This is the arbitrary type that this data belongs to. In your selected format, tt will be mapped to this type: ${typeProcessor.getSQLType(values.format)}`}
               />
+            )}
+            {gen_opts?.includes("withEntity") && (
+              <SelectInput
+                name={namePrefix + "withEntity"}
+                onChange={handleChange}
+                value={genOptions?.withEntity}
+                options={YesNoOptions}
+                label={"With Entity"}
+                styles={{ m: 2 }}
+                tooltip="Certain types are grouped together in a Domain Entity. They can be generated as their individual field or generate together with other fields in their entity so that the result is more consistent and meaningful."
+                />
             )}
             {gen_opts?.includes("maxLength") && (
               <TextInput

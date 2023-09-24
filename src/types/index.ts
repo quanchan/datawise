@@ -3,3 +3,4 @@ export * from "./table";
 export * from "./sql";
 export * from "./genOpts";
 export * from "./constraint";
+export * from "./generation";

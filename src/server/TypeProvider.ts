@@ -1,11 +1,11 @@
 import db from "@/db";
-import { ColumnMeta, CustomType, Type, allowedGenOptions } from "@/types";
+import { ColumnMeta, CustomType, RuntimeTypesId, Type, AllowedGenOptionsMap } from "@/types";
 import { column_meta as cm, entity_meta as em } from "@/db/schema";
 
 export class TypeProvider {
-  static runtimeTypes: Type[] = [
+  public static runtimeTypes: Type[] = [
     {
-      id: "int",
+      id: RuntimeTypesId.int,
       display_name: "Random Integer",
       description: "Random integer generated with user-defined options",
       example: "1, 2, 3, 4, 5",
@@ -18,7 +18,7 @@ export class TypeProvider {
       custom: false,
     },
     {
-      id: "decimal",
+      id: RuntimeTypesId.decimal,
       display_name: "Random Decimal",
       description: "Random decimal generated with user-defined options",
       example: "1.23, 4.56, 7.89",
@@ -31,7 +31,7 @@ export class TypeProvider {
       custom: false,
     },
     {
-      id: "datetime",
+      id: RuntimeTypesId.datetime,
       display_name: "Random Datetime",
       description: "Random datetime generated with user-defined options",
       example: "2021-01-01 00:00:00",
@@ -44,7 +44,7 @@ export class TypeProvider {
       custom: false,
     },
     {
-      id: "date",
+      id: RuntimeTypesId.date,
       display_name: "Random Date",
       description: "Random date generated with user-defined options",
       example: "2021-01-01",
@@ -57,7 +57,7 @@ export class TypeProvider {
       custom: false,
     },
     {
-      id: "phonefax",
+      id: RuntimeTypesId.phonefax,
       display_name: "Random Phone/Fax",
       description: "Random phone/fax generated with user-defined options",
       example: "+81 3 1234 5678",
@@ -71,13 +71,17 @@ export class TypeProvider {
     },
   ];
 
+  public static isRuntimeTypeId(typeid: string): boolean {
+    return Object.values(RuntimeTypesId).includes(typeid as RuntimeTypesId);
+  }
+
   private static addGenOptsToType(type?: Type): Type | undefined {
     if (!type) {
       return type;
     }
     return {
       ...type,
-      gen_opts: type.gen_opts_name ? allowedGenOptions[type.gen_opts_name] : [],
+      gen_opts: type.gen_opts_name ? AllowedGenOptionsMap[type.gen_opts_name] : [],
     };
   }
 

@@ -85,6 +85,8 @@ export type CreateTableKeywords = {
   COMMIT: string;
   CONSTRAINT: string;
   UNIQUE: string;
+  INSERT_INTO: string;
+  VALUES: string;
 }
 
 export const MySQLCreateTable: CreateTableKeywords = {
@@ -99,6 +101,8 @@ export const MySQLCreateTable: CreateTableKeywords = {
   COMMIT: "COMMIT",
   CONSTRAINT: "CONSTRAINT",
   UNIQUE: "UNIQUE",
+  INSERT_INTO: "INSERT INTO",
+  VALUES: "VALUES",
 }
 
 export const OracleSQLCreateTable: CreateTableKeywords = {
@@ -113,6 +117,8 @@ export const OracleSQLCreateTable: CreateTableKeywords = {
   COMMIT: "COMMIT",
   CONSTRAINT: "CONSTRAINT",
   UNIQUE: "UNIQUE",
+  INSERT_INTO: "INSERT INTO",
+  VALUES: "VALUES",
 }
 
 // export const MySQLTypePriority = {

@@ -1,230 +1,246 @@
-import { GenOptions, WordCasing, allowedGenOptions } from "@/types";
+import {
+  GenOptions,
+  TableOptions,
+  WordCasing,
+  AllowedGenOptionsMap,
+  ValidTableValuesMap,
+  RuntimeTypesId,
+  ValidColumnValue,
+  ColumnMeta,
+  EntityMap,
+  EntitiesValues,
+  GenerationParams,
+  ValidValue,
+} from "@/types";
 import { TypeProvider } from "./TypeProvider";
 import db from "@/db";
-import dayjs from "dayjs";
+import { ValuesGenerator } from "./ValuesGenerator";
 
 export class ValuesProvider {
-  public static generateRandomInts(
+  private static async getValidColumnValuesWithoutEntity(
+    columnMeta: ColumnMeta,
     genOptions: GenOptions,
     quantity: number
-  ): number[] {
-    const { minNumber, maxNumber } = genOptions;
-    const randomInts: number[] = [];
-    for (let i = 0; i < quantity; i++) {
-      const randomInt =
-        Math.floor(Math.random() * (maxNumber! - minNumber! + 1)) + minNumber!;
-      randomInts.push(randomInt);
-    }
-    return randomInts;
+  ): Promise<string[]> {
+    const { column_name, entity_meta_table, gen_opts_name } = columnMeta;
+    let values = await this.getAllColumnValues(column_name, entity_meta_table);
+    const allowedGenOpts = AllowedGenOptionsMap[gen_opts_name!];
+    values = this.filterByExcluded(values, genOptions, allowedGenOpts);
+    values = this.filterByMinNumber(values, genOptions, allowedGenOpts);
+    values = this.filterByMaxNumber(values, genOptions, allowedGenOpts);
+    values = this.mapByWordCasing(values, genOptions, allowedGenOpts);
+    return this.shuffleAndSlice(values, quantity);
   }
-
-  public static generateRandomDecimals(
-    genOptions: GenOptions,
-    quantity: number
-  ): number[] {
-    const { minNumber, maxNumber, scale } = genOptions;
-    const randomDecimals: number[] = [];
-    for (let i = 0; i < quantity; i++) {
-      const randomDecimal = (
-        Math.random() * (maxNumber! - minNumber!) +
-        minNumber!
-      ).toFixed(scale);
-      randomDecimals.push(randomDecimal);
-    }
-    return randomDecimals;
-  }
-
-  public static generateRandomPhoneFax(
-    genOptions: GenOptions,
-    quantity: number
-  ): string[] {
-    const { phoneFaxFormat } = genOptions;
-    // sample format: +## (###) ###-####
-    const randomPhoneFax: string[] = [];
-    for (let i = 0; i < quantity; i++) {
-      let phoneFax = phoneFaxFormat || "";
-      for (let j = 0; j < phoneFax.length; j++) {
-        if (phoneFax[j] === "#") {
-          phoneFax = phoneFax.replace(
-            "#",
-            Math.floor(Math.random() * 10).toString()
-          );
-        }
-      }
-      randomPhoneFax.push(phoneFax);
-    }
-    return randomPhoneFax;
-  }
-
-  public static generateRandomDateTimes(
-    genOptions: GenOptions,
+  
+  private static async getValidColumnValuesWithEntity(
+    entityValues: EntitiesValues,
+    columnsGenParams: GenerationParams[],
     quantity: number
   ) {
-   return this.generateRandomDateCore(genOptions, quantity, true);
+    for (const param of columnsGenParams) {
+      const { columnMeta, genOptions, fieldName } = param;
+      const { gen_opts_name } = columnMeta;
+      const allowedGenOpts = AllowedGenOptionsMap[gen_opts_name!];
+      entityValues = this.filterByExcluded(entityValues, genOptions, allowedGenOpts, fieldName);
+      entityValues = this.filterByMinNumber(entityValues, genOptions, allowedGenOpts, fieldName);
+      entityValues = this.filterByMaxNumber(entityValues, genOptions, allowedGenOpts, fieldName);
+      entityValues = this.mapByWordCasing(entityValues, genOptions, allowedGenOpts, fieldName);
+    }
+    return this.shuffleAndSlice(entityValues, quantity);
   }
 
-  public static generateRandomDates(
-    genOptions: GenOptions,
-    quantity: number
-  ): string[] {
-    return this.generateRandomDateCore(genOptions, quantity);
-  }
+  public static async getValidTableValues(
+    table: TableOptions
+  ): Promise<ValidTableValuesMap> {
+    const { fields, rowQuantity } = table;
+    const tableValues: ValidTableValuesMap = {};
+    const entityMap: EntityMap = {};
+    for (const field of fields) {
+      const { type, genOptions, name } = field;
+      let values: ValidColumnValue = [];
 
-  private static generateRandomDateCore(
-    genOptions: GenOptions,
-    quantity: number,
-    withTime: boolean = false
-  ) {
-    const { minDate, maxDate, minDateInclusive, maxDateInclusive } = genOptions;
-    let minDateObj: Date | undefined;
-    let maxDateObj: Date | undefined;
-    const format = withTime ? "YYYY-MM-DD hh:mm:ss" : "YYYY-MM-DD";
-    if (minDate) {
-      minDateObj = new Date(minDate);
-      if (isNaN(minDateObj.getTime())) {
-        throw new Error(
-          `Invalid minDate format. Date should be in the format "${format}".`
+      if (TypeProvider.isRuntimeTypeId(type)) {
+        values = ValuesGenerator.generateRuntimeValues(
+          type as RuntimeTypesId,
+          genOptions,
+          rowQuantity
         );
-      }
-    }
-    if (maxDate) {
-      maxDateObj = new Date(maxDate);
-      if (isNaN(maxDateObj.getTime())) {
-        throw new Error(
-          `Invalid maxDate format. Date should be in the format "${format}".`
-        );
-      }
-    }
-    const generatedDates: string[] = [];
-
-    for (let i = 0; i < quantity; i++) {
-      let randomDate: Date;
-
-      if (minDateObj && maxDateObj) {
-        // Generate a random timestamp within the date range
-        const timestamp =
-          minDateObj.getTime() +
-          Math.random() * (maxDateObj.getTime() - minDateObj.getTime());
-
-        // Convert the timestamp to a Date object
-        randomDate = new Date(timestamp);
-
-        // Include or exclude the minDate and maxDate based on minDateInclusive and maxDateInclusive
-        if (
-          (!minDateInclusive && randomDate <= minDateObj) ||
-          (!maxDateInclusive && randomDate >= maxDateObj)
-        ) {
-          i--; // Retry if the date is excluded
-          continue;
-        }
       } else {
-        // Generate a completely random date without bounds
-        const year = 1970 + Math.floor(Math.random() * 100);
-        const month = Math.floor(Math.random() * 12);
-        const day = Math.floor(Math.random() * 31) + 1; // Adding 1 to avoid day 0
-        if (withTime) {
-          const hours = Math.floor(Math.random() * 24);
-          const minutes = Math.floor(Math.random() * 60);
-          const seconds = Math.floor(Math.random() * 60);
-          randomDate = new Date(year, month, day, hours, minutes, seconds);
+        const columnMeta = await TypeProvider.getColumnMetaById(type);
+        if (columnMeta) {
+          switch (genOptions.withEntity) {
+            case "n":
+              values = await this.getValidColumnValuesWithoutEntity(
+                columnMeta,
+                genOptions,
+                rowQuantity
+              );
+              break;
+            case "y":
+              if (!entityMap[columnMeta.entity_meta_table]) {
+                entityMap[columnMeta.entity_meta_table] = [
+                  { columnMeta, genOptions, fieldName: name },
+                ];
+              } else {
+                entityMap[columnMeta.entity_meta_table].push({
+                  columnMeta,
+                  genOptions,
+                  fieldName: name,
+                });
+              }
+              continue;
+          }
         } else {
-          randomDate = new Date(year, month, day);
+          throw new Error(`Column meta with id ${type} not found`);
         }
       }
-      const dayjsDate = dayjs(randomDate);
-
-      // Format the date as 'YYYY-MM-DD' and push it to the result array
-      const formattedDate = dayjsDate.format(format);
-      generatedDates.push(formattedDate);
+      tableValues[name] = values;
     }
-
-    return generatedDates;
+    for (const entity in entityMap) {
+      const fields = entityMap[entity];
+      const entityValues = await this.getAllColumnEntities(entity);
+      const validValues = await this.getValidColumnValuesWithEntity(entityValues, fields, rowQuantity);
+      if (validValues.length != 0) {
+        const fieldNameGetter = validValues[0];
+        for (const fieldName in fieldNameGetter) {
+          tableValues[fieldName] = validValues.map((value) => value[fieldName]);
+        }
+      }
+    }
+    return tableValues;
   }
 
-  public static async getValidValues(
-    typeid: string,
-    genOptions: GenOptions,
-    quantity: number
-  ) {
-    switch (typeid) {
-      case "int":
-        return this.generateRandomInts(genOptions, quantity);
-      case "decimal":
-        return this.generateRandomDecimals(genOptions, quantity);
-      case "phonefax":
-        return this.generateRandomPhoneFax(genOptions, quantity);
-      case "datetime":
-        return this.generateRandomDateTimes(genOptions, quantity);
-      case "date":
-        return this.generateRandomDates(genOptions, quantity);
-    }
-    const columnMeta = await TypeProvider.getColumnMetaById(typeid);
-    if (columnMeta) {
-      const { column_name, entity_meta_table } = columnMeta;
-      let values = await this.getAllValues(column_name, entity_meta_table);
-      const allowedGenOpts = allowedGenOptions[columnMeta.gen_opts_name!];
-      const {
-        excluded,
-        wordCasing,
-        minNumber,
-        minNumberInclusive,
-        maxNumberInclusive,
-        maxNumber,
-      } = genOptions;
-
-      if (allowedGenOpts.includes("excluded")) {
-        values = values.filter(
-          (value) => !excluded?.includes(value.toString())
-        );
-      }
-      if (allowedGenOpts.includes("wordCasing")) {
-        switch (wordCasing) {
-          case WordCasing.lower:
-            values = values.map((value) => value.toLowerCase());
-            break;
-          case WordCasing.upper:
-            values = values.map((value) => value.toUpperCase());
-            break;
-          case WordCasing.capital:
-            values = values.map((value) =>
-              value.replace(/\w\S*/g, (w: string) =>
-                w.replace(/^\w/, (c) => c.toUpperCase())
-              )
-            );
-            break;
-          case WordCasing.first:
-            values = values.map((value) =>
-              value.replace(/^\w/, (c: string) => c.toUpperCase())
-            );
-            break;
-        }
-        if (allowedGenOpts.includes("minNumber")) {
-          if (minNumber) {
-            if (minNumberInclusive) {
-              values = values.filter((value) => value >= minNumber);
-            } else {
-              values = values.filter((value) => value > minNumber);
-            }
-          }
-        }
-        if (allowedGenOpts.includes("maxNumber")) {
-          if (maxNumber) {
-            if (maxNumberInclusive) {
-              values = values.filter((value) => value <= maxNumber);
-            } else {
-              values = values.filter((value) => value < maxNumber);
-            }
-          }
-        }
-      }
-    }
-  }
-
-  public static async getAllValues(column: string, table: string) {
-    const result = await db.query<Record<string, string | number>[]>(
+  public static async getAllColumnValues(column: string, table: string) {
+    const result = await db.query<EntitiesValues>(
       `SELECT ${column} FROM ${table};`
     );
     const values = result.map((row) => row[column as string]);
     return values;
+  }
+
+  public static async getAllColumnEntities(table: string) {
+    const result = await db.query<EntitiesValues>(`SELECT * FROM ${table};`);
+    return result;
+  }
+
+  private static shuffleAndSlice<T extends ValidValue>(array: T[], quantity: number): T[] {
+    for (let i = array.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [array[i], array[j]] = [array[j], array[i]]; // Swap elements
+    }
+    return array.slice(0, quantity);
+  }
+
+  private static filterByExcluded<T extends ValidValue>(
+    values: T[],
+    genOptions: GenOptions,
+    allowedGenOpts: (keyof GenOptions)[],
+    fieldName: string = ""
+  ) {
+    const { excluded } = genOptions;
+    if (excluded && allowedGenOpts.includes("excluded")) {
+      return values.filter(
+        (value) =>
+          !excluded.includes(
+            typeof value !== "string" ? value[fieldName].toString() : value.toString()
+          )
+      );
+    }
+    return values;
+  }
+
+  private static filterByMinNumber<T extends ValidValue>(
+    values: T[],
+    genOptions: GenOptions,
+    allowedGenOpts: (keyof GenOptions)[],
+    fieldName: string = ""
+  ) {
+    const { minNumber, minNumberInclusive } = genOptions;
+    if (minNumber && allowedGenOpts.includes("minNumber")) {
+      if (minNumberInclusive && allowedGenOpts.includes("minNumberInclusive")) {
+        return values.filter(
+          (value) => Number(typeof value === "string" ? value : value[fieldName as string]) >= minNumber
+        );
+      } else {
+        return values.filter(
+          (value) => Number(typeof value === "string"  ? value : value[fieldName as string]) > minNumber
+        );
+      }
+    }
+    return values;
+  }
+
+  private static filterByMaxNumber<T extends ValidValue>(
+    values: T[],
+    genOptions: GenOptions,
+    allowedGenOpts: (keyof GenOptions)[],
+    fieldName: string = ""
+  ) {
+    const { maxNumber, maxNumberInclusive } = genOptions;
+    if (maxNumber && allowedGenOpts.includes("maxNumber")) {
+      if (maxNumberInclusive && allowedGenOpts.includes("maxNumberInclusive")) {
+        return values.filter(
+          (value) => Number(typeof value !== "string" ? value[fieldName as string] : value) <= maxNumber
+        );
+      } else {
+        return values.filter(
+          (value) => Number(typeof value !== "string" ? value[fieldName as string] : value) < maxNumber
+        );
+      }
+    }
+    return values;
+  }
+
+  private static mapByWordCasing<T extends ValidValue>(
+    values: T[],
+    genOptions: GenOptions,
+    allowedGenOpts: (keyof GenOptions)[],
+    fieldName: string = ""
+  ): T[] {
+    const { wordCasing } = genOptions;
+    if (wordCasing && allowedGenOpts.includes("wordCasing")) {
+      switch (wordCasing) {
+        case WordCasing.lower:
+          return values.map((value) =>
+            this.mapper(value, (v) => v.toLowerCase(), fieldName)
+          );
+        case WordCasing.upper:
+          return values.map((value) =>
+            this.mapper(value, (v) => v.toUpperCase(), fieldName)
+          );
+        case WordCasing.capital:
+          return values.map((value) =>
+            this.mapper(
+              value,
+              (v) =>
+                v.replace(/\w\S*/g, (w: string) =>
+                  w.replace(/^\w/, (c) => c.toUpperCase())
+                ),
+              fieldName
+            )
+          );
+        case WordCasing.first:
+          return values.map((value) =>
+            this.mapper(value, (v) =>
+              v.replace(/^\w/, (c: string) => c.toUpperCase())
+            )
+          );
+      }
+    }
+    return values;
+  }
+
+  private static mapper<T extends ValidValue>(
+    value: T,
+    modifier: (v: string) => string,
+    fieldName: string = ""
+  ): T {
+    if (typeof value === "string") {
+      return modifier(value) as T;
+    } else if (fieldName) {
+      value[fieldName] = modifier(value[fieldName]);
+      return value;
+    }
+    return value;
   }
 }

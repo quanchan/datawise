@@ -8,7 +8,7 @@ export default async function handler(
   if (req.method == "GET") {
     const { column, table } = req.query;
     if (column && table) {
-      const values = await ValuesProvider.getAllValues(column as string, table as string);
+      const values = await ValuesProvider.getAllColumnValues(column as string, table as string);
       res.status(200).json(values);
     }
   }

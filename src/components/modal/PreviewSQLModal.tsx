@@ -11,6 +11,7 @@ import {
   ModalHeader,
 } from "@chakra-ui/react";
 import React, { useEffect } from "react";
+import { BaseFooter } from "../BaseFooter";
 
 export type PreviewSQLModalProps = {} & BaseModalProps;
 
@@ -32,7 +33,7 @@ export const PreviewSQLModal: React.FC<PreviewSQLModalProps> = (props) => {
   }, [isOpen]);
 
   return (
-    <BaseModal isOpen={isOpen} onClose={onClose} size={"6xl"}>
+    <BaseModal isOpen={isOpen} onClose={onClose}>
       <ModalHeader>SQL Preview</ModalHeader>
       <ModalBody
         whiteSpace={"pre"}
@@ -40,14 +41,16 @@ export const PreviewSQLModal: React.FC<PreviewSQLModalProps> = (props) => {
         fontFamily={
           "Consolas,Monaco,Lucida Console,Liberation Mono,DejaVu Sans Mono,Bitstream Vera Sans Mono,Courier New"
         }
+        fontSize={"xs"}
+        mb={"65px"}
       >
         {data}
       </ModalBody>
-      <ModalFooter>
+      <BaseFooter>
         <Button variant={"primary"} onClick={onClose}>
           Close
         </Button>
-      </ModalFooter>
+      </BaseFooter>
     </BaseModal>
   );
 };

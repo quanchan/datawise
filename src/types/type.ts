@@ -1,5 +1,13 @@
 import { GenOptions } from "./genOpts";
 
+export enum RuntimeTypesId {
+  int = "int",
+  decimal = "decimal",
+  datetime = "datetime",
+  date = "date",
+  phonefax = "phonefax",
+}
+
 export type Type = {
   gen_opts?: (keyof GenOptions)[],
   entity_display_name: string,
