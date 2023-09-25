@@ -28,13 +28,15 @@ export const FieldControl: React.FC<FieldControlProps> = (props) => {
   const { values, handleChange } = useFormikContext<Tables>();
   const { onRemove, tableIndex, fieldIndex, onChooseType, onEditOptions } =
     props;
-  const data = values.tables[tableIndex].fields[fieldIndex];
+  const data = values.tables[tableIndex]?.fields[fieldIndex];
 
   const { data: typeObj } = useQuery<Type | undefined>({
-    queryKey: [`typeData${data.type}`],
+    queryKey: [`typeData${data?.type || ""}`],
     queryFn: () =>
-      axios.get(`/api/types/id?id=${data.type || ""}`).then((res) => res.data),
+      axios.get(`/api/types/id?id=${data?.type || ""}`).then((res) => res.data),
   });
+
+  if (!data) return <></>;
 
   return (
     <VStack

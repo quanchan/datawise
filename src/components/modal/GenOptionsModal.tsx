@@ -24,7 +24,7 @@ export type GenOptionsModalProps = {
 export const GenOptionsModal: React.FC<GenOptionsModalProps> = (props) => {
   const { onClose, tableIndex, fieldIndex, isOpen } = props;
   const { values, handleChange, setFieldValue } = useFormikContext<Tables>();
-  const fieldData = values.tables[tableIndex].fields[fieldIndex];
+  const fieldData = values.tables[tableIndex]?.fields[fieldIndex];
   const genOptions = fieldData?.genOptions;
   const typeId = fieldData?.type;
   const { data: type } = useQuery<Type | undefined>({
@@ -36,39 +36,58 @@ export const GenOptionsModal: React.FC<GenOptionsModalProps> = (props) => {
   const namePrefix = `tables.${tableIndex}.fields.${fieldIndex}.genOptions.`;
   const typeProcessor = new TypeProcessor(type?.data_type);
   React.useEffect(() => {
-    setFieldValue(
-      namePrefix + "actualType",
-      genOptions?.actualType || typeProcessor.type
-    );
-    setFieldValue(
-      namePrefix + "maxLength",
-      genOptions?.maxLength || typeProcessor.args[0]
-    );
-    setFieldValue(
-      namePrefix + "precision",
-      genOptions?.precision || typeProcessor.args[0]
-    );
-    setFieldValue(
-      namePrefix + "scale",
-      genOptions?.scale || typeProcessor.args[1]
-    );
-    setFieldValue(namePrefix + "excluded", genOptions?.excluded || []);
-    setFieldValue(namePrefix + "nullPercent", genOptions?.nullPercent || 0);
-    setFieldValue(
-      namePrefix + "phoneFaxFormat",
-      genOptions?.phoneFaxFormat || ""
-    );
-    setFieldValue(namePrefix + "minDate", genOptions?.minDate || "");
-    setFieldValue(namePrefix + "maxDate", genOptions?.maxDate || "");
-    setFieldValue(namePrefix + "minNumber", genOptions?.minNumber || "");
-    setFieldValue(namePrefix + "maxNumber", genOptions?.maxNumber || "");
-    setFieldValue(namePrefix + "minDateInclusive", genOptions?.minDateInclusive || false);
-    setFieldValue(namePrefix + "maxDateInclusive", genOptions?.maxDateInclusive || false);
-    setFieldValue(namePrefix + "minNumberInclusive", genOptions?.minNumberInclusive || false);
-    setFieldValue(namePrefix + "maxNumberInclusive", genOptions?.maxNumberInclusive || false);
-    setFieldValue(namePrefix + "wordCasing", genOptions?.wordCasing || WordCasing.original);
-    setFieldValue(namePrefix + "withEntity", genOptions?.withEntity || "n");
+    if (fieldData) {
+      setFieldValue(
+        namePrefix + "actualType",
+        genOptions?.actualType || typeProcessor.type
+      );
+      setFieldValue(
+        namePrefix + "maxLength",
+        genOptions?.maxLength || typeProcessor.args[0]
+      );
+      setFieldValue(
+        namePrefix + "precision",
+        genOptions?.precision || typeProcessor.args[0]
+      );
+      setFieldValue(
+        namePrefix + "scale",
+        genOptions?.scale || typeProcessor.args[1]
+      );
+      setFieldValue(namePrefix + "excluded", genOptions?.excluded || []);
+      setFieldValue(namePrefix + "nullPercent", genOptions?.nullPercent || 0);
+      setFieldValue(
+        namePrefix + "phoneFaxFormat",
+        genOptions?.phoneFaxFormat || ""
+      );
+      setFieldValue(namePrefix + "minDate", genOptions?.minDate || "");
+      setFieldValue(namePrefix + "maxDate", genOptions?.maxDate || "");
+      setFieldValue(namePrefix + "minNumber", genOptions?.minNumber || "");
+      setFieldValue(namePrefix + "maxNumber", genOptions?.maxNumber || "");
+      setFieldValue(
+        namePrefix + "minDateInclusive",
+        genOptions?.minDateInclusive || false
+      );
+      setFieldValue(
+        namePrefix + "maxDateInclusive",
+        genOptions?.maxDateInclusive || false
+      );
+      setFieldValue(
+        namePrefix + "minNumberInclusive",
+        genOptions?.minNumberInclusive || false
+      );
+      setFieldValue(
+        namePrefix + "maxNumberInclusive",
+        genOptions?.maxNumberInclusive || false
+      );
+      setFieldValue(
+        namePrefix + "wordCasing",
+        genOptions?.wordCasing || WordCasing.original
+      );
+      setFieldValue(namePrefix + "withEntity", genOptions?.withEntity || "n");
+    }
   }, [type, gen_opts]);
+
+  if (!fieldData) return <></>;
 
   return (
     <BaseModal isOpen={isOpen} onClose={onClose}>
@@ -98,7 +117,9 @@ export const GenOptionsModal: React.FC<GenOptionsModalProps> = (props) => {
                 label="Actual Type"
                 disabled={true}
                 styles={{ m: 2 }}
-                tooltip={`This is the arbitrary type that this data belongs to. In your selected format, tt will be mapped to this type: ${typeProcessor.getSQLType(values.format)}`}
+                tooltip={`This is the arbitrary type that this data belongs to. In your selected format, tt will be mapped to this type: ${typeProcessor.getSQLType(
+                  values.format
+                )}`}
               />
             )}
             {gen_opts?.includes("withEntity") && (
@@ -110,7 +131,7 @@ export const GenOptionsModal: React.FC<GenOptionsModalProps> = (props) => {
                 label={"With Entity"}
                 styles={{ m: 2 }}
                 tooltip="Certain types are grouped together in a Domain Entity. They can be generated as their individual field or generate together with other fields in their entity so that the result is more consistent and meaningful."
-                />
+              />
             )}
             {gen_opts?.includes("maxLength") && (
               <TextInput

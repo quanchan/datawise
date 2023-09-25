@@ -16,7 +16,7 @@ export const BaseModal: React.FC<BaseModalProps> = (props) => {
     size={size || "full"}
   >
     <ModalOverlay />
-    <ModalContent>
+    <ModalContent overflowX={"hidden"}>
       {children}
     </ModalContent>
   </Modal>

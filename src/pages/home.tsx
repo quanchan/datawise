@@ -18,7 +18,6 @@ import { TableFieldsEditor } from "@/components/TableFieldsEditor";
 import { TableConstraintsEditor } from "@/components/TableConstraintsEditor";
 import {
   ArrayHelpers,
-  ErrorMessage,
   FieldArray,
   Form,
   Formik,
@@ -150,7 +149,7 @@ const validationSchema = yup.object().shape({
           .unique("name", "Field name needs to be unique")
           .uniquePropertyValue(
             "constraints",
-            (obj: Field) => obj.constraints.primaryKey,
+            (obj: Field) => obj?.constraints?.primaryKey,
             true,
             "Primary key already exists. For composite primary key, please use the constraint editor."
           ),
@@ -267,7 +266,8 @@ export default function Home() {
         errors,
       }) => (
         <>
-          {console.log(errors)}
+          {/* {console.log("error", errors)}
+          {console.log("values", values)} */}
           <Form>
             <VStack
               width={"100vw"}
@@ -392,9 +392,11 @@ export default function Home() {
 
           <ChooseTypeModal
             isOpen={openModal.chooseType}
-            onClose={() => {
+            onClose={(selected: string) => {
               onCloseModal("chooseType");
-              onOpenModal("generationOptions");
+              if (selected) {
+                onOpenModal("generationOptions");
+              }
             }}
             addCustomType={() => {
               onCloseModal("chooseType");

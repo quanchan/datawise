@@ -11,7 +11,6 @@ import { TableConstraintControl } from "./TableConstraintControl";
 import { AddButton } from "./btn/AddButton";
 import {
   ArrayHelpers,
-  ErrorMessage,
   FieldArray,
   useFormikContext,
 } from "formik";
@@ -28,8 +27,8 @@ export const TableConstraintsEditor: React.FC<TableConstraintsEditorProps> = (
   props
 ) => {
   const { tableIndex, onEditConstraint } = props;
-  const { values, handleChange, errors } = useFormikContext<Tables>();
-  const data = values.tables[tableIndex].constraints;
+  const { values } = useFormikContext<Tables>();
+  const data = values.tables[tableIndex]?.constraints;
 
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [currentConstraintIndex, setCurrentConstraintIndex] =
@@ -45,6 +44,8 @@ export const TableConstraintsEditor: React.FC<TableConstraintsEditorProps> = (
     setRemoveField(() => remove);
     onOpen();
   };
+
+  if (!data) return <></>;
 
   return (
     <>
@@ -92,7 +93,7 @@ export const TableConstraintsEditor: React.FC<TableConstraintsEditorProps> = (
         <FieldArray name={`tables.${tableIndex}.constraints`}>
           {({ remove, push }: ArrayHelpers) => (
             <>
-              {data.map((constraint, i) => (
+              {data.map((_, i) => (
                 <TableConstraintControl
                   key={i}
                   onRemove={() => openRemoveConstraintModal(i, remove)}

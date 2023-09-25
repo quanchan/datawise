@@ -63,7 +63,7 @@ export const ConstraintModal: React.FC<ConstraintModalProps> = (props) => {
             name={`tables.${tableIndex}.constraints.${constraintIndex}.condition`}
             onChange={handleChange}
             value={
-              values.tables[tableIndex].constraints[constraintIndex]?.condition
+              values.tables[tableIndex]?.constraints[constraintIndex]?.condition
             }
             height={"70vh"}
             variant={"outline"}
