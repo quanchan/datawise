@@ -2,7 +2,7 @@
 drop table yesno;
 
 delete from column_meta
-where entity_meta_id = 9;
+where entity_meta_table = 'yesno';
 
 delete from entity_meta
-where display_name = 'YesNo';
+where table_name = 'yesno';

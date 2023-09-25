@@ -8,7 +8,6 @@ import {
   Text,
   VStack,
 } from "@chakra-ui/react";
-import { MdOutlineDragIndicator } from "react-icons/md";
 import { IoOpenOutline } from "react-icons/io5";
 import { FieldConstraintsControl } from "./FieldConstraintsControl";
 import { RiDeleteBinLine } from "react-icons/ri";
@@ -26,16 +25,17 @@ export type FieldControlProps = {
 };
 
 export const FieldControl: React.FC<FieldControlProps> = (props) => {
-  const { data: allType } = useQuery<Type[]>({
-    queryKey: ["typesData"],
-    queryFn: () => axios.get("/api/types").then((res) => res.data),
-  });
-
   const { values, handleChange } = useFormikContext<Tables>();
   const { onRemove, tableIndex, fieldIndex, onChooseType, onEditOptions } =
     props;
   const data = values.tables[tableIndex].fields[fieldIndex];
-  const type = allType?.find((type) => type.id === data.type);
+
+  const { data: typeObj } = useQuery<Type | undefined>({
+    queryKey: [`typeData${data.type}`],
+    queryFn: () =>
+      axios.get(`/api/types/id?id=${data.type || ""}`).then((res) => res.data),
+  });
+
   return (
     <VStack
       spacing={1}
@@ -56,9 +56,6 @@ export const FieldControl: React.FC<FieldControlProps> = (props) => {
         width={"100%"}
         minW={"4xl"}
       >
-        <Box>
-          <MdOutlineDragIndicator />
-        </Box>
         <Input
           size="sm"
           value={data.name}
@@ -82,7 +79,7 @@ export const FieldControl: React.FC<FieldControlProps> = (props) => {
           backgroundColor={"surface.01"}
           onClick={() => onChooseType(fieldIndex)}
         >
-          {type?.display_name || (
+          {typeObj?.display_name || (
             <Text as="i" color="text.disable">
               Choose a Type
             </Text>
@@ -101,7 +98,7 @@ export const FieldControl: React.FC<FieldControlProps> = (props) => {
           name={`tables.${tableIndex}.fields.${fieldIndex}.defaultValue`}
           onChange={handleChange}
         />
-        <Button variant={"primary"} onClick={() => onEditOptions(fieldIndex)}>
+       <Button variant={"primary"} onClick={() => onEditOptions(fieldIndex)} isDisabled={!data.type}>
           Options
         </Button>
         <Box>
@@ -117,6 +114,23 @@ export const FieldControl: React.FC<FieldControlProps> = (props) => {
       </HStack>
       <ErrorMessage
         name={`tables.${tableIndex}.fields.${fieldIndex}.name`}
+        component={Text}
+        color="red.500"
+      />
+      <ErrorMessage
+        name={`tables.${tableIndex}.fields.${fieldIndex}.type`}
+        component={Text}
+        color="red.500"
+      />
+
+      <ErrorMessage
+        name={`tables.${tableIndex}.fields.${fieldIndex}.constraints`}
+        component={Text}
+        color="red.500"
+      />
+
+      <ErrorMessage
+        name={`tables.${tableIndex}.fields.${fieldIndex}.defaultValue`}
         component={Text}
         color="red.500"
       />

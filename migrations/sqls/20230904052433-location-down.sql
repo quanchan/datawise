@@ -2,7 +2,7 @@
 drop table location;
 
 delete from column_meta
-where entity_meta_id = 3;
+where entity_meta_table = 'location';
 
 delete from entity_meta
-where display_name = 'Location';
+where table_name = 'location';

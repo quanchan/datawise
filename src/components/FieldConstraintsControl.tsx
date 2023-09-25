@@ -14,6 +14,7 @@ export const FieldConstraintsControl: React.FC<
   const {values, handleChange} = useFormikContext<Tables>();
   const data = values.tables[tableIndex].fields[fieldIndex].constraints;
 
+  if (data) {
   return (
     <HStack w={"100%"} justifyContent={"space-between"}>
       <Checkbox name={`tables.${tableIndex}.fields.${fieldIndex}.constraints.notNull`} checked={data.notNull} onChange={handleChange}>
@@ -27,4 +28,7 @@ export const FieldConstraintsControl: React.FC<
       </Checkbox>
     </HStack>
   );
+  } else {
+    return <></>
+  }
 };

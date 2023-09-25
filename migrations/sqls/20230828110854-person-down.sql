@@ -2,7 +2,7 @@
 drop table person;
 
 delete from column_meta
-where entity_meta_id = 1;
+where entity_meta_table = 'person';
 
 delete from entity_meta
-where display_name = 'Person';
+where table_name = 'person';

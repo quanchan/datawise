@@ -19,5 +19,5 @@ async function query<I extends any[]>(
   return res.rows;
 }
 
-const db = { query }
+const db = { query, pool }
 export default db;

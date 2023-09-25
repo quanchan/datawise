@@ -1,10 +1,15 @@
 import { Box } from "@chakra-ui/react";
 import { InputLabel, InputLabelProps } from "./InputLabel";
 import { DatePickerInput } from "@/components/DatePicker";
+import { FormikErrors } from "formik";
+import { Tables } from "@/types";
 
 export type DateInputProps = {
   isNumber?: boolean;
-  value: string | number;
+value?: string;
+  selectTime?: boolean;
+  styles?: Record<string, any>;
+  setFieldValue: (field: string, value: any, shouldValidate?: boolean | undefined) => Promise<void | FormikErrors<Tables>>;
 } & InputLabelProps;
 
 export const DateInput: React.FC<DateInputProps> = (props) => {
@@ -14,11 +19,14 @@ export const DateInput: React.FC<DateInputProps> = (props) => {
     onChange,
     inclusiveChecked,
     tooltip,
+    selectTime,
     value,
+    styles,
+    setFieldValue
   } = props;
 
   return (
-    <Box m={2}>
+    <Box {...styles}>
       <InputLabel
         name={name}
         label={label}
@@ -27,9 +35,11 @@ export const DateInput: React.FC<DateInputProps> = (props) => {
         tooltip={tooltip}
       />
       <DatePickerInput
-        showTimeSelector={true}
+        showTimeSelector={selectTime}
         currentLangKey="en"
-        format="DD-MM-YYYY HH:mm:ss"
+        value={value}
+        format={selectTime ? "YYYY-MM-DD HH:mm:ss" : "YYYY-MMM-DD"}
+        onChange={(date) => setFieldValue(name || "", date)}
       />
     </Box>
   );

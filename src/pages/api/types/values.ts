@@ -1,16 +1,14 @@
 import type { NextApiRequest, NextApiResponse } from "next";
-import db from "@/db";
+import { ValuesProvider } from "@/server/ValuesProvider";
 
 export default async function handler(
   req: NextApiRequest,
-  res: NextApiResponse<string[]>
+  res: NextApiResponse<(string | number)[]>
 ) {
   if (req.method == "GET") {
-    const { table, column } = req.query;
-    console.log(req.body)
-    if (table && column) {
-      const result = await db.query<string[]>(`SELECT ${column} FROM ${table};`);
-      const values = result.map((row) => row[column as string]);
+    const { column, table } = req.query;
+    if (column && table) {
+      const values = await ValuesProvider.getAllColumnValues(column as string, table as string);
       res.status(200).json(values);
     }
   }

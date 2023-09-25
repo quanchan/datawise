@@ -1,22 +1,32 @@
-import { Footer } from "@/components/Footer";
 import { TopBar } from "@/components/TopBar";
 import {
   Box,
   Button,
   HStack,
   Icon,
+  Select,
   Tab,
   TabList,
   TabPanel,
   TabPanels,
   Tabs,
+  Text,
   VStack,
 } from "@chakra-ui/react";
 import React from "react";
 import { TableFieldsEditor } from "@/components/TableFieldsEditor";
-import { TableConstaintsEditor } from "@/components/TableConstaintsEditor";
-import { ArrayHelpers, FieldArray, Form, Formik } from "formik";
+import { TableConstraintsEditor } from "@/components/TableConstraintsEditor";
 import {
+  ArrayHelpers,
+  ErrorMessage,
+  FieldArray,
+  Form,
+  Formik,
+  FormikTouched,
+} from "formik";
+import {
+  Field,
+  Format,
   Tables,
   defaultTableOptions,
   defaultTables,
@@ -31,7 +41,10 @@ import {
 } from "@/components/modal";
 import { VisualiserModal } from "@/components/modal/VisualiserModal";
 import { ConfirmDeleteModal } from "@/components/modal/ConfirmDeleteModal";
+import { PreviewSQLModal } from "@/components/modal/PreviewSQLModal";
+import { BaseFooter } from "@/components/BaseFooter";
 import * as yup from "yup";
+import { CreateTypeModal } from "@/components/modal/CreateTypeModal";
 
 const initialValues: Tables = {
   ...defaultTables,
@@ -39,48 +52,129 @@ const initialValues: Tables = {
 
 const sqlFieldNamePattern = /^[a-zA-Z][a-zA-Z0-9_]*$/;
 
+yup.addMethod(yup.array, "unique", function (field: string, message: string) {
+  return this.test(
+    "unique",
+    message,
+    function (array: Record<string, any>[] | undefined) {
+      if (!array) {
+        return true;
+      }
+      const uniquedata = Array.from(
+        new Set(array.map((row) => row[field]?.toLowerCase()))
+      );
+      const isunique = array.length === uniquedata.length;
+      if (isunique) {
+        return true;
+      }
+      const index = array.findIndex(
+        (row, i) => row[field]?.toLowerCase() !== uniquedata[i]
+      );
+      if (array[index][field] === "") {
+        return true;
+      }
+      return this.createError({
+        path: `${this.path}.${index}.${field}`,
+        message,
+      });
+    }
+  );
+});
+
+yup.addMethod(
+  yup.array,
+  "uniquePropertyValue",
+  function (
+    path: string,
+    valueGetter: (arr: Record<string, any>) => any,
+    propertyValue: any,
+    message: string
+  ) {
+    return this.test(
+      "unique-property-value",
+      message,
+      function (array: Record<string, any>[] | undefined) {
+        if (!array) {
+          return true;
+        }
+        const values = array.map((obj) => valueGetter(obj));
+        const appearances = values.filter(
+          (val) => val === propertyValue
+        ).length;
+        if (appearances <= 1) {
+          return true;
+        }
+        const firstIndex = values.indexOf(propertyValue);
+        values[firstIndex] = null;
+        const secondIndex = values.indexOf(propertyValue);
+
+        return this.createError({
+          path: `${this.path}.${secondIndex}.${path}`,
+          message,
+        });
+      }
+    );
+  }
+);
+
 const validationSchema = yup.object().shape({
-  tables: yup.array().of(
-    yup.object().shape({
-      name: yup
-        .string()
-        .matches(sqlFieldNamePattern, "Name should not contain spaces")
-        .notOneOf(sqlReservedWords, "Reserved SQL keyword used as field name")
-        .required("Table name is required"),
-      rowQuantity: yup
-        .number()
-        .min(1, "The minimum row quantity should be 1")
-        .max(100, "The maximum rows quantity should be 100")
-        .required("Rows quantity is required"),
-      fields: yup.array().of(
-        yup.object().shape({
-          name: yup
-            .string()
-            .matches(sqlFieldNamePattern, "Name should not contain spaces")
-            .notOneOf(
-              sqlReservedWords,
-              "Reserved SQL keyword used as field name"
-            )
-            .required("Field name is required"),
-          type: yup.string().required("Type is required"),
-        })
-      ),
-      constraints: yup.array().of(
-        yup.object().shape({
-          name: yup
-            .string()
-            .matches(
-              sqlFieldNamePattern,
-              "Constraint name should not contain spaces"
-            )
-            .notOneOf(
-              sqlReservedWords,
-              "Reserved SQL keyword used as field name"
-            ),
-        })
-      ),
-    })
-  ),
+  tables: yup
+    .array()
+    .of(
+      yup.object().shape({
+        name: yup
+          .string()
+          .matches(sqlFieldNamePattern, "Name should not contain spaces")
+          .notOneOf(sqlReservedWords, "Reserved SQL keyword used as field name")
+          .required("Table name is required"),
+        rowQuantity: yup
+          .number()
+          .min(1, "The minimum row quantity should be 1")
+          .max(100, "The maximum rows quantity should be 100")
+          .required("Rows quantity is required"),
+        fields: yup
+          .array()
+          .of(
+            yup.object().shape({
+              name: yup
+                .string()
+                .matches(sqlFieldNamePattern, "Name should not contain spaces")
+                .notOneOf(
+                  sqlReservedWords,
+                  "Reserved SQL keyword used as field name"
+                )
+                .required("Field name is required"),
+              type: yup.string().required("Type is required"),
+            })
+          )
+          .unique("name", "Field name needs to be unique")
+          .uniquePropertyValue(
+            "constraints",
+            (obj: Field) => obj.constraints.primaryKey,
+            true,
+            "Primary key already exists. For composite primary key, please use the constraint editor."
+          ),
+        constraints: yup
+          .array()
+          .of(
+            yup.object().shape({
+              name: yup
+                .string()
+                .matches(
+                  sqlFieldNamePattern,
+                  "Constraint name should not contain spaces"
+                )
+                .notOneOf(
+                  sqlReservedWords,
+                  "Reserved SQL keyword used as field name"
+                ),
+              condition: yup.string().required("Condition is required"),
+            })
+          )
+          .unique("name", "Constraint name needs to be unique"),
+      })
+    )
+    .unique("name", "Table name needs to be unique"),
 });
 
 type ModalOpenStates = {
@@ -89,6 +183,8 @@ type ModalOpenStates = {
   constraint: boolean;
   generationOptions: boolean;
   visualiser: boolean;
+  preview: boolean;
+  createType: boolean;
 };
 
 export default function Home() {
@@ -99,6 +195,8 @@ export default function Home() {
     constraint: false,
     generationOptions: false,
     visualiser: false,
+    preview: false,
+    createType: false,
   });
   const [currentFieldIndex, setCurrentFieldIndex] = React.useState<number>(0);
   const [currentConstraintIndex, setCurrentConstraintIndex] =
@@ -156,11 +254,20 @@ export default function Home() {
       initialValues={initialValues}
       onSubmit={async (values) => {
         alert(JSON.stringify(values));
+        console.log(values);
       }}
       validationSchema={validationSchema}
     >
-      {({ values, handleChange }) => (
+      {({
+        values,
+        handleChange,
+        validateForm,
+        setTouched,
+        touched,
+        errors,
+      }) => (
         <>
+          {console.log(errors)}
           <Form>
             <VStack
               width={"100vw"}
@@ -232,7 +339,7 @@ export default function Home() {
                             onChooseType={onChooseType}
                             onEditOptions={onEditOptions}
                           />
-                          <TableConstaintsEditor
+                          <TableConstraintsEditor
                             tableIndex={index}
                             onEditConstraint={onEditConstraint}
                           />
@@ -242,13 +349,57 @@ export default function Home() {
                   </TabPanels>
                 </Tabs>
               </VStack>
-              <Footer />
+              <BaseFooter>
+                <Text>Format</Text>
+                <Select
+                  size="sm"
+                  fontSize="xs"
+                  w={"150px"}
+                  value={values.format}
+                  onChange={handleChange}
+                  name="format"
+                >
+                  <option value={Format.MySQL}>{Format.MySQL}</option>
+                  <option value={Format.OracleSQL}>{Format.OracleSQL}</option>
+                </Select>
+                <Button
+                  minW={"75px"}
+                  size="sm"
+                  variant={"outline"}
+                  fontSize={"xs"}
+                  fontWeight={"bold"}
+                  onClick={async () => {
+                    const errors = await validateForm();
+                    const possibleErrors = Object.keys(errors);
+                    if (possibleErrors.length === 0) {
+                      onOpenModal("preview");
+                    } else {
+                      setTouched({
+                        ...touched,
+                        ...errors,
+                      } as FormikTouched<Tables>);
+                    }
+                  }}
+                >
+                  Preview
+                </Button>
+                <Button variant={"primary"} type="submit" fontWeight={"bold"}>
+                  Download
+                </Button>
+              </BaseFooter>
             </VStack>
           </Form>
 
           <ChooseTypeModal
             isOpen={openModal.chooseType}
-            onClose={() => onCloseModal("chooseType")}
+            onClose={() => {
+              onCloseModal("chooseType");
+              onOpenModal("generationOptions");
+            }}
+            addCustomType={() => {
+              onCloseModal("chooseType");
+              onOpenModal("createType");
+            }}
             tableIndex={tabIndex}
             fieldIndex={currentFieldIndex}
           />
@@ -275,6 +426,17 @@ export default function Home() {
             onClose={() => onCloseModal("generationOptions")}
             tableIndex={tabIndex}
             fieldIndex={currentFieldIndex}
+          />
+          <PreviewSQLModal
+            isOpen={openModal.preview}
+            onClose={() => onCloseModal("preview")}
+          />
+          <CreateTypeModal
+            isOpen={openModal.createType}
+            onClose={() => {
+              onOpenModal("chooseType");
+              onCloseModal("createType");
+            }}
           />
         </>
       )}

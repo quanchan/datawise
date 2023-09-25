@@ -2,7 +2,7 @@
 drop table bank;
 
 delete from column_meta
-where entity_meta_id = 16;
+where entity_meta_table = 'bank';
 
 delete from entity_meta
-where display_name = 'Bank';
+where table_name = 'bank';

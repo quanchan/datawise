@@ -2,7 +2,7 @@
 drop table webpage;
 
 delete from column_meta
-where entity_meta_id = 7;
+where entity_meta_table = 'webpage';
 
 delete from entity_meta
-where display_name = 'Webpage';
+where table_name = 'webpage';

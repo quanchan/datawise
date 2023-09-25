@@ -251,9 +251,9 @@ export const DatePicker: FC<DatePickerProps> = ({
   const [currMonth, setCurrMonth] = useState(now.startOf("month"));
   const [selectedDate, setSelectedDate] = useState<Dayjs>();
   const [selectedTime, setSelectedTime] = useState<{
-    hour: number | undefined;
-    minute: number | undefined;
-    second: number | undefined;
+    hour?: number;
+    minute?: number;
+    second?: number;
   }>({
     hour: undefined,
     minute: undefined,
@@ -317,7 +317,6 @@ export const DatePicker: FC<DatePickerProps> = ({
     const updateFunc = (datetime, funcName) => {
       if (datetime) {
         const newTime = { ...selectedTime };
-        // console.log(funcName, newTime, selectedTime, selectedTimeObj);
         if (selectedTimeObj.hour(newTime?.hour ?? 0)[funcName](datetime))
           newTime.hour = Number(datetime.hour());
         if (
@@ -448,7 +447,6 @@ export const DatePicker: FC<DatePickerProps> = ({
   useEffect(() => {
     if (selectedTimeObj) {
       if (value) return;
-      // console.log("datepicker selectedTimeObj onChange")
       onChange(selectedTimeObj.format(format), selectedTimeObj);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -1181,7 +1179,7 @@ export interface DatePickerProps {
   onChange?: (formattedDay: string, day: Dayjs) => void;
   onOk?: (day: Dayjs) => void;
   picker?: "anniversary" | "date";
-  showCancelButton?: boolean;/*  */
+  showCancelButton?: boolean /*  */;
   showOkButton?: boolean;
   showSelectableDays?: boolean;
   showTimeSelector?: boolean;

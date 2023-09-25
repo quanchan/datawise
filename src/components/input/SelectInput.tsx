@@ -1,9 +1,14 @@
 import { Box, Select } from "@chakra-ui/react";
 import { InputLabel, InputLabelProps } from "./InputLabel";
 
-export type SelectInputProps = {
+export type Option = {
   value: string | number;
-  options: string[];
+  label: string;
+}
+export type SelectInputProps = {
+  value?: string | number;
+  options?: Option[];
+  styles?: Record<string, any>;
 } & InputLabelProps;
 
 export const SelectInput: React.FC<SelectInputProps> = (props) => {
@@ -15,10 +20,11 @@ export const SelectInput: React.FC<SelectInputProps> = (props) => {
     tooltip,
     value,
     options,
+    styles
   } = props;
 
   return (
-    <Box m={2}>
+    <Box {...styles}>
       <InputLabel
         name={name}
         label={label}
@@ -33,7 +39,7 @@ export const SelectInput: React.FC<SelectInputProps> = (props) => {
         name={name}
       >
         {options?.map((option) => (
-          <option key={option} value={option}>{option}</option>
+          <option key={option.value} value={option.value}>{option.label}</option>
         ))}
       </Select>
     </Box>

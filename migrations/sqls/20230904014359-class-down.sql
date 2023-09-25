@@ -2,7 +2,7 @@
 drop table class;
 
 delete from column_meta
-where entity_meta_id = 2;
+where entity_meta_table = 'class';
 
 delete from entity_meta
-where display_name = 'Class';
+where table_name = 'class';

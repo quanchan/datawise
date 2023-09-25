@@ -1,3 +1,6 @@
+import { GenOptions, defaultGenOptions } from "./genOpts";
+import { CustomType, defaultCustomType } from "./type";
+
 export type FieldConstraints = {
   notNull: boolean;
   unique: boolean;
@@ -9,6 +12,7 @@ export type Field = {
   type: string;
   defaultValue: string;
   constraints: FieldConstraints;
+  genOptions: GenOptions,
 };
 
 export const defaultField: Field = {
@@ -20,6 +24,7 @@ export const defaultField: Field = {
     unique: false,
     primaryKey: false,
   },
+  genOptions: defaultGenOptions
 };
 
 export type TableConstraints = {
@@ -27,7 +32,7 @@ export type TableConstraints = {
   condition: string;
 };
 
-export const defaultTableConstaints: TableConstraints = {
+export const defaultTableConstraints: TableConstraints = {
   name: "Constraint_1",
   condition: "",
 };
@@ -43,7 +48,7 @@ export const defaultTableOptions: TableOptions = {
   name: "Table_1",
   rowQuantity: 50,
   fields: [{ ...defaultField }],
-  constraints: [{ ...defaultTableConstaints }],
+  constraints: [{ ...defaultTableConstraints }],
 };
 
 export enum Format {
@@ -54,11 +59,13 @@ export enum Format {
 export type Tables = {
   tables: TableOptions[];
   format: Format;
+  newType: CustomType;
 };
 
 export const defaultTables: Tables = {
   tables: [{ ...defaultTableOptions }],
   format: Format.MySQL,
+  newType: defaultCustomType,
 };
 
 export const sqlReservedWords = [

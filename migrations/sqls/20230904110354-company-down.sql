@@ -2,7 +2,7 @@
 drop table company;
 
 delete from column_meta
-where entity_meta_id = 6;
+where entity_meta_table = 'company';
 
 delete from entity_meta
-where display_name = 'Company';
+where table_name = 'company';
