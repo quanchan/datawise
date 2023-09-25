@@ -124,6 +124,12 @@ export const FieldControl: React.FC<FieldControlProps> = (props) => {
       />
 
       <ErrorMessage
+        name={`tables.${tableIndex}.fields.${fieldIndex}.constraints`}
+        component={Text}
+        color="red.500"
+      />
+
+      <ErrorMessage
         name={`tables.${tableIndex}.fields.${fieldIndex}.defaultValue`}
         component={Text}
         color="red.500"

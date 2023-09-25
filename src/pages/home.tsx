@@ -16,8 +16,16 @@ import {
 import React from "react";
 import { TableFieldsEditor } from "@/components/TableFieldsEditor";
 import { TableConstraintsEditor } from "@/components/TableConstraintsEditor";
-import { ArrayHelpers, ErrorMessage, FieldArray, Form, Formik, FormikTouched } from "formik";
 import {
+  ArrayHelpers,
+  ErrorMessage,
+  FieldArray,
+  Form,
+  Formik,
+  FormikTouched,
+} from "formik";
+import {
+  Field,
   Format,
   Tables,
   defaultTableOptions,
@@ -44,75 +52,129 @@ const initialValues: Tables = {
 
 const sqlFieldNamePattern = /^[a-zA-Z][a-zA-Z0-9_]*$/;
 
-yup.addMethod(yup.array, 'unique', function (field, message) {
-  return this.test('unique', message, function (array) {
-    if (!array) {
-      return true;
+yup.addMethod(yup.array, "unique", function (field: string, message: string) {
+  return this.test(
+    "unique",
+    message,
+    function (array: Record<string, any>[] | undefined) {
+      if (!array) {
+        return true;
+      }
+      const uniquedata = Array.from(
+        new Set(array.map((row) => row[field]?.toLowerCase()))
+      );
+      const isunique = array.length === uniquedata.length;
+      if (isunique) {
+        return true;
+      }
+      const index = array.findIndex(
+        (row, i) => row[field]?.toLowerCase() !== uniquedata[i]
+      );
+      if (array[index][field] === "") {
+        return true;
+      }
+      return this.createError({
+        path: `${this.path}.${index}.${field}`,
+        message,
+      });
     }
-    const uniquedata = Array.from(
-      new Set(array.map((row) => row[field]?.toLowerCase())),
-    );
-    const isunique = array.length === uniquedata.length;
-    if (isunique) {
-      return true;
-    }
-    const index = array.findIndex(
-      (row, i) => row[field]?.toLowerCase() !== uniquedata[i],
-    );
-    if (array[index][field] === '') {
-      return true;
-    }
-    return this.createError({
-      path: `${this.path}.${index}.${field}`,
-      message,
-    });
-  });
+  );
 });
 
+yup.addMethod(
+  yup.array,
+  "uniquePropertyValue",
+  function (
+    path: string,
+    valueGetter: (arr: Record<string, any>) => any,
+    propertyValue: any,
+    message: string
+  ) {
+    return this.test(
+      "unique-property-value",
+      message,
+      function (array: Record<string, any>[] | undefined) {
+        if (!array) {
+          return true;
+        }
+        const values = array.map((obj) => valueGetter(obj));
+        const appearances = values.filter(
+          (val) => val === propertyValue
+        ).length;
+        if (appearances <= 1) {
+          return true;
+        }
+        const firstIndex = values.indexOf(propertyValue);
+        values[firstIndex] = null;
+        const secondIndex = values.indexOf(propertyValue);
+
+        return this.createError({
+          path: `${this.path}.${secondIndex}.${path}`,
+          message,
+        });
+      }
+    );
+  }
+);
 
 const validationSchema = yup.object().shape({
-  tables: yup.array().of(
-    yup.object().shape({
-      name: yup
-        .string()
-        .matches(sqlFieldNamePattern, "Name should not contain spaces")
-        .notOneOf(sqlReservedWords, "Reserved SQL keyword used as field name")
-        .required("Table name is required"),
-      rowQuantity: yup
-        .number()
-        .min(1, "The minimum row quantity should be 1")
-        .max(100, "The maximum rows quantity should be 100")
-        .required("Rows quantity is required"),
-      fields: yup.array().of(
-        yup.object().shape({
-          name: yup
-            .string()
-            .matches(sqlFieldNamePattern, "Name should not contain spaces")
-            .notOneOf(
-              sqlReservedWords,
-              "Reserved SQL keyword used as field name"
-            )
-            .required("Field name is required"),
-          type: yup.string().required("Type is required"),
-        })
-      ).unique("name", "Field name needs to be unique"),
-      constraints: yup.array().of(
-        yup.object().shape({
-          name: yup
-            .string()
-            .matches(
-              sqlFieldNamePattern,
-              "Constraint name should not contain spaces"
-            )
-            .notOneOf(
-              sqlReservedWords,
-              "Reserved SQL keyword used as field name"
-            ),
-          condition: yup.string().required("Condition is required"),
-        })
-      ).unique("name", "Constraint name needs to be unique"),
-    })
-  ).unique("name", "Table name needs to be unique"),
+  tables: yup
+    .array()
+    .of(
+      yup.object().shape({
+        name: yup
+          .string()
+          .matches(sqlFieldNamePattern, "Name should not contain spaces")
+          .notOneOf(sqlReservedWords, "Reserved SQL keyword used as field name")
+          .required("Table name is required"),
+        rowQuantity: yup
+          .number()
+          .min(1, "The minimum row quantity should be 1")
+          .max(100, "The maximum rows quantity should be 100")
+          .required("Rows quantity is required"),
+        fields: yup
+          .array()
+          .of(
+            yup.object().shape({
+              name: yup
+                .string()
+                .matches(sqlFieldNamePattern, "Name should not contain spaces")
+                .notOneOf(
+                  sqlReservedWords,
+                  "Reserved SQL keyword used as field name"
+                )
+                .required("Field name is required"),
+              type: yup.string().required("Type is required"),
+            })
+          )
+          .unique("name", "Field name needs to be unique")
+          .uniquePropertyValue(
+            "constraints",
+            (obj: Field) => obj.constraints.primaryKey,
+            true,
+            "Primary key already exists. For composite primary key, please use the constraint editor."
+          ),
+        constraints: yup
+          .array()
+          .of(
+            yup.object().shape({
+              name: yup
+                .string()
+                .matches(
+                  sqlFieldNamePattern,
+                  "Constraint name should not contain spaces"
+                )
+                .notOneOf(
+                  sqlReservedWords,
+                  "Reserved SQL keyword used as field name"
+                ),
+              condition: yup.string().required("Condition is required"),
+            })
+          )
+          .unique("name", "Constraint name needs to be unique"),
+      })
+    )
+    .unique("name", "Table name needs to be unique"),
 });
 
 type ModalOpenStates = {
@@ -196,8 +258,16 @@ export default function Home() {
       }}
       validationSchema={validationSchema}
     >
-      {({ values, handleChange, validateForm, setTouched, touched }) => (
+      {({
+        values,
+        handleChange,
+        validateForm,
+        setTouched,
+        touched,
+        errors,
+      }) => (
         <>
+          {console.log(errors)}
           <Form>
             <VStack
               width={"100vw"}
@@ -302,11 +372,13 @@ export default function Home() {
                     const errors = await validateForm();
                     const possibleErrors = Object.keys(errors);
                     if (possibleErrors.length === 0) {
-                      onOpenModal("preview")
+                      onOpenModal("preview");
                     } else {
-                      setTouched({ ...touched, ...errors } as FormikTouched<Tables>);
+                      setTouched({
+                        ...touched,
+                        ...errors,
+                      } as FormikTouched<Tables>);
                     }
-
                   }}
                 >
                   Preview
