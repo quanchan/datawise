@@ -1,40 +1,55 @@
-import { GenOptions, RuntimeTypesId } from "@/types";
+import { RuntimeGenOptions, RuntimeTypesId } from "@/types";
 import dayjs from "dayjs";
 
 
 export class ValuesGenerator {
   public static generateRandomInts(
-    genOptions: GenOptions,
+    genOptions: RuntimeGenOptions,
     quantity: number
   ): string[] {
-    const { minNumber, maxNumber } = genOptions;
+    let { minNumber, maxNumber, precision } = genOptions;
     const randomInts: string[] = [];
+    minNumber = minNumber || -(10 ** (precision!) - 1);
+    maxNumber = maxNumber || 10 ** (precision!) - 1;
+    
     for (let i = 0; i < quantity; i++) {
       const randomInt =
-        Math.floor(Math.random() * (maxNumber! - minNumber! + 1)) + minNumber!;
+        Math.floor(Math.random() * (maxNumber - minNumber + 1)) + minNumber;
+      if ((genOptions.unique || genOptions.primaryKey) && randomInts.includes("" + randomInt)) {
+        i--; // Retry if the date is excluded
+        continue;
+      }
       randomInts.push("" + randomInt);
     }
     return randomInts;
   }
 
   public static generateRandomDecimals(
-    genOptions: GenOptions,
+    genOptions: RuntimeGenOptions,
     quantity: number
   ): string[] {
-    const { minNumber, maxNumber, scale } = genOptions;
+    let { minNumber, maxNumber, scale, precision } = genOptions;
     const randomDecimals: string[] = [];
+    minNumber = minNumber || -(10 ** (precision! - scale!) - 1);
+    maxNumber = maxNumber || 10 ** (precision! - scale!) - 1;
+
     for (let i = 0; i < quantity; i++) {
       const randomDecimal = (
-        Math.random() * (maxNumber! - minNumber!) +
-        minNumber!
+        Math.random() * (maxNumber - minNumber) +
+        minNumber
       ).toFixed(scale);
+      if ((genOptions.unique || genOptions.primaryKey) && randomDecimals.includes(randomDecimal)) {
+        i--; // Retry if the date is excluded
+        continue;
+      }
       randomDecimals.push(randomDecimal);
     }
+
     return randomDecimals;
   }
 
   public static generateRandomPhoneFax(
-    genOptions: GenOptions,
+    genOptions: RuntimeGenOptions,
     quantity: number
   ): string[] {
     const { phoneFaxFormat } = genOptions;
@@ -50,26 +65,31 @@ export class ValuesGenerator {
           );
         }
       }
+      if ((genOptions.unique || genOptions.primaryKey) && randomPhoneFax.includes(phoneFax)) {
+        i--; // Retry if the date is excluded
+        continue;
+      }
       randomPhoneFax.push(phoneFax);
     }
+
     return randomPhoneFax;
   }
 
   public static generateRandomDateTimes(
-    genOptions: GenOptions,
+    genOptions: RuntimeGenOptions,
     quantity: number
   ): string[] {
    return this.generateRandomDateCore(genOptions, quantity, true);
   }
 
   public static generateRandomDates(
-    genOptions: GenOptions,
+    genOptions: RuntimeGenOptions,
     quantity: number
   ): string[] {
     return this.generateRandomDateCore(genOptions, quantity);
   }
 
-  public static generateRuntimeValues(typeid: RuntimeTypesId, genOptions: GenOptions, quantity: number) {
+  public static generateRuntimeValues(typeid: RuntimeTypesId, genOptions: RuntimeGenOptions, quantity: number) {
     switch (typeid) {
     case RuntimeTypesId.int:
       return this.generateRandomInts(genOptions, quantity);
@@ -87,7 +107,7 @@ export class ValuesGenerator {
   }
 
   private static generateRandomDateCore(
-    genOptions: GenOptions,
+    genOptions: RuntimeGenOptions,
     quantity: number,
     withTime: boolean = false
   ): string[] {
@@ -128,7 +148,7 @@ export class ValuesGenerator {
         // Include or exclude the minDate and maxDate based on minDateInclusive and maxDateInclusive
         if (
           (!minDateInclusive && randomDate <= minDateObj) ||
-          (!maxDateInclusive && randomDate >= maxDateObj)
+          (!maxDateInclusive && randomDate >= maxDateObj) 
         ) {
           i--; // Retry if the date is excluded
           continue;
@@ -151,6 +171,10 @@ export class ValuesGenerator {
 
       // Format the date as 'YYYY-MM-DD' and push it to the result array
       const formattedDate = dayjsDate.format(format);
+      if ((genOptions.unique || genOptions.primaryKey) && generatedDates.includes(formattedDate)) {
+        i--; // Retry if the date is excluded
+        continue;
+      }
       generatedDates.push(formattedDate);
     }
 

@@ -317,7 +317,6 @@ export const DatePicker: FC<DatePickerProps> = ({
     const updateFunc = (datetime, funcName) => {
       if (datetime) {
         const newTime = { ...selectedTime };
-        // console.log(funcName, newTime, selectedTime, selectedTimeObj);
         if (selectedTimeObj.hour(newTime?.hour ?? 0)[funcName](datetime))
           newTime.hour = Number(datetime.hour());
         if (
@@ -448,7 +447,6 @@ export const DatePicker: FC<DatePickerProps> = ({
   useEffect(() => {
     if (selectedTimeObj) {
       if (value) return;
-      // console.log("datepicker selectedTimeObj onChange")
       onChange(selectedTimeObj.format(format), selectedTimeObj);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps

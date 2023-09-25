@@ -192,6 +192,7 @@ export default function Home() {
       initialValues={initialValues}
       onSubmit={async (values) => {
         alert(JSON.stringify(values));
+        console.log(values);
       }}
       validationSchema={validationSchema}
     >

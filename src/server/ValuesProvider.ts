@@ -1,5 +1,6 @@
 import {
   GenOptions,
+  RuntimeGenOptions,
   TableOptions,
   WordCasing,
   AllowedGenOptionsMap,
@@ -17,38 +18,6 @@ import db from "@/db";
 import { ValuesGenerator } from "./ValuesGenerator";
 
 export class ValuesProvider {
-  private static async getValidColumnValuesWithoutEntity(
-    columnMeta: ColumnMeta,
-    genOptions: GenOptions,
-    quantity: number
-  ): Promise<string[]> {
-    const { column_name, entity_meta_table, gen_opts_name } = columnMeta;
-    let values = await this.getAllColumnValues(column_name, entity_meta_table);
-    const allowedGenOpts = AllowedGenOptionsMap[gen_opts_name!];
-    values = this.filterByExcluded(values, genOptions, allowedGenOpts);
-    values = this.filterByMinNumber(values, genOptions, allowedGenOpts);
-    values = this.filterByMaxNumber(values, genOptions, allowedGenOpts);
-    values = this.mapByWordCasing(values, genOptions, allowedGenOpts);
-    return this.shuffleAndSlice(values, quantity);
-  }
-  
-  private static async getValidColumnValuesWithEntity(
-    entityValues: EntitiesValues,
-    columnsGenParams: GenerationParams[],
-    quantity: number
-  ) {
-    for (const param of columnsGenParams) {
-      const { columnMeta, genOptions, fieldName } = param;
-      const { gen_opts_name } = columnMeta;
-      const allowedGenOpts = AllowedGenOptionsMap[gen_opts_name!];
-      entityValues = this.filterByExcluded(entityValues, genOptions, allowedGenOpts, fieldName);
-      entityValues = this.filterByMinNumber(entityValues, genOptions, allowedGenOpts, fieldName);
-      entityValues = this.filterByMaxNumber(entityValues, genOptions, allowedGenOpts, fieldName);
-      entityValues = this.mapByWordCasing(entityValues, genOptions, allowedGenOpts, fieldName);
-    }
-    return this.shuffleAndSlice(entityValues, quantity);
-  }
-
   public static async getValidTableValues(
     table: TableOptions
   ): Promise<ValidTableValuesMap> {
@@ -56,13 +25,17 @@ export class ValuesProvider {
     const tableValues: ValidTableValuesMap = {};
     const entityMap: EntityMap = {};
     for (const field of fields) {
-      const { type, genOptions, name } = field;
+      const { type, genOptions, name, constraints } = field;
       let values: ValidColumnValue = [];
-
+      const runtimeGenOptions: RuntimeGenOptions = {
+        ...genOptions,
+        ...constraints,
+      };
+      field.genOptions = runtimeGenOptions;
       if (TypeProvider.isRuntimeTypeId(type)) {
         values = ValuesGenerator.generateRuntimeValues(
           type as RuntimeTypesId,
-          genOptions,
+          runtimeGenOptions,
           rowQuantity
         );
       } else {
@@ -72,19 +45,23 @@ export class ValuesProvider {
             case "n":
               values = await this.getValidColumnValuesWithoutEntity(
                 columnMeta,
-                genOptions,
+                runtimeGenOptions,
                 rowQuantity
               );
               break;
             case "y":
               if (!entityMap[columnMeta.entity_meta_table]) {
                 entityMap[columnMeta.entity_meta_table] = [
-                  { columnMeta, genOptions, fieldName: name },
+                  {
+                    columnMeta,
+                    genOptions: runtimeGenOptions,
+                    fieldName: name,
+                  },
                 ];
               } else {
                 entityMap[columnMeta.entity_meta_table].push({
                   columnMeta,
-                  genOptions,
+                  genOptions: runtimeGenOptions,
                   fieldName: name,
                 });
               }
@@ -97,13 +74,98 @@ export class ValuesProvider {
       tableValues[name] = values;
     }
     for (const entity in entityMap) {
-      const fields = entityMap[entity];
-      const entityValues = await this.getAllColumnEntities(entity);
-      const validValues = await this.getValidColumnValuesWithEntity(entityValues, fields, rowQuantity);
+      const columnsGenParams = entityMap[entity];
+      const fieldToColumnMapper: Record<string, string> = {}
+      for (const param of columnsGenParams) {
+        fieldToColumnMapper[param.fieldName] = param.columnMeta.column_name;
+      }
+      const validValues = await this.getValidColumnValuesWithEntity(
+        entity,
+        columnsGenParams,
+        fieldToColumnMapper,
+        rowQuantity
+      );
       if (validValues.length != 0) {
-        const fieldNameGetter = validValues[0];
-        for (const fieldName in fieldNameGetter) {
+        let duplicatedValues: number[][] = [];
+        for (const fieldName in fieldToColumnMapper) {
+          const fieldGenOpts = fields.find((field) => field.name === fieldName)!
+            .genOptions as RuntimeGenOptions;
+
+          // Directly remove all the row with null value if the field is not nullable
+          if (fieldGenOpts.notNull || fieldGenOpts.primaryKey) {
+            validValues.filter((value) => value[fieldName] !== null);
+          }
+          
+          // Save all the duplicated indices of that entity column in duplicatedMap 
+          // to remove after all the columns are processed to reduce the number of lost rows
+          if (fieldGenOpts.unique || fieldGenOpts.primaryKey) {
+            const duplicatedMap: Record<string, number[]> = {};
+            validValues.forEach((value, index) => {
+              if (duplicatedMap[value[fieldName]]) {
+                duplicatedMap[value[fieldName]].push(index);
+              } else {
+                duplicatedMap[value[fieldName]] = [index];
+              }
+            });
+            const duplicatedValuesEntry = Object.values(duplicatedMap).filter(
+              (group) => group.length > 1
+            );
+            duplicatedValues.push(...duplicatedValuesEntry);
+          }
+
+          // Temporary save the column values to tableValues
           tableValues[fieldName] = validValues.map((value) => value[fieldName]);
+        }
+
+        // If there are duplicated rows, remove them, prioritizing the ones with the highest amount 
+        // of duplicated columns
+        if (duplicatedValues.length != 0) {
+          const countFrequency = (arr: number[]) => {
+            const frequency: Record<string, number> = {};
+            for (const num of arr) {
+              frequency[num] = (frequency[num] || 0) + 1;
+            }
+            return frequency;
+          }
+        
+          // Function to find the number with the highest frequency
+          const findHighestFrequencyNumber = (arr: number[]): number => {
+            const frequency = countFrequency(arr);
+            let highestFrequency = 0;
+            let numberWithHighestFrequency = null;
+            for (const num in frequency) {
+              if (frequency[num] >= highestFrequency) {
+                highestFrequency = frequency[num];
+                numberWithHighestFrequency = num;
+              }
+            }
+            return Number(numberWithHighestFrequency);
+          }
+        
+          while (true) {
+            // Find the number with the highest frequency in the entire 2D array
+            const numbers = duplicatedValues.flat();
+            const numberToRemove = findHighestFrequencyNumber(numbers);
+        
+            // If no number has a frequency greater than 1, break out of the loop
+            if (!numberToRemove) {
+              break;
+            }
+        
+            // Remove the number with the highest frequency from each inner array
+            for (let i = 0; i < duplicatedValues.length; i++) {
+              duplicatedValues[i] = duplicatedValues[i].filter((num) => num !== numberToRemove);
+            }
+        
+            // Remove inner arrays with only one member
+            duplicatedValues = duplicatedValues.filter((innerArray) => innerArray.length > 1);
+
+            // Remove all the corresponding indices of that entity column from the tableValues
+            for (const fieldName in fieldToColumnMapper) {
+              tableValues[fieldName] = tableValues[fieldName].filter((_, index) => index !== numberToRemove);
+            }
+          }
+
         }
       }
     }
@@ -123,26 +185,105 @@ export class ValuesProvider {
     return result;
   }
 
-  private static shuffleAndSlice<T extends ValidValue>(array: T[], quantity: number): T[] {
+  private static async getValidColumnValuesWithoutEntity(
+    columnMeta: ColumnMeta,
+    genOptions: RuntimeGenOptions,
+    quantity: number
+  ): Promise<string[]> {
+    const { column_name, entity_meta_table, gen_opts_name } = columnMeta;
+    let values = await this.getAllColumnValues(column_name, entity_meta_table);
+    const allowedGenOpts = AllowedGenOptionsMap[gen_opts_name!];
+    values = this.filterByExcluded(values, genOptions, allowedGenOpts);
+    values = this.filterByMinNumber(values, genOptions, allowedGenOpts);
+    values = this.filterByMaxNumber(values, genOptions, allowedGenOpts);
+    values = this.mapByWordCasing(values, genOptions, allowedGenOpts);
+    if (genOptions.notNull || genOptions.primaryKey) {
+      values.filter((value) => value !== null);
+    }
+    if (genOptions.unique || genOptions.primaryKey) {
+      values = Array.from(new Set(values));
+    } else {
+      if (values.length < quantity && values.length != 0) {
+        // Clone values until surpass quantity
+        while (values.length < quantity) {
+          values.push(...values);
+        }
+      }
+    }
+    return this.shuffleAndSlice(values, quantity);
+  }
+
+  private static async getValidColumnValuesWithEntity(
+    entityName: string,
+    columnsGenParams: GenerationParams[],
+    fieldToColumnMapper: Record<string, string>,
+    quantity: number
+  ) {
+    let entityValues = await this.getAllColumnEntities(entityName);
+    entityValues = entityValues.map(value => {
+      const obj: Record<string, string> = {};
+      for (const name in fieldToColumnMapper) {
+        obj[name] = value[fieldToColumnMapper[name]].toString();
+      }
+      return obj;
+    })
+    for (const param of columnsGenParams) {
+      const { columnMeta, genOptions, fieldName } = param;
+      const { gen_opts_name } = columnMeta;
+      const allowedGenOpts = AllowedGenOptionsMap[gen_opts_name!];
+      entityValues = this.filterByExcluded(
+        entityValues,
+        genOptions,
+        allowedGenOpts,
+        fieldName
+      );
+      entityValues = this.filterByMinNumber(
+        entityValues,
+        genOptions,
+        allowedGenOpts,
+        fieldName
+      );
+      entityValues = this.filterByMaxNumber(
+        entityValues,
+        genOptions,
+        allowedGenOpts,
+        fieldName
+      );
+      entityValues = this.mapByWordCasing(
+        entityValues,
+        genOptions,
+        allowedGenOpts,
+        fieldName
+      );
+    }
+    return this.shuffleAndSlice(entityValues, quantity);
+  }
+
+  private static shuffleAndSlice<T extends ValidValue>(
+    array: T[],
+    quantity: number
+  ): T[] {
     for (let i = array.length - 1; i > 0; i--) {
       const j = Math.floor(Math.random() * (i + 1));
-      [array[i], array[j]] = [array[j], array[i]]; // Swap elements
+      [array[i], array[j]] = [array[j], array[i]]; 
     }
     return array.slice(0, quantity);
   }
 
   private static filterByExcluded<T extends ValidValue>(
     values: T[],
-    genOptions: GenOptions,
+    genOptions: RuntimeGenOptions,
     allowedGenOpts: (keyof GenOptions)[],
     fieldName: string = ""
   ) {
     const { excluded } = genOptions;
-    if (excluded && allowedGenOpts.includes("excluded")) {
+    if (excluded && excluded.length != 0 && allowedGenOpts.includes("excluded")) {
       return values.filter(
         (value) =>
           !excluded.includes(
-            typeof value !== "string" ? value[fieldName].toString() : value.toString()
+            typeof value !== "string"
+              ? value[fieldName].toString()
+              : value.toString()
           )
       );
     }
@@ -151,7 +292,7 @@ export class ValuesProvider {
 
   private static filterByMinNumber<T extends ValidValue>(
     values: T[],
-    genOptions: GenOptions,
+    genOptions: RuntimeGenOptions,
     allowedGenOpts: (keyof GenOptions)[],
     fieldName: string = ""
   ) {
@@ -159,11 +300,17 @@ export class ValuesProvider {
     if (minNumber && allowedGenOpts.includes("minNumber")) {
       if (minNumberInclusive && allowedGenOpts.includes("minNumberInclusive")) {
         return values.filter(
-          (value) => Number(typeof value === "string" ? value : value[fieldName as string]) >= minNumber
+          (value) =>
+            Number(
+              typeof value === "string" ? value : value[fieldName as string]
+            ) >= minNumber
         );
       } else {
         return values.filter(
-          (value) => Number(typeof value === "string"  ? value : value[fieldName as string]) > minNumber
+          (value) =>
+            Number(
+              typeof value === "string" ? value : value[fieldName as string]
+            ) > minNumber
         );
       }
     }
@@ -172,7 +319,7 @@ export class ValuesProvider {
 
   private static filterByMaxNumber<T extends ValidValue>(
     values: T[],
-    genOptions: GenOptions,
+    genOptions: RuntimeGenOptions,
     allowedGenOpts: (keyof GenOptions)[],
     fieldName: string = ""
   ) {
@@ -180,11 +327,17 @@ export class ValuesProvider {
     if (maxNumber && allowedGenOpts.includes("maxNumber")) {
       if (maxNumberInclusive && allowedGenOpts.includes("maxNumberInclusive")) {
         return values.filter(
-          (value) => Number(typeof value !== "string" ? value[fieldName as string] : value) <= maxNumber
+          (value) =>
+            Number(
+              typeof value !== "string" ? value[fieldName as string] : value
+            ) <= maxNumber
         );
       } else {
         return values.filter(
-          (value) => Number(typeof value !== "string" ? value[fieldName as string] : value) < maxNumber
+          (value) =>
+            Number(
+              typeof value !== "string" ? value[fieldName as string] : value
+            ) < maxNumber
         );
       }
     }
@@ -193,7 +346,7 @@ export class ValuesProvider {
 
   private static mapByWordCasing<T extends ValidValue>(
     values: T[],
-    genOptions: GenOptions,
+    genOptions: RuntimeGenOptions,
     allowedGenOpts: (keyof GenOptions)[],
     fieldName: string = ""
   ): T[] {

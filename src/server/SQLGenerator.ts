@@ -126,11 +126,15 @@ class SQLGenerator {
     kw: CreateTableKeywords
   ): Promise<string> {
     const { name, fields } = table;
-    let sql = `${kw.INSERT_INTO} ${name} (
-${"\t" + fields.map((field) => field.name).join(",\n\t")}
-) ${kw.VALUES}`;
+
     const values = await ValuesProvider.getValidTableValues(table);
     const minLen = Math.min(...Object.values(values).map((v) => v.length));
+    if (minLen === 0) {
+      return "-- Your filters are too strict. No values were generated.";
+    }
+    let sql = `${kw.INSERT_INTO} ${name} (
+      ${"\t" + fields.map((field) => field.name).join(",\n\t")}
+      ) ${kw.VALUES}`;
     for (let i = 0; i < minLen; i++) {
       const rowValues = Object.values(values).map((v) => v[i]);
       sql += `\n\t(${rowValues.join(", ")})`;
