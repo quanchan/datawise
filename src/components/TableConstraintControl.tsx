@@ -23,7 +23,10 @@ export const TableConstraintControl: React.FC<TableConstraintControlProps> = (
 ) => {
   const { onRemove, tableIndex, constraintIndex, onEditConstraint } = props;
   const { values, handleChange } = useFormikContext<Tables>();
-  const data = values.tables[tableIndex].constraints[constraintIndex];
+  const data = values.tables[tableIndex]?.constraints[constraintIndex];
+
+  if (!data) return <></>;
+
   return (
     <VStack
       spacing={1}

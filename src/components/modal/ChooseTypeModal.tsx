@@ -29,19 +29,19 @@ import axios from "axios";
 import { useQuery } from "@tanstack/react-query";
 import { AiOutlinePlusCircle } from "react-icons/ai";
 
-export type ChooseTypeModalProps = {
-  onClose: () => void;
+export type ChooseTypeModalProps = BaseModalProps & {
+  onClose: (selected: string) => void;
   tableIndex: number;
   fieldIndex: number;
   addCustomType: () => void;
-} & BaseModalProps;
+};
 
 export const ChooseTypeModal: React.FC<ChooseTypeModalProps> = (props) => {
   const { onClose, tableIndex, fieldIndex, isOpen, addCustomType } = props;
   const [tabIndex, setTabIndex] = useState(0);
   const { setFieldValue, values } = useFormikContext<Tables>();
   const [selectedType, setSelectedType] = useState<string>(
-    values.tables[tableIndex].fields[fieldIndex]?.type
+    values.tables[tableIndex]?.fields[fieldIndex]?.type || ""
   );
   const [searchTerm, setSearchTerm] = useState("");
 
@@ -83,11 +83,13 @@ export const ChooseTypeModal: React.FC<ChooseTypeModalProps> = (props) => {
       `tables.${tableIndex}.fields.${fieldIndex}.type`,
       selectedType
     );
-    onClose();
+    onClose(selectedType);
   };
 
+  if (!data) return <></>;
+
   return (
-    <BaseModal isOpen={isOpen} onClose={onClose}>
+    <BaseModal isOpen={isOpen} onClose={onSave}>
       <VStack
         width={"100vw"}
         textAlign={"center"}
@@ -171,7 +173,14 @@ export const ChooseTypeModal: React.FC<ChooseTypeModalProps> = (props) => {
                             key={type.id}
                             type={type}
                             selected={selectedType == type.id}
-                            handleClick={() => setSelectedType(type.id)}
+                            handleClick={() => {
+                              if (selectedType == type.id) {
+                                setSelectedType("");
+                              } else {
+                                setSelectedType(type.id)
+                              }
+                              
+                            }}
                           />
                         );
                       })}
