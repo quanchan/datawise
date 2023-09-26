@@ -122,8 +122,9 @@ class SQLGenerator {
       return typeProcessor.needQuoteWrap;
     });
     for (let i = 0; i < minLen; i++) {
-      const rowValues = Object.values(values).map((v) => needQuoteWraps ? `'${v[i]}'` : v[i]);
-      sql += `\n\t(${rowValues.join(", ")})`;
+      const rowValues = Object.values(values).map((v) => v[i]);
+      const rowValuesWithQuote = rowValues.map((v, i) => needQuoteWraps[i] ? `'${v}'` : v);
+      sql += `\n\t(${rowValuesWithQuote.join(", ")})`;
       if (i < minLen - 1) {
         sql += ",";
       }
