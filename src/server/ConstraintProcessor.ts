@@ -1,7 +1,7 @@
-import { ConstraintType } from "@/types";
+import { ConstraintType, ParsedTableConstraint, TableConstraint } from "@/types";
 
 export class ConstraintProcessor {
-  public static parse(input: string): object | null {
+  private static parse(input: string): ParsedTableConstraint | undefined {
     // Lowercase and remove extra whitespace
     input.toLowerCase().replace(/\s+/g, ' ');
     if (input.startsWith(ConstraintType.FK)) {
@@ -13,34 +13,38 @@ export class ConstraintProcessor {
     } else if (input.startsWith(ConstraintType.CHECK)) {
       return this.parseCheck(input);
     } else {
-      return null; // Invalid input
+      return; // Invalid input
     }
   }
 
-  private static parseForeignKey(input: string): object | null {
+  private static parseForeignKey(input: string): ParsedTableConstraint | undefined {
     const regex = /foreign key\((.*?)\) references (.*?)\((.*?)\)/;
     const match = input.match(regex);
 
     if (!match || match.length !== 4) {
-      return null; // Invalid foreign key constraint format
+      return; // Invalid foreign key constraint format
     }
 
     const [, columns, referencedTable, referencedColumns] = match;
-    
+    const columnNames = columns.split(',').map(col => col.trim());
+    const refColumnNames = referencedColumns.split(',').map(col => col.trim());
+    if (columnNames.length !== refColumnNames.length) {
+      return; // Invalid foreign key constraint format
+    }
     return {
       type: ConstraintType.FK,
-      columns: columns.split(',').map(col => col.trim()),
+      columns: columnNames,
       referencedTable,
-      referencedColumns: referencedColumns.split(',').map(col => col.trim()),
+      referencedColumns: refColumnNames,
     };
   }
 
-  private static parsePrimaryKey(input: string): object | null {
+  private static parsePrimaryKey(input: string): ParsedTableConstraint | undefined {
     const regex = /primary key\((.*?)\)/;
     const match = input.match(regex);
 
     if (!match || match.length !== 2) {
-      return null; // Invalid primary key constraint format
+      return; // Invalid primary key constraint format
     }
 
     const [, columns] = match;
@@ -51,12 +55,12 @@ export class ConstraintProcessor {
     };
   }
 
-  private static parseUnique(input: string): object | null {
+  private static parseUnique(input: string): ParsedTableConstraint | undefined {
     const regex = /unique\((.*?)\)/;
     const match = input.match(regex);
 
     if (!match || match.length !== 2) {
-      return null; // Invalid unique constraint format
+      return; // Invalid unique constraint format
     }
 
     const [, columns] = match;
@@ -67,12 +71,12 @@ export class ConstraintProcessor {
     };
   }
 
-  private static parseCheck(input: string): object | null {
+  private static parseCheck(input: string): ParsedTableConstraint | undefined {
     const regex = /check\((.*?)\)/;
     const match = input.match(regex);
 
     if (!match || match.length !== 2) {
-      return null; // Invalid unique constraint format
+      return; // Invalid unique constraint format
     }
 
     const [, checkCondition] = match;
@@ -80,5 +84,17 @@ export class ConstraintProcessor {
       type: ConstraintType.CHECK,
       condition: checkCondition,
     };
+  }
+
+  public static parseConstraints(constraints: TableConstraint[]): ParsedTableConstraint[] {
+    return constraints.map(constraint => {
+      const { condition } = constraint;
+      const parsedConstraint = this.parse(condition);
+      if (!parsedConstraint) {
+        // Ignore this error
+        return;
+      }
+      return parsedConstraint;
+    }).filter(constraint => constraint) as ParsedTableConstraint[];
   }
 }

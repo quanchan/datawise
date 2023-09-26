@@ -1,12 +1,12 @@
 import { Format } from "@/types";
-import { MySQLTypeMap, OracleSQLTypeMap, TypeMap } from "@/types/sql";
+import { MySQLTypeMap, NeedQuoteWrap, OracleSQLTypeMap, TypeMap } from "@/types/sql";
 export class TypeProcessor {
-  private _type: string;
+  private _type: keyof TypeMap;
   private _args: string[];
   constructor(type: string = "") {
     type = type.replace("(", ",").replace(")", "");
     const [typeString, ...args] = type.split(",");
-    this._type = typeString;
+    this._type = typeString as keyof TypeMap;
     this._args = args;
   }
 
@@ -18,11 +18,15 @@ export class TypeProcessor {
     return this._type;
   }
 
+  public get needQuoteWrap(): boolean {
+    return NeedQuoteWrap[this._type as keyof TypeMap];
+  }
+
   public get args(): string[] {
     return this._args;
   }
 
-  public set type(t: string) {
+  public set type(t: keyof TypeMap) {
     this._type = t;
   }
 

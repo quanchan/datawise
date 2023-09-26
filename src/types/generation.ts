@@ -13,3 +13,11 @@ export type EntityMap = Record<string, GenerationParams[]>
 export type EntitiesValues = Record<string, string>[]
 export type ValidValue = Record<string, string> | string
 export type RuntimeGenOptions = FieldConstraints & GenOptions
+
+export type ParsedTableConstraint = {
+  type: string,
+  columns?: string[],
+  referencedTable?: string,
+  referencedColumns?: string[],
+  condition?: string,
+}

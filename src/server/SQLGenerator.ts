@@ -1,8 +1,9 @@
-import { GenOptions, TableConstraints, TableOptions } from "@/types";
+import { ConstraintType, Field, GenOptions, ParsedTableConstraint, TableConstraint, TableOptions } from "@/types";
 import { TypeProcessor } from "./TypeProcessor";
 import { CreateTableKeywords, MySQLCreateTable } from "@/types/sql";
 import { TypeProvider } from "./TypeProvider";
 import { ValuesProvider } from "./ValuesProvider";
+import { ConstraintProcessor } from "./ConstraintProcessor";
 
 class SQLGenerator {
   public static async generateAllTables(
@@ -12,7 +13,7 @@ class SQLGenerator {
     let sql = "";
     for (let index = 0; index < tables.length; index++) {
       const table = tables[index];
-      sql += await this.generateOneTable(table, kw);
+      sql += await this.generateOneTable(table, tables, kw);
       if (index < tables.length - 1) {
         sql += "\n\n";
       }
@@ -28,46 +29,27 @@ class SQLGenerator {
     return sql;
   }
 
-  public static async generateOneTable(
+  protected static async generateOneTable(
     table: TableOptions,
+    tables: TableOptions[],
     kw: CreateTableKeywords
   ): Promise<string> {
     const { name, fields, constraints } = table;
+    
+    const parsedConstraints = ConstraintProcessor.parseConstraints(constraints);
+    const foreignKeyConstraints = parsedConstraints.filter(constraint => constraint.type === ConstraintType.FK);
+
     let sql = `${kw.CREATE_TABLE} ${kw.IF_NOT_EXISTS} ${name} (\n`;
+
     for (let index = 0; index < fields.length; index++) {
       let field = fields[index];
-      const {
-        name: fname,
-        type,
-        defaultValue,
-        constraints: fconstraints,
-        genOptions,
-      } = field;
-      const { notNull, unique, primaryKey } = fconstraints;
-      const type_meta = await TypeProvider.getTypeById(type);
-      const actualType = this.generateType(
-        genOptions,
-        type_meta?.gen_opts_name
-      );
-      sql += `\t${fname} ${actualType}`;
-      if (!notNull) {
-        sql += ` ${kw.NULL}`;
-      } else {
-        sql += ` ${kw.NOT} ${kw.NULL}`;
-      }
-      if (unique) {
-        sql += ` ${kw.UNIQUE}`;
-      }
-      if (defaultValue) {
-        sql += ` ${kw.DEFAULT} ${defaultValue}`;
-      }
-      if (primaryKey) {
-        sql += ` ${kw.PRIMARY_KEY}`;
-      }
-      if (index < fields.length - 1 || constraints.length > 0) {
-        sql += ",\n";
-      }
+      const endWithComma = index < fields.length - 1 || constraints.length > 0 || foreignKeyConstraints.length > 0;
+      const generatedColumnSQL = await this.generateOneColumn(field, kw, false, endWithComma);
+      sql += generatedColumnSQL;
     }
+    
+    const foreignKey = await this.generateForeignKey(parsedConstraints, table, tables, kw);
+    sql += foreignKey;
     const tableConstraint = this.generateConstraints(constraints, kw);
     sql += tableConstraint;
     sql += "\n);";
@@ -75,8 +57,8 @@ class SQLGenerator {
     return sql;
   }
 
-  public static generateConstraints(
-    constraints: TableConstraints[],
+  private static generateConstraints(
+    constraints: TableConstraint[],
     kw: CreateTableKeywords
   ): string {
     let sql = "";
@@ -90,7 +72,7 @@ class SQLGenerator {
     return sql;
   }
 
-  public static generateType(
+  private static generateType(
     genOptions: GenOptions,
     gen_opts_name: string = ""
   ): string {
@@ -121,7 +103,7 @@ class SQLGenerator {
     );
   }
 
-  public static async generateValuesInsertion(
+  private static async generateValuesInsertion(
     table: TableOptions,
     kw: CreateTableKeywords
   ): Promise<string> {
@@ -130,13 +112,17 @@ class SQLGenerator {
     const values = await ValuesProvider.getValidTableValues(table);
     const minLen = Math.min(...Object.values(values).map((v) => v.length));
     if (minLen === 0) {
-      return "-- Your filters are too strict. No values were generated.";
+      return "-- WARNING: Your filters are too strict. No values were generated.";
     }
     let sql = `${kw.INSERT_INTO} ${name} (
       ${"\t" + fields.map((field) => field.name).join(",\n\t")}
       ) ${kw.VALUES}`;
+    const needQuoteWraps = fields.map((field) => {
+      const typeProcessor = new TypeProcessor(field.genOptions.actualType);
+      return typeProcessor.needQuoteWrap;
+    });
     for (let i = 0; i < minLen; i++) {
-      const rowValues = Object.values(values).map((v) => v[i]);
+      const rowValues = Object.values(values).map((v) => needQuoteWraps ? `'${v[i]}'` : v[i]);
       sql += `\n\t(${rowValues.join(", ")})`;
       if (i < minLen - 1) {
         sql += ",";
@@ -146,13 +132,80 @@ class SQLGenerator {
 
     return sql;
   }
+
+  private static async generateOneColumn(field: Field, kw: CreateTableKeywords, isForeignKey: boolean, endWithComma: boolean, alternativeColumnName?: string): Promise<string> {
+    const {
+      name,
+      type,
+      defaultValue,
+      constraints: fconstraints,
+      genOptions,
+    } = field;
+    let sql = "";
+    const { notNull, unique, primaryKey } = fconstraints;
+    const type_meta = await TypeProvider.getTypeById(type);
+    const actualType = this.generateType(
+      genOptions,
+      type_meta?.gen_opts_name
+    );
+    const fname = alternativeColumnName ? alternativeColumnName : name;
+    sql += `\t${fname} ${actualType}`;
+    if (!notNull) {
+      sql += ` ${kw.NULL}`;
+    } else {
+      sql += ` ${kw.NOT} ${kw.NULL}`;
+    }
+    if (!isForeignKey) {
+      if (unique) {
+        sql += ` ${kw.UNIQUE}`;
+      }
+      if (defaultValue) {
+        sql += ` ${kw.DEFAULT} ${defaultValue}`;
+      }
+      if (primaryKey) {
+        sql += ` ${kw.PRIMARY_KEY}`;
+      }
+    }
+    if (endWithComma) {
+      sql += ",";
+    }
+    sql += "\n";
+    return sql;
+  }
+
+  private static async generateForeignKey(foreignKeyConstraints: ParsedTableConstraint[], table: TableOptions, tables: TableOptions[], kw:  CreateTableKeywords): Promise<string> {
+    let sql = "";
+    for (let j = 0; j < foreignKeyConstraints.length; j++) {
+      const constraint = foreignKeyConstraints[j];
+      const { columns, referencedTable: refTableName, referencedColumns: refColumnNames } = constraint;
+      const referencedTable = tables.find(table => table.name.toLowerCase() === refTableName!.toLowerCase());
+      if (!referencedTable) {
+        sql += `-- ERROR: Referenced table ${refTableName} not found\n`;
+        continue;
+      }
+      const referencedColumns = referencedTable.fields.filter(field => {
+        if (refColumnNames!.includes(field.name.toLowerCase())) {
+          return true;
+        } else {
+          sql += `-- ERROR: Referenced column ${field.name} not found\n`;
+          return false;
+        }
+      });
+      if (referencedColumns.length !== refColumnNames!.length) {
+        continue;
+      }
+      for (let i = 0; i < columns!.length; i++) {
+        const endWithComma = i < columns!.length - 1 || table.constraints.length > 0 || j < foreignKeyConstraints.length - 1;
+        const foreignKeyColumnsSQL = await this.generateOneColumn(referencedColumns[i], kw, true, endWithComma, columns![i]); 
+        sql += foreignKeyColumnsSQL;
+      }
+    }
+    return sql;
+  }
+
 }
 
 export class MySQLGenerator extends SQLGenerator {
-  public static async generateOneTable(table: TableOptions): Promise<string> {
-    return super.generateOneTable(table, MySQLCreateTable);
-  }
-
   public static async generateAllTables(
     tables: TableOptions[]
   ): Promise<string> {
@@ -161,10 +214,6 @@ export class MySQLGenerator extends SQLGenerator {
 }
 
 export class OracleSQLGenerator extends SQLGenerator {
-  public static async generateOneTable(table: TableOptions): Promise<string> {
-    return super.generateOneTable(table, MySQLCreateTable);
-  }
-
   public static async generateAllTables(
     tables: TableOptions[]
   ): Promise<string> {

@@ -299,7 +299,7 @@ export default function Home() {
                               onClick={() => {
                                 push({
                                   ...defaultTableOptions,
-                                  name: `Table_${values.tables.length + 1}`,
+                                  name: `table_${values.tables.length + 1}`,
                                 });
                               }}
                             >
