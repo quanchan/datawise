@@ -8,9 +8,11 @@ export class ValuesGenerator {
     quantity: number
   ): string[] {
     let { minNumber, maxNumber, precision } = genOptions;
+    precision = precision ? +precision! : 5;
+    minNumber = minNumber !== "" ? +minNumber! : -(10 ** (precision!) - 1);
+    maxNumber = maxNumber !== "" ? +maxNumber! : 10 ** (precision!) - 1;
+    
     const randomInts: string[] = [];
-    minNumber = minNumber || -(10 ** (precision!) - 1);
-    maxNumber = maxNumber || 10 ** (precision!) - 1;
     
     for (let i = 0; i < quantity; i++) {
       const randomInt =
@@ -29,9 +31,12 @@ export class ValuesGenerator {
     quantity: number
   ): string[] {
     let { minNumber, maxNumber, scale, precision } = genOptions;
+    precision = precision ? +precision! : 5;
+    scale = scale ? +scale! : 2;
+    minNumber = minNumber !== "" ? +minNumber! : -(10 ** (precision - scale) - 1);
+    maxNumber = maxNumber !== "" ? +maxNumber! : 10 ** (precision - scale) - 1;
+    
     const randomDecimals: string[] = [];
-    minNumber = minNumber || -(10 ** (precision! - scale!) - 1);
-    maxNumber = maxNumber || 10 ** (precision! - scale!) - 1;
 
     for (let i = 0; i < quantity; i++) {
       const randomDecimal = (
