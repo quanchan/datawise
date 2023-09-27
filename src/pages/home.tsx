@@ -146,6 +146,7 @@ const validationSchema = yup.object().shape({
               type: yup.string().required("Type is required"),
             })
           )
+          // @ts-ignore
           .unique("name", "Field name needs to be unique")
           .uniquePropertyValue(
             "constraints",
@@ -170,9 +171,11 @@ const validationSchema = yup.object().shape({
               condition: yup.string().required("Condition is required"),
             })
           )
+          // @ts-ignore 
           .unique("name", "Constraint name needs to be unique"),
       })
     )
+    // @ts-ignore
     .unique("name", "Table name needs to be unique"),
 });
 
