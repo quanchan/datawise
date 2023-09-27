@@ -85,6 +85,7 @@ export const GenOptionsModal: React.FC<GenOptionsModalProps> = (props) => {
       );
       setFieldValue(namePrefix + "withEntity", genOptions?.withEntity || "n");
     }
+  // 
   }, [type, gen_opts]);
 
   if (!fieldData) return <></>;
