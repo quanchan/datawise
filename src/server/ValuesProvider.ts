@@ -297,7 +297,7 @@ export class ValuesProvider {
     fieldName: string = ""
   ) {
     const { minNumber, minNumberInclusive } = genOptions;
-    if (minNumber && allowedGenOpts.includes("minNumber")) {
+    if (minNumber && typeof minNumber === "number" && allowedGenOpts.includes("minNumber")) {
       if (minNumberInclusive && allowedGenOpts.includes("minNumberInclusive")) {
         return values.filter(
           (value) =>
@@ -324,7 +324,7 @@ export class ValuesProvider {
     fieldName: string = ""
   ) {
     const { maxNumber, maxNumberInclusive } = genOptions;
-    if (maxNumber && allowedGenOpts.includes("maxNumber")) {
+    if (maxNumber && typeof maxNumber === "number" && allowedGenOpts.includes("maxNumber")) {
       if (maxNumberInclusive && allowedGenOpts.includes("maxNumberInclusive")) {
         return values.filter(
           (value) =>
