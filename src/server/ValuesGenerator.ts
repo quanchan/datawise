@@ -193,10 +193,25 @@ export class ValuesGenerator {
   ): ValidColumnValue {
     const { unique } = genOptions;
     const generatedValues: ValidColumnValue = [];
+    const indices = this.generateRandomIndices(pool.length, quantity, unique);
+    for (const index of indices) {
+      generatedValues.push(pool[index]);
+    }
+    return generatedValues;
+  }
 
-    quantity = unique ? Math.min(quantity, pool.length) : quantity;
-    
-    if (unique && pool.length == quantity) {
+  public static generateRandomIndices(
+    range: number,
+    quantity: number,
+    unique: boolean
+  ): number[] {
+    const generatedIndexes: number[] = [];
+
+
+    quantity = unique ? Math.min(quantity, range) : quantity;
+    // Create an array from 0 to range - 1
+    const pool = Array.from(Array(range).keys());
+    if (unique && range == quantity) {
       // shuffle the pool
       for (let i = pool.length - 1; i > 0; i--) {
         const j = Math.floor(Math.random() * (i + 1));
@@ -206,13 +221,13 @@ export class ValuesGenerator {
     }
 
     for (let i = 0; i < quantity; i++) {
-      const randomValue = pool[Math.floor(Math.random() * pool.length)];
-      if (unique && generatedValues.includes(randomValue) && pool.length > quantity) {
-        i--; // Retry if the value already exists
+      const randomIndex = Math.floor(Math.random() * range);
+      if (unique && generatedIndexes.includes(randomIndex)) {
+        i--; // Retry if the index already exists
         continue;
       }
-      generatedValues.push(randomValue);
+      generatedIndexes.push(randomIndex);
     }
-    return generatedValues;
+    return generatedIndexes;
   }
 }

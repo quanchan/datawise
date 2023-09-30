@@ -130,7 +130,7 @@ class SQLGenerator {
     let sql = "";
     constraints.forEach((constraint, i) => {
       const { name, condition } = constraint;
-      sql += `\t${kw.CONSTRAINT} ${name} ${condition}`;
+      sql += `  ${kw.CONSTRAINT} ${name} ${condition}`;
       if (i < constraints.length - 1) {
         sql += ",\n";
       }
@@ -183,9 +183,6 @@ class SQLGenerator {
     kw: CreateTableKeywords
   ): Promise<string> {
     const { name, fields } = table;
-    const foreignKeyConstraints = parsedConstraints.filter(
-      (constraint) => constraint.type === ConstraintType.FK
-    );
     // Get all the valid values for the table
     const values = await ValuesProvider.getValidTableValues(
       table,
@@ -205,7 +202,7 @@ class SQLGenerator {
     valuesCache[name] = cachedTableValues;
 
     let sql = `${kw.INSERT_INTO} ${name} (
-      ${"\t" + fields.map((field) => field.name).join(",\n\t")}
+  ${fields.map((field) => field.name).join(",\n  ")}
 ) ${kw.VALUES}`;
     const needQuoteWraps = fields.map((field) => {
       let systemType = parsedFKColumnMap[field.name]?.systemType || field.genOptions.actualType
@@ -245,7 +242,6 @@ class SQLGenerator {
     } = field;
     let sql = "";
     const { notNull, unique, primaryKey } = fconstraints;
-    // TODO: Modify this
     let fkActualType = tablesForeignKeyMap[tableName]?.[name]?.typeWithArgs;
     const isForeignKey = TypeProvider.isForeignKey(type);
     const type_meta = await TypeProvider.getTypeById(type);
@@ -256,7 +252,7 @@ class SQLGenerator {
       fkActualType
     );
     const fname = alternativeColumnName ? alternativeColumnName : name;
-    sql += `\t${fname} ${actualType}`;
+    sql += `  ${fname} ${actualType}`;
     if (!notNull) {
       sql += ` ${kw.NULL}`;
     } else {

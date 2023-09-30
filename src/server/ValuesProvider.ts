@@ -14,6 +14,8 @@ import {
   ValidValue,
   AllTablesValuesCache,
   ParsedFKColumnMap,
+  Field,
+  FKMap,
 } from "@/types";
 import { TypeProvider } from "./TypeProvider";
 import db from "@/db";
@@ -28,6 +30,7 @@ export class ValuesProvider {
     const { fields, rowQuantity } = table;
     const tableValues: ValidTableValuesMap = {};
     const entityMap: EntityMap = {};
+    const fkMap: FKMap = {}
     for (const field of fields) {
       const { type, genOptions, name, constraints } = field;
       let values: ValidColumnValue = [];
@@ -44,30 +47,38 @@ export class ValuesProvider {
         );
       } else if (TypeProvider.isForeignKey(type)) {
         const parsedFKColumn = parsedFKColumnMap[name];
-        const isStandalone = parsedFKColumn.isStandalone
-        if (isStandalone) {
-          const { refTable, refColumn } = parsedFKColumn;
-          const refTableValues = valuesCache[refTable];
-          if (refTableValues) {
-            const valuePool = refTableValues[refColumn];
-            if (values) {
+        const { refTable, refColumn, isStandalone, group } = parsedFKColumn;
+        const refTableValues = valuesCache[refTable];
+        if (refTableValues) {
+          const valuePool = refTableValues[refColumn];
+          if (valuePool) {
+            if (isStandalone) {
               values = ValuesGenerator.generateRandomValueFromGivenPool(
                 valuePool,
                 runtimeGenOptions,
                 rowQuantity
               );
             } else {
-              throw new Error(`Column ${refColumn} not found in table ${refTable}`);
+              // If the foreign key is not standalone, it means that it is a part of a multi-column foreign key
+              // and will need to be generated together with other columns
+              if(fkMap[group]) {
+                fkMap[group].push(name);
+              } else {
+                fkMap[group] = [name]
+              };
+              // Temporary store all available values in fkMap to filter later
+              values = valuePool;
             }
           } else {
-            throw new Error(`Table ${refTable} not found`);
+            throw new Error(
+              `Column ${refColumn} not found in table ${refTable}`
+            );
           }
         } else {
-          // Temporary assigned to empty array and will be filled as group later
-          values = [];
+          throw new Error(`Table ${refTable} not found`);
         }
-      } 
-      else {
+      } else {
+        // Normal column
         const columnMeta = await TypeProvider.getColumnMetaById(type);
         if (columnMeta) {
           switch (genOptions.withEntity) {
@@ -102,9 +113,48 @@ export class ValuesProvider {
       }
       tableValues[name] = values;
     }
+    await ValuesProvider.getValidTableValuesWithEntity(
+      entityMap,
+      rowQuantity,
+      fields,
+      tableValues
+    );
+
+    ValuesProvider.getValidMultiColumnFKValues(tableValues, fkMap, rowQuantity);
+
+    return tableValues;
+  }
+
+  private static getValidMultiColumnFKValues(
+    tableValues: ValidTableValuesMap,
+    fkMap: FKMap,
+    rowQuantity: number
+  ) {
+    // TODO:low priority: somehow implement single column uniqueness
+    for (const group in fkMap) {
+      const firstCol = fkMap[group][0];
+      const length = tableValues[firstCol].length;
+      // TODO: modify unique when implemented group uniqueness
+      const indices = ValuesGenerator.generateRandomIndices(length, rowQuantity, false);
+      for (const col of fkMap[group]) {
+        const values = []
+        for (const index of indices) {
+          values.push(tableValues[col][index]);
+        }
+        tableValues[col] = values;
+      }
+    }
+  }
+
+  private static async getValidTableValuesWithEntity(
+    entityMap: EntityMap,
+    rowQuantity: number,
+    fields: Field[],
+    tableValues: ValidTableValuesMap
+  ) {
     for (const entity in entityMap) {
       const columnsGenParams = entityMap[entity];
-      const fieldToColumnMapper: Record<string, string> = {}
+      const fieldToColumnMapper: Record<string, string> = {};
       for (const param of columnsGenParams) {
         fieldToColumnMapper[param.fieldName] = param.columnMeta.column_name;
       }
@@ -124,8 +174,8 @@ export class ValuesProvider {
           if (fieldGenOpts.notNull || fieldGenOpts.primaryKey) {
             validValues.filter((value) => value[fieldName] !== null);
           }
-          
-          // Save all the duplicated indices of that entity column in duplicatedMap 
+
+          // Save all the duplicated indices of that entity column in duplicatedMap
           // to remove after all the columns are processed to reduce the number of lost rows
           if (fieldGenOpts.unique || fieldGenOpts.primaryKey) {
             const duplicatedMap: Record<string, number[]> = {};
@@ -146,7 +196,7 @@ export class ValuesProvider {
           tableValues[fieldName] = validValues.map((value) => value[fieldName]);
         }
 
-        // If there are duplicated rows, remove them, prioritizing the ones with the highest amount 
+        // If there are duplicated rows, remove them, prioritizing the ones with the highest amount
         // of duplicated columns
         if (duplicatedValues.length != 0) {
           const countFrequency = (arr: number[]) => {
@@ -155,8 +205,8 @@ export class ValuesProvider {
               frequency[num] = (frequency[num] || 0) + 1;
             }
             return frequency;
-          }
-        
+          };
+
           // Function to find the number with the highest frequency
           const findHighestFrequencyNumber = (arr: number[]): number => {
             const frequency = countFrequency(arr);
@@ -169,36 +219,40 @@ export class ValuesProvider {
               }
             }
             return Number(numberWithHighestFrequency);
-          }
-        
+          };
+
           while (true) {
             // Find the number with the highest frequency in the entire 2D array
             const numbers = duplicatedValues.flat();
             const numberToRemove = findHighestFrequencyNumber(numbers);
-        
+
             // If no number has a frequency greater than 1, break out of the loop
             if (!numberToRemove) {
               break;
             }
-        
+
             // Remove the number with the highest frequency from each inner array
             for (let i = 0; i < duplicatedValues.length; i++) {
-              duplicatedValues[i] = duplicatedValues[i].filter((num) => num !== numberToRemove);
+              duplicatedValues[i] = duplicatedValues[i].filter(
+                (num) => num !== numberToRemove
+              );
             }
-        
+
             // Remove inner arrays with only one member
-            duplicatedValues = duplicatedValues.filter((innerArray) => innerArray.length > 1);
+            duplicatedValues = duplicatedValues.filter(
+              (innerArray) => innerArray.length > 1
+            );
 
             // Remove all the corresponding indices of that entity column from the tableValues
             for (const fieldName in fieldToColumnMapper) {
-              tableValues[fieldName] = tableValues[fieldName].filter((_, index) => index !== numberToRemove);
+              tableValues[fieldName] = tableValues[fieldName].filter(
+                (_, index) => index !== numberToRemove
+              );
             }
           }
-
         }
       }
     }
-    return tableValues;
   }
 
   public static async getAllColumnValues(column: string, table: string) {
@@ -249,13 +303,13 @@ export class ValuesProvider {
     quantity: number
   ) {
     let entityValues = await this.getAllColumnEntities(entityName);
-    entityValues = entityValues.map(value => {
+    entityValues = entityValues.map((value) => {
       const obj: Record<string, string> = {};
       for (const name in fieldToColumnMapper) {
         obj[name] = value[fieldToColumnMapper[name]].toString();
       }
       return obj;
-    })
+    });
     for (const param of columnsGenParams) {
       const { columnMeta, genOptions, fieldName } = param;
       const { gen_opts_name } = columnMeta;
@@ -294,7 +348,7 @@ export class ValuesProvider {
   ): T[] {
     for (let i = array.length - 1; i > 0; i--) {
       const j = Math.floor(Math.random() * (i + 1));
-      [array[i], array[j]] = [array[j], array[i]]; 
+      [array[i], array[j]] = [array[j], array[i]];
     }
     return array.slice(0, quantity);
   }
@@ -306,7 +360,11 @@ export class ValuesProvider {
     fieldName: string = ""
   ) {
     const { excluded } = genOptions;
-    if (excluded && excluded.length != 0 && allowedGenOpts.includes("excluded")) {
+    if (
+      excluded &&
+      excluded.length != 0 &&
+      allowedGenOpts.includes("excluded")
+    ) {
       return values.filter(
         (value) =>
           !excluded.includes(
@@ -326,7 +384,11 @@ export class ValuesProvider {
     fieldName: string = ""
   ) {
     const { minNumber, minNumberInclusive } = genOptions;
-    if (minNumber && typeof minNumber === "number" && allowedGenOpts.includes("minNumber")) {
+    if (
+      minNumber &&
+      typeof minNumber === "number" &&
+      allowedGenOpts.includes("minNumber")
+    ) {
       if (minNumberInclusive && allowedGenOpts.includes("minNumberInclusive")) {
         return values.filter(
           (value) =>
@@ -353,7 +415,11 @@ export class ValuesProvider {
     fieldName: string = ""
   ) {
     const { maxNumber, maxNumberInclusive } = genOptions;
-    if (maxNumber && typeof maxNumber === "number" && allowedGenOpts.includes("maxNumber")) {
+    if (
+      maxNumber &&
+      typeof maxNumber === "number" &&
+      allowedGenOpts.includes("maxNumber")
+    ) {
       if (maxNumberInclusive && allowedGenOpts.includes("maxNumberInclusive")) {
         return values.filter(
           (value) =>
