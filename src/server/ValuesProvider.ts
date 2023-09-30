@@ -131,7 +131,7 @@ export class ValuesProvider {
     rowQuantity: number
   ) {
     // TODO:low priority: somehow implement single column uniqueness
-    for (const group in fkMap) {
+  for (const group in fkMap) {
       const firstCol = fkMap[group][0];
       const length = tableValues[firstCol].length;
       // TODO: modify unique when implemented group uniqueness

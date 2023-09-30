@@ -6,7 +6,6 @@ import {
   GenOptions,
   ParsedFKColumnMap,
   ParsedTableConstraint,
-  SpecialTypesId,
   TableConstraint,
   TableOptions,
   TablesParsedFKColumnsMap,
