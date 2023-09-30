@@ -32,6 +32,25 @@ export const PreviewSQLModal: React.FC<PreviewSQLModalProps> = (props) => {
     }
   }, [isOpen]);
 
+  const downloadSQL = () => {
+    // Create a Blob containing the SQL content
+    const blob = new Blob([data], { type: "application/sql" });
+
+    // Create a URL for the Blob
+    const url = URL.createObjectURL(blob);
+
+    // Create a temporary anchor element
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "schema.sql";
+
+    // Trigger a click event on the anchor to initiate the download
+    a.click();
+
+    // Clean up by revoking the Blob URL
+    URL.revokeObjectURL(url);
+  };
+
   return (
     <BaseModal isOpen={isOpen} onClose={onClose}>
       <ModalHeader>SQL Preview</ModalHeader>
@@ -47,6 +66,9 @@ export const PreviewSQLModal: React.FC<PreviewSQLModalProps> = (props) => {
         {data}
       </ModalBody>
       <BaseFooter>
+        <Button variant={"primary"} onClick={downloadSQL}>
+          Download
+        </Button>
         <Button variant={"primary"} onClick={onClose}>
           Close
         </Button>
