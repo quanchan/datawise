@@ -1,4 +1,4 @@
-import { RuntimeGenOptions, RuntimeTypesId } from "@/types";
+import { RuntimeGenOptions, RuntimeTypesId, ValidColumnValue } from "@/types";
 import dayjs from "dayjs";
 
 
@@ -186,5 +186,33 @@ export class ValuesGenerator {
     return generatedDates;
   }
 
+  public static generateRandomValueFromGivenPool(
+    pool: ValidColumnValue,
+    genOptions: RuntimeGenOptions,
+    quantity: number,
+  ): ValidColumnValue {
+    const { unique } = genOptions;
+    const generatedValues: ValidColumnValue = [];
 
+    quantity = unique ? Math.min(quantity, pool.length) : quantity;
+    
+    if (unique && pool.length == quantity) {
+      // shuffle the pool
+      for (let i = pool.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [pool[i], pool[j]] = [pool[j], pool[i]];
+      }
+      return pool;
+    }
+
+    for (let i = 0; i < quantity; i++) {
+      const randomValue = pool[Math.floor(Math.random() * pool.length)];
+      if (unique && generatedValues.includes(randomValue) && pool.length > quantity) {
+        i--; // Retry if the value already exists
+        continue;
+      }
+      generatedValues.push(randomValue);
+    }
+    return generatedValues;
+  }
 }

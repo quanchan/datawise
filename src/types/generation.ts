@@ -4,6 +4,7 @@ import { ColumnMeta } from "./type"
 
 export type ValidColumnValue = string[]
 export type ValidTableValuesMap = Record<string, ValidColumnValue>
+export type AllTablesValuesCache = Record<string, ValidTableValuesMap>
 export type GenerationParams = {
   genOptions: RuntimeGenOptions,
   columnMeta: ColumnMeta,
@@ -21,3 +22,15 @@ export type ParsedTableConstraint = {
   referencedColumns?: string[],
   condition?: string,
 }
+
+export type ParsedFKColumn = {
+  refTable: string,
+  refColumn: string,
+  typeWithArgs: string,
+  group: number,
+  isStandalone: boolean,
+  systemType: string,
+}
+
+export type ParsedFKColumnMap = Record<string, ParsedFKColumn>
+export type TablesParsedFKColumnsMap = Record<string, ParsedFKColumnMap>

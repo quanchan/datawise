@@ -12,6 +12,8 @@ import {
   EntitiesValues,
   GenerationParams,
   ValidValue,
+  AllTablesValuesCache,
+  ParsedFKColumnMap,
 } from "@/types";
 import { TypeProvider } from "./TypeProvider";
 import db from "@/db";
@@ -19,7 +21,9 @@ import { ValuesGenerator } from "./ValuesGenerator";
 
 export class ValuesProvider {
   public static async getValidTableValues(
-    table: TableOptions
+    table: TableOptions,
+    valuesCache: AllTablesValuesCache,
+    parsedFKColumnMap: ParsedFKColumnMap
   ): Promise<ValidTableValuesMap> {
     const { fields, rowQuantity } = table;
     const tableValues: ValidTableValuesMap = {};
@@ -38,7 +42,32 @@ export class ValuesProvider {
           runtimeGenOptions,
           rowQuantity
         );
-      } else {
+      } else if (TypeProvider.isForeignKey(type)) {
+        const parsedFKColumn = parsedFKColumnMap[name];
+        const isStandalone = parsedFKColumn.isStandalone
+        if (isStandalone) {
+          const { refTable, refColumn } = parsedFKColumn;
+          const refTableValues = valuesCache[refTable];
+          if (refTableValues) {
+            const valuePool = refTableValues[refColumn];
+            if (values) {
+              values = ValuesGenerator.generateRandomValueFromGivenPool(
+                valuePool,
+                runtimeGenOptions,
+                rowQuantity
+              );
+            } else {
+              throw new Error(`Column ${refColumn} not found in table ${refTable}`);
+            }
+          } else {
+            throw new Error(`Table ${refTable} not found`);
+          }
+        } else {
+          // Temporary assigned to empty array and will be filled as group later
+          values = [];
+        }
+      } 
+      else {
         const columnMeta = await TypeProvider.getColumnMetaById(type);
         if (columnMeta) {
           switch (genOptions.withEntity) {

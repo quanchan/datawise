@@ -1,9 +1,9 @@
 import db from "@/db";
-import { ColumnMeta, CustomType, RuntimeTypesId, Type, AllowedGenOptionsMap } from "@/types";
+import { ColumnMeta, CustomType, RuntimeTypesId, Type, AllowedGenOptionsMap, SpecialTypesId } from "@/types";
 import { column_meta as cm, entity_meta as em } from "@/db/schema";
 
 export class TypeProvider {
-  public static runtimeTypes: Type[] = [
+  private static runtimeTypes: Type[] = [
     {
       id: RuntimeTypesId.int,
       display_name: "Random Integer",
@@ -71,8 +71,28 @@ export class TypeProvider {
     },
   ];
 
+  public static foreignKey = 
+    {
+      id: SpecialTypesId.foreignKey,
+      display_name: "Foreign Key",
+      description: "A placeholder type so you can write your own Foreign Key Constraint using this field in the Constraint Editor.",
+      example: "",
+      data_type: "foreignKey",
+      gen_opts_name: "foreignKey",
+      column_name: "",
+      entity_display_name: "",
+      entity_meta_table: "",
+      standalone: true,
+      custom: false,
+    }
+  ;
+
   public static isRuntimeTypeId(typeid: string): boolean {
     return Object.values(RuntimeTypesId).includes(typeid as RuntimeTypesId);
+  }
+
+  public static isForeignKey(typeid: string): boolean {
+    return typeid === SpecialTypesId.foreignKey;
   }
 
   private static addGenOptsToType(type?: Type): Type | undefined {
@@ -103,7 +123,7 @@ export class TypeProvider {
     JOIN ${em.n} 
     ON ${cm.n_entity_meta_table} = ${em.n_table_name};
     `);
-    const allTypes = [...types, ...this.runtimeTypes];
+    const allTypes = [...types, ...this.runtimeTypes, this.foreignKey];
     return allTypes.map((type: Type) => this.addGenOptsToType(type) as Type);
   }
 
@@ -112,7 +132,7 @@ export class TypeProvider {
       return undefined;
     }
     try {
-      let type = this.runtimeTypes.find((type) => type.id === id);
+      let type = [...this.runtimeTypes, this.foreignKey].find((type) => type.id === id);
       if (!type) {
         const types = await db.query<Type[]>(`
         SELECT 
@@ -223,7 +243,7 @@ export class TypeProvider {
     if (!id) {
       return undefined;
     }
-    let type = this.runtimeTypes.find((type) => type.id === id);
+    let type = [...this.runtimeTypes, this.foreignKey].find((type) => type.id === id);
     if (type) {
       return this.convertTypeToColumnMeta(type);
     }

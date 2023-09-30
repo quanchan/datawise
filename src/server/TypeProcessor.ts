@@ -34,6 +34,7 @@ export class TypeProcessor {
     this._args = a;
   }
 
+  // Map our arbitrary type to an actual SQL type of the given format
   public getSQLType(format: Format) {
     switch (format) {
       case Format.MySQL:
@@ -45,14 +46,22 @@ export class TypeProcessor {
 
   private _getMySQLType(): string {
     const tm = MySQLTypeMap;
-    return tm[this._type as keyof TypeMap].toUpperCase();
+    const raw = tm[this._type as keyof TypeMap];
+    if (!raw) {
+      throw new Error(`Invalid type ${this._type}`);
+    }
+    return raw.toUpperCase();
   }
 
   private _getOracleSQLType(): string {
     const tm = OracleSQLTypeMap;
-    return tm[this._type as keyof TypeMap].toUpperCase();
-  }
+    const raw = tm[this._type as keyof TypeMap];
+    if (!raw) {
+      throw new Error(`Invalid type ${this._type}`);
+    }
+    return raw.toUpperCase();  }
 
+  // Static method to make the type presentable
   public static getDisplayType(type: string, args: string[]): string {
     type = type.toUpperCase();
     if (args.length > 0) {
