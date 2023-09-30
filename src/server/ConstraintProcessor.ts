@@ -3,7 +3,7 @@ import { ConstraintType, ParsedTableConstraint, TableConstraint } from "@/types"
 export class ConstraintProcessor {
   private static parse(input: string): ParsedTableConstraint | undefined {
     // Lowercase and remove extra whitespace
-    input.toLowerCase().replace(/\s+/g, ' ');
+    input = input.toLowerCase().replace(/\s+/g, ' ');
     if (input.startsWith(ConstraintType.FK)) {
       return this.parseForeignKey(input);
     } else if (input.startsWith(ConstraintType.PK)) {
