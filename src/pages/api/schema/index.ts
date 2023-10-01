@@ -12,10 +12,10 @@ export default async function handler(
     let sql = ""
     switch (format) {
       case Format.MySQL:
-        sql = await MySQLGenerator.generateAllTables(tables);
+        sql = await MySQLGenerator.generateAllTables(tables, format);
         break;
       case Format.OracleSQL:
-        sql = await OracleSQLGenerator.generateAllTables(tables);
+        sql = await OracleSQLGenerator.generateAllTables(tables, format);
         break;
       }
     res.status(200).send(sql);

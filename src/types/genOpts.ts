@@ -1,9 +1,9 @@
 export type GenOptions = {
   actualType: string,
   maxLength?: number,
-  minNumber?: number,
+  minNumber?: number | string,
   minNumberInclusive?: boolean,
-  maxNumber?: number,
+  maxNumber?: number | string,
   maxNumberInclusive?: boolean,
   precision?: number,
   scale?: number,
@@ -36,6 +36,7 @@ export const AllowedGenOptionsMap: AllowedGenOptions = {
   randomDate: ["actualType", "minDate", "maxDate", "minDateInclusive", "maxDateInclusive","nullPercent"],
   randomDateTime: ["actualType", "minDate", "maxDate", "minDateInclusive", "maxDateInclusive", "nullPercent", "time"],
   randomPhoneFax: ["actualType", "phoneFaxFormat", "nullPercent"],
+  foreignKey: ["nullPercent"],
 } 
 
 export enum WordCasing {

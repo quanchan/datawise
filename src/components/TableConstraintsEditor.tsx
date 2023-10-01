@@ -107,7 +107,7 @@ export const TableConstraintsEditor: React.FC<TableConstraintsEditorProps> = (
                   onClick={() => {
                     push({
                       ...defaultTableConstraints,
-                      name: `Constraint_${data.length + 1}`,
+                      name: `constraint_${data.length + 1}`,
                     });
                   }}
                 >

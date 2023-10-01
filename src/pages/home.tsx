@@ -16,13 +16,7 @@ import {
 import React from "react";
 import { TableFieldsEditor } from "@/components/TableFieldsEditor";
 import { TableConstraintsEditor } from "@/components/TableConstraintsEditor";
-import {
-  ArrayHelpers,
-  FieldArray,
-  Form,
-  Formik,
-  FormikTouched,
-} from "formik";
+import { ArrayHelpers, FieldArray, Form, Formik } from "formik";
 import {
   Field,
   Format,
@@ -146,6 +140,7 @@ const validationSchema = yup.object().shape({
               type: yup.string().required("Type is required"),
             })
           )
+          // @ts-ignore
           .unique("name", "Field name needs to be unique")
           .uniquePropertyValue(
             "constraints",
@@ -170,9 +165,11 @@ const validationSchema = yup.object().shape({
               condition: yup.string().required("Condition is required"),
             })
           )
+          // @ts-ignore
           .unique("name", "Constraint name needs to be unique"),
       })
     )
+    // @ts-ignore
     .unique("name", "Table name needs to be unique"),
 });
 
@@ -252,18 +249,13 @@ export default function Home() {
     <Formik
       initialValues={initialValues}
       onSubmit={async (values) => {
-        alert(JSON.stringify(values));
-        console.log(values);
+        onOpenModal("preview");
       }}
       validationSchema={validationSchema}
     >
       {({
         values,
         handleChange,
-        validateForm,
-        setTouched,
-        touched,
-        errors,
       }) => (
         <>
           {/* {console.log("error", errors)}
@@ -299,7 +291,7 @@ export default function Home() {
                               onClick={() => {
                                 push({
                                   ...defaultTableOptions,
-                                  name: `Table_${values.tables.length + 1}`,
+                                  name: `table_${values.tables.length + 1}`,
                                 });
                               }}
                             >
@@ -362,29 +354,8 @@ export default function Home() {
                   <option value={Format.MySQL}>{Format.MySQL}</option>
                   <option value={Format.OracleSQL}>{Format.OracleSQL}</option>
                 </Select>
-                <Button
-                  minW={"75px"}
-                  size="sm"
-                  variant={"outline"}
-                  fontSize={"xs"}
-                  fontWeight={"bold"}
-                  onClick={async () => {
-                    const errors = await validateForm();
-                    const possibleErrors = Object.keys(errors);
-                    if (possibleErrors.length === 0) {
-                      onOpenModal("preview");
-                    } else {
-                      setTouched({
-                        ...touched,
-                        ...errors,
-                      } as FormikTouched<Tables>);
-                    }
-                  }}
-                >
-                  Preview
-                </Button>
                 <Button variant={"primary"} type="submit" fontWeight={"bold"}>
-                  Download
+                  Preview
                 </Button>
               </BaseFooter>
             </VStack>

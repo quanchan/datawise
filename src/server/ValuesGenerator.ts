@@ -1,4 +1,4 @@
-import { RuntimeGenOptions, RuntimeTypesId } from "@/types";
+import { RuntimeGenOptions, RuntimeTypesId, ValidColumnValue } from "@/types";
 import dayjs from "dayjs";
 
 
@@ -8,9 +8,11 @@ export class ValuesGenerator {
     quantity: number
   ): string[] {
     let { minNumber, maxNumber, precision } = genOptions;
+    precision = precision ? +precision! : 5;
+    minNumber = minNumber !== "" ? +minNumber! : -(10 ** (precision!) - 1);
+    maxNumber = maxNumber !== "" ? +maxNumber! : 10 ** (precision!) - 1;
+    
     const randomInts: string[] = [];
-    minNumber = minNumber || -(10 ** (precision!) - 1);
-    maxNumber = maxNumber || 10 ** (precision!) - 1;
     
     for (let i = 0; i < quantity; i++) {
       const randomInt =
@@ -29,9 +31,12 @@ export class ValuesGenerator {
     quantity: number
   ): string[] {
     let { minNumber, maxNumber, scale, precision } = genOptions;
+    precision = precision ? +precision! : 5;
+    scale = scale ? +scale! : 2;
+    minNumber = minNumber !== "" ? +minNumber! : -(10 ** (precision - scale) - 1);
+    maxNumber = maxNumber !== "" ? +maxNumber! : 10 ** (precision - scale) - 1;
+    
     const randomDecimals: string[] = [];
-    minNumber = minNumber || -(10 ** (precision! - scale!) - 1);
-    maxNumber = maxNumber || 10 ** (precision! - scale!) - 1;
 
     for (let i = 0; i < quantity; i++) {
       const randomDecimal = (
@@ -181,5 +186,48 @@ export class ValuesGenerator {
     return generatedDates;
   }
 
+  public static generateRandomValueFromGivenPool(
+    pool: ValidColumnValue,
+    genOptions: RuntimeGenOptions,
+    quantity: number,
+  ): ValidColumnValue {
+    const { unique } = genOptions;
+    const generatedValues: ValidColumnValue = [];
+    const indices = this.generateRandomIndices(pool.length, quantity, unique);
+    for (const index of indices) {
+      generatedValues.push(pool[index]);
+    }
+    return generatedValues;
+  }
 
+  public static generateRandomIndices(
+    range: number,
+    quantity: number,
+    unique: boolean
+  ): number[] {
+    const generatedIndexes: number[] = [];
+
+
+    quantity = unique ? Math.min(quantity, range) : quantity;
+    // Create an array from 0 to range - 1
+    const pool = Array.from(Array(range).keys());
+    if (unique && range == quantity) {
+      // shuffle the pool
+      for (let i = pool.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [pool[i], pool[j]] = [pool[j], pool[i]];
+      }
+      return pool;
+    }
+
+    for (let i = 0; i < quantity; i++) {
+      const randomIndex = Math.floor(Math.random() * range);
+      if (unique && generatedIndexes.includes(randomIndex)) {
+        i--; // Retry if the index already exists
+        continue;
+      }
+      generatedIndexes.push(randomIndex);
+    }
+    return generatedIndexes;
+  }
 }

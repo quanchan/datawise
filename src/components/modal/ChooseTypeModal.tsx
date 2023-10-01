@@ -29,7 +29,7 @@ import axios from "axios";
 import { useQuery } from "@tanstack/react-query";
 import { AiOutlinePlusCircle } from "react-icons/ai";
 
-export type ChooseTypeModalProps = BaseModalProps & {
+export type ChooseTypeModalProps = Omit<BaseModalProps, 'onClose'> & {
   onClose: (selected: string) => void;
   tableIndex: number;
   fieldIndex: number;

@@ -449,7 +449,6 @@ export const DatePicker: FC<DatePickerProps> = ({
       if (value) return;
       onChange(selectedTimeObj.format(format), selectedTimeObj);
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedTimeObj]);
 
   return (

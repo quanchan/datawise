@@ -137,7 +137,7 @@ export const TableFieldsEditor: React.FC<TableFieldsEditorProps> = (props) => {
                   onClick={() => {
                     push({
                       ...defaultField,
-                      name: `Field_${data.fields.length + 1}`,
+                      name: `field_${data.fields.length + 1}`,
                     });
                   }}
                 >

@@ -43,15 +43,15 @@ export const GenOptionsModal: React.FC<GenOptionsModalProps> = (props) => {
       );
       setFieldValue(
         namePrefix + "maxLength",
-        genOptions?.maxLength || typeProcessor.args[0]
+        genOptions?.maxLength || typeProcessor.args[0] 
       );
       setFieldValue(
         namePrefix + "precision",
-        genOptions?.precision || typeProcessor.args[0]
+        genOptions?.precision || typeProcessor.args[0] || 5
       );
       setFieldValue(
         namePrefix + "scale",
-        genOptions?.scale || typeProcessor.args[1]
+        genOptions?.scale || typeProcessor.args[1] || 2
       );
       setFieldValue(namePrefix + "excluded", genOptions?.excluded || []);
       setFieldValue(namePrefix + "nullPercent", genOptions?.nullPercent || 0);
@@ -85,6 +85,7 @@ export const GenOptionsModal: React.FC<GenOptionsModalProps> = (props) => {
       );
       setFieldValue(namePrefix + "withEntity", genOptions?.withEntity || "n");
     }
+  // 
   }, [type, gen_opts]);
 
   if (!fieldData) return <></>;
