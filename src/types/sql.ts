@@ -8,6 +8,16 @@ export type TypeMap = {
   text: string;
 }
 
+export const NeedQuoteWrap: Record<keyof TypeMap, boolean> = {
+  number: false,
+  datetime: true,
+  timestamp: true,
+  boolean: false,
+  char: true,
+  varchar: true,
+  text: true,
+}
+
 export const MySQLTypeMap: TypeMap = {
   number: "DECIMAL",
   datetime: "DATETIME",

@@ -1,12 +1,12 @@
 import { Format } from "@/types";
-import { MySQLTypeMap, OracleSQLTypeMap, TypeMap } from "@/types/sql";
+import { MySQLTypeMap, NeedQuoteWrap, OracleSQLTypeMap, TypeMap } from "@/types/sql";
 export class TypeProcessor {
-  private _type: string;
+  private _type: keyof TypeMap;
   private _args: string[];
   constructor(type: string = "") {
     type = type.replace("(", ",").replace(")", "");
     const [typeString, ...args] = type.split(",");
-    this._type = typeString;
+    this._type = typeString as keyof TypeMap;
     this._args = args;
   }
 
@@ -18,11 +18,15 @@ export class TypeProcessor {
     return this._type;
   }
 
+  public get needQuoteWrap(): boolean {
+    return NeedQuoteWrap[this._type as keyof TypeMap];
+  }
+
   public get args(): string[] {
     return this._args;
   }
 
-  public set type(t: string) {
+  public set type(t: keyof TypeMap) {
     this._type = t;
   }
 
@@ -30,6 +34,7 @@ export class TypeProcessor {
     this._args = a;
   }
 
+  // Map our arbitrary type to an actual SQL type of the given format
   public getSQLType(format: Format) {
     switch (format) {
       case Format.MySQL:
@@ -41,14 +46,22 @@ export class TypeProcessor {
 
   private _getMySQLType(): string {
     const tm = MySQLTypeMap;
-    return tm[this._type as keyof TypeMap].toUpperCase();
+    const raw = tm[this._type as keyof TypeMap];
+    if (!raw) {
+      throw new Error(`Invalid type ${this._type}`);
+    }
+    return raw.toUpperCase();
   }
 
   private _getOracleSQLType(): string {
     const tm = OracleSQLTypeMap;
-    return tm[this._type as keyof TypeMap].toUpperCase();
-  }
+    const raw = tm[this._type as keyof TypeMap];
+    if (!raw) {
+      throw new Error(`Invalid type ${this._type}`);
+    }
+    return raw.toUpperCase();  }
 
+  // Static method to make the type presentable
   public static getDisplayType(type: string, args: string[]): string {
     type = type.toUpperCase();
     if (args.length > 0) {

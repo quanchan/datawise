@@ -16,7 +16,7 @@ export type Field = {
 };
 
 export const defaultField: Field = {
-  name: "Field_1",
+  name: "field_1",
   type: "",
   defaultValue: "",
   constraints: {
@@ -27,13 +27,13 @@ export const defaultField: Field = {
   genOptions: defaultGenOptions
 };
 
-export type TableConstraints = {
+export type TableConstraint = {
   name: string;
   condition: string;
 };
 
-export const defaultTableConstraints: TableConstraints = {
-  name: "Constraint_1",
+export const defaultTableConstraints: TableConstraint = {
+  name: "constraint_1",
   condition: "",
 };
 
@@ -41,11 +41,11 @@ export type TableOptions = {
   name: string;
   rowQuantity: number;
   fields: Field[];
-  constraints: TableConstraints[];
+  constraints: TableConstraint[];
 };
 
 export const defaultTableOptions: TableOptions = {
-  name: "Table_1",
+  name: "table_1",
   rowQuantity: 50,
   fields: [{ ...defaultField }],
   constraints: [{ ...defaultTableConstraints }],

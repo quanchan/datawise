@@ -8,6 +8,10 @@ export enum RuntimeTypesId {
   phonefax = "phonefax",
 }
 
+export enum SpecialTypesId {
+  foreignKey = "foreignKey",
+}
+
 export type Type = {
   gen_opts?: (keyof GenOptions)[],
   entity_display_name: string,
