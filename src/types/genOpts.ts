@@ -24,6 +24,7 @@ export type GenOptions = {
 
 export const defaultGenOptions: GenOptions = {
   actualType: "",
+  excluded: [],
 }
 
 export type AllowedGenOptions = Record<string, (keyof GenOptions)[]>;
