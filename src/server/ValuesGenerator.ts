@@ -222,11 +222,12 @@ export class ValuesGenerator {
   public static generateRandomValueFromGivenPool(
     pool: ValidColumnValue,
     genOptions: RuntimeGenOptions,
-    quantity: number
+    quantity: number,
+    canMapToItself: boolean,
   ): ValidColumnValue {
     const { unique } = genOptions;
     const generatedValues: ValidColumnValue = [];
-    const indices = this.generateRandomIndices(pool.length, quantity, unique);
+    const indices = this.generateRandomIndices(pool.length, quantity, unique, canMapToItself);
     for (const index of indices) {
       generatedValues.push(pool[index]);
     }
@@ -236,7 +237,8 @@ export class ValuesGenerator {
   public static generateRandomIndices(
     range: number,
     quantity: number,
-    unique: boolean
+    unique: boolean,
+    canMapToItself: boolean,
   ): number[] {
     const generatedIndexes: number[] = [];
 
@@ -253,7 +255,14 @@ export class ValuesGenerator {
     }
 
     for (let i = 0; i < quantity; i++) {
-      const randomIndex = Math.floor(Math.random() * range);
+      let randomIndex;
+      if (canMapToItself) {
+        randomIndex = Math.floor(Math.random() * i);
+        generatedIndexes.push(randomIndex);
+        continue;
+      } else {
+        randomIndex = Math.floor(Math.random() * range);
+      }
       if (unique && generatedIndexes.includes(randomIndex)) {
         i--; // Retry if the index already exists
         continue;

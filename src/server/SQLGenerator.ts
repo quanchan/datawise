@@ -360,7 +360,7 @@ class SQLGenerator {
       );
       const referencedTables = foreignKeyConstraints
         .map((constraint) => constraint.referencedTable)
-        .filter((val) => val !== undefined);
+        .filter((val) => val !== undefined && val !== table.name);
       dependencyMap[table.name] = referencedTables as string[];
     }
 

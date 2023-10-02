@@ -51,7 +51,11 @@ export class ValuesProvider {
       } else if (TypeProvider.isForeignKey(type)) {
         const parsedFKColumn = parsedFKColumnMap[name];
         const { refTable, refColumn, isStandalone, group } = parsedFKColumn;
-        const refTableValues = valuesCache[refTable];
+        let refTableValues = valuesCache[refTable];
+        const refItself = refTable === table.name;
+        if (refItself) {
+          refTableValues = tableValues;
+        }
         if (refTableValues) {
           const valuePool = refTableValues[refColumn];
           if (valuePool) {
@@ -59,7 +63,8 @@ export class ValuesProvider {
               values = ValuesGenerator.generateRandomValueFromGivenPool(
                 valuePool,
                 runtimeGenOptions,
-                rowQuantity
+                rowQuantity,
+                refItself
               );
             } else {
               // If the foreign key is not standalone, it means that it is a part of a multi-column foreign key
@@ -344,12 +349,12 @@ export class ValuesProvider {
     rowQuantity: number,
     uniqueGroups: string[][]
   ) {
-    // TODO:low priority: somehow implement single column uniqueness
     for (const group in fkMap) {
       const colsInFK = fkMap[group];
       const firstCol = colsInFK[0];
       const length = tableValues[firstCol].length;
       let isUnique = false;
+      // Check to see if this FK is required to be unique by any unique constraint
       for (const uniqueGroup of uniqueGroups) {
         if (uniqueGroup.length != colsInFK.length) {
           continue;
@@ -362,10 +367,13 @@ export class ValuesProvider {
           break;
         }
       }
+      // Since we temporary stored all the values pool in fkMap, we can just generate random indices,
+      // pick fk values from those pools and replace the pools with the actual values
       const indices = ValuesGenerator.generateRandomIndices(
         length,
         rowQuantity,
-        isUnique
+        isUnique,
+        false
       );
       for (const col of fkMap[group]) {
         const values = [];
