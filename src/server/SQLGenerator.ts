@@ -305,7 +305,7 @@ class SQLGenerator {
         throw new Error(`Referenced table ${refTableName} not found`);
       }
       const referencedColumns = referencedTable.fields.filter((field) =>
-        refColumnNames!.includes(field.name.toLowerCase())
+        refColumnNames!.includes(field.name)
       );
       if (referencedColumns.length !== refColumnNames!.length) {
         throw new Error(`Invalid referenced columns`);
