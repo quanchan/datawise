@@ -29,12 +29,14 @@ export const CreateTypeModal: React.FC<CreateTypeModalProps> = (props) => {
 
   useEffect(() => {
     setFieldValue("newType", defaultCustomType);
-  }, []);
+  }, [isOpen]);
 
   const namePrefix = `newType.`;
 
-  const newTypeMutation = useMutation(() =>
-    axios.post("/api/types/new", values.newType).then((res) => res.data)
+  const newTypeMutation = useMutation(async () =>{
+    const res = await axios.post("/api/types/new", values.newType)
+    return res.data
+  }
   );
 
   const queryClient = useQueryClient();
