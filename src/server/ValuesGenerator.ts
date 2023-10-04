@@ -16,8 +16,8 @@ export class ValuesGenerator {
       primaryKey,
     } = genOptions;
     precision = precision ? +precision! : 5;
-    minNumber = minNumber !== "" ? +minNumber! : -(10 ** precision! - 1);
-    maxNumber = maxNumber !== "" ? +maxNumber! : 10 ** precision! - 1;
+    minNumber = minNumber !== undefined ? +minNumber! : -(10 ** precision! - 1);
+    maxNumber = maxNumber !== undefined ? +maxNumber! : 10 ** precision! - 1;
     minNumber = minNumberInclusive ? minNumber : minNumber + 1;
     maxNumber = maxNumberInclusive ? maxNumber : maxNumber - 1;
     const randomInts: string[] = [];
@@ -51,8 +51,8 @@ export class ValuesGenerator {
     precision = precision ? +precision! : 5;
     scale = scale ? +scale! : 2;
     minNumber =
-      minNumber !== "" ? +minNumber! : -(10 ** (precision - scale) - 1);
-    maxNumber = maxNumber !== "" ? +maxNumber! : 10 ** (precision - scale) - 1;
+      minNumber !== undefined ? +minNumber! : -(10 ** (precision - scale) - 1);
+    maxNumber = maxNumber !== undefined ? +maxNumber! : 10 ** (precision - scale) - 1;
     minNumber = minNumberInclusive
       ? minNumber
       : minNumber + 1 / 10 ** scale;

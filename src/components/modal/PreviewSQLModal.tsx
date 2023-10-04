@@ -28,6 +28,7 @@ export const PreviewSQLModal: React.FC<PreviewSQLModalProps> = (props) => {
 
   useEffect(() => {
     if (isOpen) {
+      console.log("form values", values)
       previewMutation.mutateAsync();
     }
   }, [isOpen]);

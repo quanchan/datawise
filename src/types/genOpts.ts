@@ -1,9 +1,9 @@
 export type GenOptions = {
   actualType: string,
   maxLength?: number,
-  minNumber?: number | string,
+  minNumber?: number,
   minNumberInclusive?: boolean,
-  maxNumber?: number | string,
+  maxNumber?: number,
   maxNumberInclusive?: boolean,
   precision?: number,
   scale?: number,

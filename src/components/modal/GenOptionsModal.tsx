@@ -61,8 +61,8 @@ export const GenOptionsModal: React.FC<GenOptionsModalProps> = (props) => {
       );
       setFieldValue(namePrefix + "minDate", genOptions?.minDate || "");
       setFieldValue(namePrefix + "maxDate", genOptions?.maxDate || "");
-      setFieldValue(namePrefix + "minNumber", genOptions?.minNumber || "");
-      setFieldValue(namePrefix + "maxNumber", genOptions?.maxNumber || "");
+      setFieldValue(namePrefix + "minNumber", genOptions?.minNumber);
+      setFieldValue(namePrefix + "maxNumber", genOptions?.maxNumber);
       setFieldValue(
         namePrefix + "minDateInclusive",
         genOptions?.minDateInclusive || false
