@@ -152,7 +152,7 @@ const validationSchema = yup.object().shape({
                   .number()
                   .optional()
                   .positive("Scale must be a positive number"),
-                nullPercentage: yup
+                  nullPercent: yup
                   .number()
                   .optional()
                   .min(0, "Null percentage min value is 0")
@@ -333,7 +333,7 @@ export default function Home() {
     >
       {({ values, handleChange, errors }) => (
         <>
-          {/* {console.log("error", errors)} */}
+          {console.log("error", errors)}
           {/* {console.log("values", values)} */}
           <Form>
             <VStack
