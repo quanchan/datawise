@@ -18,7 +18,6 @@ export type GenOptions = {
   nullPercent?: number,
   wordCasing?: string,
   stringFormat?: string,
-  distribution?: string,
   time?: boolean,
 }
 
@@ -32,8 +31,8 @@ export type AllowedGenOptions = Record<string, (keyof GenOptions)[]>;
 export const AllowedGenOptionsMap: AllowedGenOptions = {
   entityVarchar: ["actualType", "excluded", "wordCasing", "maxLength", "nullPercent", "withEntity"],
   entityNumber: ["actualType", "excluded", "minNumber", "maxNumber", "minNumberInclusive", "maxNumberInclusive", "nullPercent", "precision", "scale", "withEntity"],
-  randomInt: ["actualType", "minNumber", "maxNumber", "nullPercent", "precision", "minNumber", "maxNumber", "minNumberInclusive", "maxNumberInclusive", "distribution"],
-  randomDecimal: ["actualType", "minNumber", "maxNumber", "nullPercent", "precision", "scale", "minNumber", "maxNumber", "minNumberInclusive", "maxNumberInclusive", "distribution"],
+  randomInt: ["actualType", "minNumber", "maxNumber", "nullPercent", "precision", "minNumber", "maxNumber", "minNumberInclusive", "maxNumberInclusive"],
+  randomDecimal: ["actualType", "minNumber", "maxNumber", "nullPercent", "precision", "scale", "minNumber", "maxNumber", "minNumberInclusive", "maxNumberInclusive"],
   randomDate: ["actualType", "minDate", "maxDate", "minDateInclusive", "maxDateInclusive","nullPercent"],
   randomDateTime: ["actualType", "minDate", "maxDate", "minDateInclusive", "maxDateInclusive", "nullPercent", "time"],
   randomPhoneFax: ["actualType", "phoneFaxFormat", "nullPercent"],

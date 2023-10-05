@@ -259,6 +259,10 @@ class SQLGenerator {
       format,
       fkActualType
     );
+    let systemType =
+    tablesForeignKeyMap[tableName]?.[name]?.systemType ||
+    genOptions.actualType; 
+    const needQuoteWrap = new TypeProcessor(systemType).needQuoteWrap;
     const fname = alternativeColumnName ? alternativeColumnName : name;
     sql += `  ${fname} ${actualType}`;
     if (!notNull) {
@@ -271,7 +275,8 @@ class SQLGenerator {
     }
     if (!isForeignKey) {
       if (defaultValue) {
-        sql += ` ${kw.DEFAULT} ${defaultValue}`;
+        const defaultValueQuoted = needQuoteWrap ? `'${defaultValue}'` : defaultValue;
+        sql += ` ${kw.DEFAULT} ${defaultValueQuoted}`;
       }
       if (primaryKey) {
         sql += ` ${kw.PRIMARY_KEY}`;

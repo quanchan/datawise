@@ -4,10 +4,8 @@ import { Tables } from "@/types";
 import axios from "axios";
 import { useMutation } from "@tanstack/react-query";
 import {
-  Box,
   Button,
   ModalBody,
-  ModalFooter,
   ModalHeader,
 } from "@chakra-ui/react";
 import React, { useEffect } from "react";
