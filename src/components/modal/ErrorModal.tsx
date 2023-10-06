@@ -2,7 +2,7 @@ import { useFormikContext } from "formik";
 import { BaseModal, BaseModalProps } from "./BaseModal";
 import { Tables } from "@/types";
 import { Button, ModalBody, ModalFooter, ModalHeader } from "@chakra-ui/react";
-import React, { useEffect } from "react";
+import React from "react";
 
 export type ErrorModalProps = {} & BaseModalProps;
 
