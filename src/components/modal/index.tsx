@@ -6,3 +6,7 @@ export * from "./ChooseTypeFooter";
 export * from "./GenOptionsModalFooter";
 export * from "./BaseModal";
 export * from "./PreviewSQLModal";
+export * from "./ErrorModal";
+export * from "./ConfirmDeleteModal";
+export * from "./VisualiserModal";
+export * from "./CreateTypeModal";

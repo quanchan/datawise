@@ -31,13 +31,14 @@ import {
   ChooseTypeModal,
   ConstraintModal,
   GenOptionsModal,
+  ErrorModal,
+  PreviewSQLModal,
+  ConfirmDeleteModal,
+  VisualiserModal,
+  CreateTypeModal,
 } from "@/components/modal";
-import { VisualiserModal } from "@/components/modal/VisualiserModal";
-import { ConfirmDeleteModal } from "@/components/modal/ConfirmDeleteModal";
-import { PreviewSQLModal } from "@/components/modal/PreviewSQLModal";
 import { BaseFooter } from "@/components/BaseFooter";
 import * as yup from "yup";
-import { CreateTypeModal } from "@/components/modal/CreateTypeModal";
 import dayjs from "dayjs";
 
 const initialValues: Tables = {
@@ -152,7 +153,7 @@ const validationSchema = yup.object().shape({
                   .number()
                   .optional()
                   .positive("Scale must be a positive number"),
-                  nullPercent: yup
+                nullPercent: yup
                   .number()
                   .optional()
                   .min(0, "Null percentage min value is 0")
@@ -211,13 +212,14 @@ const validationSchema = yup.object().shape({
                         !value ||
                         !this.parent.minDate ||
                         this.parent.minDate === value ||
-                       dayjs(this.parent.minDate).isBefore(dayjs(value))
+                        dayjs(this.parent.minDate).isBefore(dayjs(value))
                       );
                     }
                   ),
               }),
             })
           )
+          .min(1, "At least one field is required")
           // @ts-ignore
           .unique("name", "Field name needs to be unique")
           .uniquePropertyValue(
@@ -259,6 +261,7 @@ type ModalOpenStates = {
   visualiser: boolean;
   preview: boolean;
   createType: boolean;
+  error: boolean;
 };
 
 export default function Home() {
@@ -271,6 +274,7 @@ export default function Home() {
     visualiser: false,
     preview: false,
     createType: false,
+    error: false,
   });
   const [currentFieldIndex, setCurrentFieldIndex] = React.useState<number>(0);
   const [currentConstraintIndex, setCurrentConstraintIndex] =
@@ -326,15 +330,13 @@ export default function Home() {
   return (
     <Formik
       initialValues={initialValues}
-      onSubmit={async (values) => {
+      onSubmit={async (_) => {
         onOpenModal("preview");
       }}
       validationSchema={validationSchema}
     >
       {({ values, handleChange, errors }) => (
         <>
-          {console.log("error", errors)}
-          {/* {console.log("values", values)} */}
           <Form>
             <VStack
               width={"100vw"}
@@ -429,7 +431,16 @@ export default function Home() {
                   <option value={Format.MySQL}>{Format.MySQL}</option>
                   <option value={Format.OracleSQL}>{Format.OracleSQL}</option>
                 </Select>
-                <Button variant={"primary"} type="submit" fontWeight={"bold"}>
+                <Button
+                  variant={"primary"}
+                  type="submit"
+                  fontWeight={"bold"}
+                  onClick={() => {
+                    if (Object.keys(errors).length !== 0) {
+                      onOpenModal("error");
+                    }
+                  }}
+                >
                   Preview
                 </Button>
               </BaseFooter>
@@ -485,6 +496,10 @@ export default function Home() {
               onOpenModal("chooseType");
               onCloseModal("createType");
             }}
+          />
+          <ErrorModal
+            isOpen={openModal.error}
+            onClose={() => onCloseModal("error")}
           />
         </>
       )}
