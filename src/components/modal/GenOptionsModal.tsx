@@ -83,6 +83,7 @@ export const GenOptionsModal: React.FC<GenOptionsModalProps> = (props) => {
         namePrefix + "wordCasing",
         genOptions?.wordCasing || WordCasing.original
       );
+      setFieldValue(namePrefix + "serial", genOptions?.serial || "n");
       setFieldValue(namePrefix + "withEntity", genOptions?.withEntity || "n");
     }
     //
@@ -133,6 +134,17 @@ export const GenOptionsModal: React.FC<GenOptionsModalProps> = (props) => {
                 label={"With Entity"}
                 styles={{ m: 2 }}
                 tooltip="Certain types are grouped together in a Domain Entity. They can be generated as their individual field or generate together with other fields in their entity so that the result is more consistent and meaningful."
+              />
+            )}
+            {gen_opts?.includes("serial") && (
+              <SelectInput
+                name={namePrefix + "serial"}
+                onChange={handleChange}
+                value={genOptions?.serial}
+                options={YesNoOptions}
+                label={"Serial"}
+                styles={{ m: 2 }}
+                tooltip="Numbers will be generated sequentially from the provided min number."
               />
             )}
             {gen_opts?.includes("maxLength") && (

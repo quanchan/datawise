@@ -14,6 +14,7 @@ export class ValuesGenerator {
       maxNumberInclusive,
       unique,
       primaryKey,
+      serial
     } = genOptions;
     precision = precision ? +precision! : 5;
     minNumber = minNumber !== undefined ? +minNumber! : -(10 ** precision! - 1);
@@ -21,7 +22,13 @@ export class ValuesGenerator {
     minNumber = minNumberInclusive ? minNumber : minNumber + 1;
     maxNumber = maxNumberInclusive ? maxNumber : maxNumber - 1;
     const randomInts: string[] = [];
-
+    if (serial) {
+      minNumber = minNumber || 0;
+      for (let i = 0; i < quantity; i++) {
+        randomInts.push("" + (minNumber + i));
+      }
+      return randomInts;
+    }
     for (let i = 0; i < quantity; i++) {
       const randomInt =
         Math.floor(Math.random() * (maxNumber - minNumber + 1)) + minNumber;

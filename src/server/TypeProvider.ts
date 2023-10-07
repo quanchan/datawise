@@ -7,7 +7,7 @@ export class TypeProvider {
     {
       id: RuntimeTypesId.int,
       display_name: "Random Integer",
-      description: "Random integer generated with user-defined options",
+      description: "Random integer generated with user-defined options. Can be used to generate serial primary keys.",
       example: "1, 2, 3, 4, 5",
       data_type: "number",
       gen_opts_name: "randomInt",
