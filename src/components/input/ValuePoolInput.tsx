@@ -52,11 +52,11 @@ export const ValuePoolInput: React.FC<ValuePoolInputProps> = (
   };
 
   const excludeAll = () => {
-    setIsExcluded(values?.map((v) => true) ?? []);
+    setFieldValue(name || "", [...values]);
   }
 
   const includeAll = () => {
-    setIsExcluded(values?.map((v) => false) ?? []);
+    setFieldValue(name || "", []);
   }
 
   return (
