@@ -25,12 +25,14 @@ export class ValuesProvider {
   public static async getValidTableValues(
     table: TableOptions,
     valuesCache: AllTablesValuesCache,
-    parsedFKColumnMap: ParsedFKColumnMap
+    parsedFKColumnMap: ParsedFKColumnMap,
+    uniqueGroups: string[][]
   ): Promise<ValidTableValuesMap> {
     const { fields, rowQuantity } = table;
-    const tableValues: ValidTableValuesMap = {};
+    let tableValues: ValidTableValuesMap = {};
     const entityMap: EntityMap = {};
-    const fkMap: FKMap = {}
+    const fkMap: FKMap = {};
+    const groupGeneratedTogether: string[][] = [];
     for (const field of fields) {
       const { type, genOptions, name, constraints } = field;
       let values: ValidColumnValue = [];
@@ -40,6 +42,7 @@ export class ValuesProvider {
       };
       field.genOptions = runtimeGenOptions;
       if (TypeProvider.isRuntimeTypeId(type)) {
+        groupGeneratedTogether.push([name]);
         values = ValuesGenerator.generateRuntimeValues(
           type as RuntimeTypesId,
           runtimeGenOptions,
@@ -48,7 +51,11 @@ export class ValuesProvider {
       } else if (TypeProvider.isForeignKey(type)) {
         const parsedFKColumn = parsedFKColumnMap[name];
         const { refTable, refColumn, isStandalone, group } = parsedFKColumn;
-        const refTableValues = valuesCache[refTable];
+        let refTableValues = valuesCache[refTable];
+        const refItself = refTable === table.name;
+        if (refItself) {
+          refTableValues = tableValues;
+        }
         if (refTableValues) {
           const valuePool = refTableValues[refColumn];
           if (valuePool) {
@@ -56,16 +63,17 @@ export class ValuesProvider {
               values = ValuesGenerator.generateRandomValueFromGivenPool(
                 valuePool,
                 runtimeGenOptions,
-                rowQuantity
+                rowQuantity,
+                refItself
               );
             } else {
               // If the foreign key is not standalone, it means that it is a part of a multi-column foreign key
               // and will need to be generated together with other columns
-              if(fkMap[group]) {
+              if (fkMap[group]) {
                 fkMap[group].push(name);
               } else {
-                fkMap[group] = [name]
-              };
+                fkMap[group] = [name];
+              }
               // Temporary store all available values in fkMap to filter later
               values = valuePool;
             }
@@ -78,11 +86,13 @@ export class ValuesProvider {
           throw new Error(`Table ${refTable} not found`);
         }
       } else {
-        // Normal column
+
         const columnMeta = await TypeProvider.getColumnMetaById(type);
         if (columnMeta) {
           switch (genOptions.withEntity) {
             case "n":
+              // Normal column
+              groupGeneratedTogether.push([name]);
               values = await this.getValidColumnValuesWithoutEntity(
                 columnMeta,
                 runtimeGenOptions,
@@ -120,24 +130,253 @@ export class ValuesProvider {
       tableValues
     );
 
-    ValuesProvider.getValidMultiColumnFKValues(tableValues, fkMap, rowQuantity);
+    ValuesProvider.getValidMultiColumnFKValues(
+      tableValues,
+      fkMap,
+      rowQuantity,
+      uniqueGroups
+    );
 
+    // Finish groupGeneratedTogether array to store all the columns that are generated together
+    for (const group in entityMap) {
+      const togetherCols = entityMap[group].map((param) => param.fieldName);
+      groupGeneratedTogether.push(togetherCols);
+    }
+
+    for (const fk in fkMap) {
+      const togetherCols = fkMap[fk];
+      groupGeneratedTogether.push(togetherCols);
+    }
+
+    let minLen = Math.min(
+      ...Object.values(tableValues).map((f) => f.length),
+      rowQuantity
+    );
+
+    if (uniqueGroups.length != 0) {
+      // Clone all the keys in tableValues to uniqueTableValues, but with empty arrays
+      const uniqueTableValues: ValidTableValuesMap = Object.keys(
+        tableValues
+      ).reduce((acc, key) => {
+        acc[key] = [];
+        return acc;
+      }, {} as ValidTableValuesMap);
+      // Clone again to store the leftover values to reshuffle later
+      const leftOverValues: ValidTableValuesMap = Object.keys(
+        tableValues
+      ).reduce((acc, key) => {
+        acc[key] = [];
+        return acc;
+      }, {} as ValidTableValuesMap);
+
+      // Array to store stringified values of row that satisfied all unique constraints
+      const uniqueGroupsValues = uniqueGroups.map((_) => [] as string[]);
+
+      let uniqueCount = 0;
+      // Go through the first n row of the tableValues, where each field will guarantee to have values
+      for (let i = 0; i < minLen; i++) {
+        const valuesAtIndex: Record<string, string> = {};
+        for (const field in tableValues) {
+          valuesAtIndex[field] = tableValues[field][i];
+        }
+        const { valuesStrings, isUnique } = this.checkUniqueConstraints(
+          uniqueGroups,
+          uniqueGroupsValues,
+          valuesAtIndex
+        );
+        // if this row satisfied all the constraints, push values to uniqueGroupsValues & uniqueTableValues
+        if (isUnique) {
+          uniqueCount = this.addNewUniqueRow(
+            uniqueCount,
+            uniqueGroupsValues,
+            valuesStrings,
+            valuesAtIndex,
+            uniqueTableValues
+          );
+        } else {
+          // Push everything to leftOverValues
+          for (const field in tableValues) {
+            leftOverValues[field].push(tableValues[field][i]);
+          }
+        }
+      }
+
+      // Save the rest of the value that we didn't use to leftOverValues to reshuffle later
+      // since some field has more than minLen values
+      for (const field in leftOverValues) {
+        leftOverValues[field] = leftOverValues[field].concat(
+          tableValues[field].slice(minLen)
+        );
+      }
+
+      // Shuffle the leftover values and push to uniqueTableValues
+      // Generate possible combinations of the leftover values
+
+      const totalGroupGeneratedTogether = groupGeneratedTogether.length;
+      // This assume that every field in groupGeneratedTogether has the same length
+      // which is true since they are either standalone, foreign keys pull from another table and fields came from the same entity row
+      const groupLeftOverLength = groupGeneratedTogether.map(
+        (group) => leftOverValues[group[0]].length
+      );
+
+      this.generateComboAndValidate(
+        0,
+        totalGroupGeneratedTogether,
+        uniqueTableValues,
+        uniqueCount,
+        minLen,
+        groupLeftOverLength,
+        groupGeneratedTogether,
+        leftOverValues,
+        uniqueGroups,
+        uniqueGroupsValues
+      );
+
+      minLen = Object.values(uniqueTableValues)[0].length
+      tableValues = uniqueTableValues;
+    } 
+    // slice the value to match the lowest length of all the columns
+    for (const field in tableValues) {
+      tableValues[field] = tableValues[field].slice(0, minLen);
+    }
     return tableValues;
+  }
+
+  // Return isUnique == true if the row satisfied all the unique constraints
+  // along with valuesStrings which is an array of stringified values of each unique group
+  private static checkUniqueConstraints(
+    uniqueGroups: string[][],
+    uniqueGroupsValues: string[][],
+    values: Record<string, string>
+  ) {
+    let isUnique = true;
+    const valuesStrings: string[] = [];
+    // Go through each unique group and check if the row satisfied all the constraints
+    uniqueGroups.forEach((group, index) => {
+      let valuesString = "";
+      for (const col of group) {
+        valuesString += col + ":" + values[col] + ",";
+      }
+      valuesStrings.push(valuesString);
+      if (uniqueGroupsValues[index].includes(valuesString)) {
+        isUnique = false;
+      }
+    });
+    return { isUnique, valuesStrings };
+  }
+
+  private static addNewUniqueRow(
+    uniqueCount: number,
+    uniqueGroupsValues: string[][],
+    valuesStrings: string[],
+    values: Record<string, string>,
+    uniqueTableValues: ValidTableValuesMap
+  ) {
+    uniqueGroupsValues.forEach((group, index) => {
+      group.push(valuesStrings[index]);
+    });
+    for (const field in values) {
+      uniqueTableValues[field].push(values[field]);
+    }
+    uniqueCount++;
+    return uniqueCount;
+  }
+
+  // From the leftover values, generate possible combinations of the values and re-validate
+  // to create more unique rows
+  private static generateComboAndValidate(
+    groupIndex: number,
+    totalGroupGeneratedTogether: number,
+    uniqueTableValues: ValidTableValuesMap,
+    uniqueCount: number,
+    minLen: number,
+    groupLeftOverLength: number[],
+    groupGeneratedTogether: string[][],
+    leftOverValues: ValidTableValuesMap,
+    uniqueGroups: string[][],
+    uniqueGroupsValues: string[][],
+    currentValues: Record<string, string> = {},
+    totalCombo: number = 0
+  ) {
+    if (groupIndex == totalGroupGeneratedTogether) {
+      totalCombo++;
+      const { isUnique, valuesStrings } = this.checkUniqueConstraints(
+        uniqueGroups,
+        uniqueGroupsValues,
+        currentValues
+      );
+      if (isUnique) {
+        uniqueCount = this.addNewUniqueRow(
+          uniqueCount,
+          uniqueGroupsValues,
+          valuesStrings,
+          currentValues,
+          uniqueTableValues
+        );
+
+        // Stop creating combo if we already have enough unique rows
+        // or if we already created 200 combos to increase processing speed
+        if (uniqueCount == minLen || totalCombo == 200) {
+          return;
+        }
+      }
+      return;
+    }
+    for (let i = 0; i < groupLeftOverLength[groupIndex]; i++) {
+      for (const col of groupGeneratedTogether[groupIndex]) {
+        currentValues[col] = leftOverValues[col][i];
+      }
+      this.generateComboAndValidate(
+        groupIndex + 1,
+        totalGroupGeneratedTogether,
+        uniqueTableValues,
+        uniqueCount,
+        minLen,
+        groupLeftOverLength,
+        groupGeneratedTogether,
+        leftOverValues,
+        uniqueGroups,
+        uniqueGroupsValues,
+        currentValues,
+        totalCombo
+      );
+    }
   }
 
   private static getValidMultiColumnFKValues(
     tableValues: ValidTableValuesMap,
     fkMap: FKMap,
-    rowQuantity: number
+    rowQuantity: number,
+    uniqueGroups: string[][]
   ) {
-    // TODO:low priority: somehow implement single column uniqueness
-  for (const group in fkMap) {
-      const firstCol = fkMap[group][0];
+    for (const group in fkMap) {
+      const colsInFK = fkMap[group];
+      const firstCol = colsInFK[0];
       const length = tableValues[firstCol].length;
-      // TODO: modify unique when implemented group uniqueness
-      const indices = ValuesGenerator.generateRandomIndices(length, rowQuantity, false);
+      let isUnique = false;
+      // Check to see if this FK is required to be unique by any unique constraint
+      for (const uniqueGroup of uniqueGroups) {
+        if (uniqueGroup.length != colsInFK.length) {
+          continue;
+        }
+        const _isUnique = uniqueGroup.every((value) =>
+          colsInFK.includes(value)
+        );
+        if (_isUnique) {
+          isUnique = _isUnique;
+          break;
+        }
+      }
+      // Since we temporary stored all the values pool in fkMap, we can just generate random indices,
+      // pick fk values from those pools and replace the pools with the actual values
+      const indices = ValuesGenerator.generateRandomIndices(
+        length,
+        rowQuantity,
+        isUnique,
+        false
+      );
       for (const col of fkMap[group]) {
-        const values = []
+        const values = [];
         for (const index of indices) {
           values.push(tableValues[col][index]);
         }
@@ -293,7 +532,7 @@ export class ValuesProvider {
         }
       }
     }
-    return this.shuffleAndSlice(values, quantity);
+    return this.shuffle(values);
   }
 
   private static async getValidColumnValuesWithEntity(
@@ -339,18 +578,15 @@ export class ValuesProvider {
         fieldName
       );
     }
-    return this.shuffleAndSlice(entityValues, quantity);
+    return this.shuffle(entityValues);
   }
 
-  private static shuffleAndSlice<T extends ValidValue>(
-    array: T[],
-    quantity: number
-  ): T[] {
+  private static shuffle<T extends ValidValue>(array: T[]): T[] {
     for (let i = array.length - 1; i > 0; i--) {
       const j = Math.floor(Math.random() * (i + 1));
       [array[i], array[j]] = [array[j], array[i]];
     }
-    return array.slice(0, quantity);
+    return array;
   }
 
   private static filterByExcluded<T extends ValidValue>(

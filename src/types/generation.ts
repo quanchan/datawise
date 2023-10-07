@@ -1,3 +1,4 @@
+import { ConstraintType } from "./constraint"
 import { GenOptions } from "./genOpts"
 import { FieldConstraints } from "./table"
 import { ColumnMeta } from "./type"
@@ -17,7 +18,7 @@ export type FKMap = Record<number, string[]>
 export type RuntimeGenOptions = FieldConstraints & GenOptions
 
 export type ParsedTableConstraint = {
-  type: string,
+  type: ConstraintType,
   columns?: string[],
   referencedTable?: string,
   referencedColumns?: string[],
@@ -35,3 +36,8 @@ export type ParsedFKColumn = {
 
 export type ParsedFKColumnMap = Record<string, ParsedFKColumn>
 export type TablesParsedFKColumnsMap = Record<string, ParsedFKColumnMap>
+
+export type UniqueGroupConstraint = {
+  type: ConstraintType.UNIQUE | ConstraintType.PK,
+  columns: string[],
+}

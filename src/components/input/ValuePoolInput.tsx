@@ -29,7 +29,7 @@ export const ValuePoolInput: React.FC<ValuePoolInputProps> = (
   const [values, setValues] = useState<(string | number)[]>([]);
   React.useEffect(() => {
     if (data) {
-      setValues(Array.from(new Set(data.sort())))
+      setValues(Array.from(new Set(data.sort())));
     }
   }, [data]);
 
@@ -41,12 +41,23 @@ export const ValuePoolInput: React.FC<ValuePoolInputProps> = (
     if (excluded) {
       const isExcluded = excluded.includes(values[index]);
       if (isExcluded) {
-        setFieldValue(name || "", excluded.filter((v) => v !== values[index]));
+        setFieldValue(
+          name || "",
+          excluded.filter((v) => v !== values[index])
+        );
       } else {
         setFieldValue(name || "", [...excluded, values[index]]);
       }
     }
   };
+
+  const excludeAll = () => {
+    setIsExcluded(values?.map((v) => true) ?? []);
+  }
+
+  const includeAll = () => {
+    setIsExcluded(values?.map((v) => false) ?? []);
+  }
 
   return (
     <HStack
@@ -58,7 +69,10 @@ export const ValuePoolInput: React.FC<ValuePoolInputProps> = (
       maxW={"1234px"}
     >
       <VStack width={"50%"} pr={3} alignItems={"flex-start"}>
-        <InputLabel name={name} label={"Value Pool"} />
+        <HStack>
+          <InputLabel name={name} label={"Value Pool"} />
+          <Button mb={2} variant={"outline"} size="sm" onClick={excludeAll}>Exclude all</Button>
+        </HStack>
         <Box
           width={"100%"}
           border="1px solid"
@@ -83,7 +97,10 @@ export const ValuePoolInput: React.FC<ValuePoolInputProps> = (
         </Box>
       </VStack>
       <VStack width={"50%"} pl={3} alignItems={"flex-start"}>
-        <InputLabel name={name} label={"Excluded Pool"} />
+        <HStack>
+          <InputLabel name={name} label={"Excluded Pool"} />
+          <Button mb={2} variant={"outline"} size="sm" onClick={includeAll}>Include all</Button>
+        </HStack>
         <Box
           width={"100%"}
           border="1px solid"

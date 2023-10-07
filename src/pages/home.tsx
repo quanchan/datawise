@@ -31,13 +31,15 @@ import {
   ChooseTypeModal,
   ConstraintModal,
   GenOptionsModal,
+  ErrorModal,
+  PreviewSQLModal,
+  ConfirmDeleteModal,
+  VisualiserModal,
+  CreateTypeModal,
 } from "@/components/modal";
-import { VisualiserModal } from "@/components/modal/VisualiserModal";
-import { ConfirmDeleteModal } from "@/components/modal/ConfirmDeleteModal";
-import { PreviewSQLModal } from "@/components/modal/PreviewSQLModal";
 import { BaseFooter } from "@/components/BaseFooter";
 import * as yup from "yup";
-import { CreateTypeModal } from "@/components/modal/CreateTypeModal";
+import dayjs from "dayjs";
 
 const initialValues: Tables = {
   ...defaultTables,
@@ -138,8 +140,86 @@ const validationSchema = yup.object().shape({
                 )
                 .required("Field name is required"),
               type: yup.string().required("Type is required"),
+              genOptions: yup.object().shape({
+                maxLength: yup
+                  .number()
+                  .optional()
+                  .positive("Max length must be a positive number"),
+                precision: yup
+                  .number()
+                  .optional()
+                  .positive("Precision must be a positive number"),
+                scale: yup
+                  .number()
+                  .optional()
+                  .positive("Scale must be a positive number"),
+                nullPercent: yup
+                  .number()
+                  .optional()
+                  .min(0, "Null percentage min value is 0")
+                  .max(100, "Null percentage max value is 100"),
+                minNumber: yup
+                  .number()
+                  .optional()
+                  .test(
+                    "minNumber",
+                    "Min value must be less than max value",
+                    function (value) {
+                      return (
+                        !value ||
+                        !this.parent.maxNumber ||
+                        value <= this.parent.maxNumber
+                      );
+                    }
+                  ),
+                maxNumber: yup
+                  .number()
+                  .optional()
+                  .test(
+                    "maxNumber",
+                    "Max value must be greater than min value",
+                    function (value) {
+                      return (
+                        !value ||
+                        !this.parent.minNumber ||
+                        value >= this.parent.minNumber
+                      );
+                    }
+                  ),
+                minDate: yup
+                  .string()
+                  .optional()
+                  .test(
+                    "minDate",
+                    "Min date must be less than max date",
+                    function (value) {
+                      return (
+                        !value ||
+                        !this.parent.maxDate ||
+                        this.parent.maxDate === value ||
+                        dayjs(value).isBefore(dayjs(this.parent.maxDate))
+                      );
+                    }
+                  ),
+                maxDate: yup
+                  .string()
+                  .optional()
+                  .test(
+                    "maxDate",
+                    "Max date must be greater than min date",
+                    function (value) {
+                      return (
+                        !value ||
+                        !this.parent.minDate ||
+                        this.parent.minDate === value ||
+                        dayjs(this.parent.minDate).isBefore(dayjs(value))
+                      );
+                    }
+                  ),
+              }),
             })
           )
+          .min(1, "At least one field is required")
           // @ts-ignore
           .unique("name", "Field name needs to be unique")
           .uniquePropertyValue(
@@ -181,6 +261,7 @@ type ModalOpenStates = {
   visualiser: boolean;
   preview: boolean;
   createType: boolean;
+  error: boolean;
 };
 
 export default function Home() {
@@ -193,6 +274,7 @@ export default function Home() {
     visualiser: false,
     preview: false,
     createType: false,
+    error: false,
   });
   const [currentFieldIndex, setCurrentFieldIndex] = React.useState<number>(0);
   const [currentConstraintIndex, setCurrentConstraintIndex] =
@@ -248,18 +330,13 @@ export default function Home() {
   return (
     <Formik
       initialValues={initialValues}
-      onSubmit={async (values) => {
+      onSubmit={async (_) => {
         onOpenModal("preview");
       }}
       validationSchema={validationSchema}
     >
-      {({
-        values,
-        handleChange,
-      }) => (
+      {({ values, handleChange, errors }) => (
         <>
-          {/* {console.log("error", errors)}
-          {console.log("values", values)} */}
           <Form>
             <VStack
               width={"100vw"}
@@ -354,7 +431,16 @@ export default function Home() {
                   <option value={Format.MySQL}>{Format.MySQL}</option>
                   <option value={Format.OracleSQL}>{Format.OracleSQL}</option>
                 </Select>
-                <Button variant={"primary"} type="submit" fontWeight={"bold"}>
+                <Button
+                  variant={"primary"}
+                  type="submit"
+                  fontWeight={"bold"}
+                  onClick={() => {
+                    if (Object.keys(errors).length !== 0) {
+                      onOpenModal("error");
+                    }
+                  }}
+                >
                   Preview
                 </Button>
               </BaseFooter>
@@ -410,6 +496,10 @@ export default function Home() {
               onOpenModal("chooseType");
               onCloseModal("createType");
             }}
+          />
+          <ErrorModal
+            isOpen={openModal.error}
+            onClose={() => onCloseModal("error")}
           />
         </>
       )}

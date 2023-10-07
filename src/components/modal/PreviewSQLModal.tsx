@@ -4,10 +4,8 @@ import { Tables } from "@/types";
 import axios from "axios";
 import { useMutation } from "@tanstack/react-query";
 import {
-  Box,
   Button,
   ModalBody,
-  ModalFooter,
   ModalHeader,
 } from "@chakra-ui/react";
 import React, { useEffect } from "react";
@@ -28,6 +26,7 @@ export const PreviewSQLModal: React.FC<PreviewSQLModalProps> = (props) => {
 
   useEffect(() => {
     if (isOpen) {
+      console.log("form values", values)
       previewMutation.mutateAsync();
     }
   }, [isOpen]);

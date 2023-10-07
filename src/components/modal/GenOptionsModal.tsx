@@ -1,11 +1,11 @@
-import { HStack, VStack } from "@chakra-ui/react";
+import { HStack, Text, VStack } from "@chakra-ui/react";
 import { BaseTopBar } from "../BaseTopBar";
 import {
   BaseModal,
   BaseModalProps,
   GenOptionsModalFooter,
 } from "@/components/modal";
-import { useFormikContext } from "formik";
+import { ErrorMessage, useFormikContext } from "formik";
 import { Tables, WordCasing, WordCasingOptions, YesNoOptions } from "@/types";
 import { TextInput, DateInput, SelectInput } from "@/components/input";
 import { ValuePoolInput } from "../input/ValuePoolInput";
@@ -43,7 +43,7 @@ export const GenOptionsModal: React.FC<GenOptionsModalProps> = (props) => {
       );
       setFieldValue(
         namePrefix + "maxLength",
-        genOptions?.maxLength || typeProcessor.args[0] 
+        genOptions?.maxLength || typeProcessor.args[0]
       );
       setFieldValue(
         namePrefix + "precision",
@@ -61,8 +61,8 @@ export const GenOptionsModal: React.FC<GenOptionsModalProps> = (props) => {
       );
       setFieldValue(namePrefix + "minDate", genOptions?.minDate || "");
       setFieldValue(namePrefix + "maxDate", genOptions?.maxDate || "");
-      setFieldValue(namePrefix + "minNumber", genOptions?.minNumber || "");
-      setFieldValue(namePrefix + "maxNumber", genOptions?.maxNumber || "");
+      setFieldValue(namePrefix + "minNumber", genOptions?.minNumber);
+      setFieldValue(namePrefix + "maxNumber", genOptions?.maxNumber);
       setFieldValue(
         namePrefix + "minDateInclusive",
         genOptions?.minDateInclusive || false
@@ -85,7 +85,7 @@ export const GenOptionsModal: React.FC<GenOptionsModalProps> = (props) => {
       );
       setFieldValue(namePrefix + "withEntity", genOptions?.withEntity || "n");
     }
-  // 
+    //
   }, [type, gen_opts]);
 
   if (!fieldData) return <></>;
@@ -106,7 +106,8 @@ export const GenOptionsModal: React.FC<GenOptionsModalProps> = (props) => {
           mt={8}
         >
           <HStack
-            justifyContent={"flex-start "}
+            justifyContent={"flex-start"}
+            alignItems={"flex-start"}
             flexWrap={"wrap"}
             mx={8}
             maxW={"1234px"}
@@ -135,92 +136,156 @@ export const GenOptionsModal: React.FC<GenOptionsModalProps> = (props) => {
               />
             )}
             {gen_opts?.includes("maxLength") && (
-              <TextInput
-                name={namePrefix + "maxLength"}
-                onChange={handleChange}
-                value={genOptions?.maxLength}
-                label={"String Max Length"}
-                styles={{ m: 2 }}
-              />
+              <VStack>
+                <TextInput
+                  name={namePrefix + "maxLength"}
+                  onChange={handleChange}
+                  value={genOptions?.maxLength}
+                  label={"String Max Length"}
+                  styles={{ m: 2 }}
+                />
+                <ErrorMessage
+                  name={namePrefix + "maxLength"}
+                  component={Text}
+                  color="red.500"
+                  maxW={"286.5px"}
+                />
+              </VStack>
             )}
             {gen_opts?.includes("precision") && (
-              <TextInput
-                name={namePrefix + "precision"}
-                onChange={handleChange}
-                value={genOptions?.precision}
-                label={"Precision"}
-                isNumber={true}
-                tooltip="The number of digits in a number. For example, the number 123.45 has a precision of 5."
-                styles={{ m: 2 }}
-              />
+              <VStack>
+                <TextInput
+                  name={namePrefix + "precision"}
+                  onChange={handleChange}
+                  value={genOptions?.precision}
+                  label={"Precision"}
+                  isNumber={true}
+                  tooltip="The number of digits in a number. For example, the number 123.45 has a precision of 5."
+                  styles={{ m: 2 }}
+                />
+                <ErrorMessage
+                  name={namePrefix + "precision"}
+                  component={Text}
+                  color="red.500"
+                  maxW={"286.5px"}
+                />
+              </VStack>
             )}
             {gen_opts?.includes("scale") && (
-              <TextInput
-                name={namePrefix + "scale"}
-                onChange={handleChange}
-                value={genOptions?.scale}
-                label={"Scale"}
-                isNumber={true}
-                tooltip="The number of digits to the right of the decimal point in a number. For example, the number 123.45 has a scale of 2."
-                styles={{ m: 2 }}
-              />
+              <VStack>
+                <TextInput
+                  name={namePrefix + "scale"}
+                  onChange={handleChange}
+                  value={genOptions?.scale}
+                  label={"Scale"}
+                  isNumber={true}
+                  tooltip="The number of digits to the right of the decimal point in a number. For example, the number 123.45 has a scale of 2."
+                  styles={{ m: 2 }}
+                />
+                <ErrorMessage
+                  name={namePrefix + "scale"}
+                  component={Text}
+                  color="red.500"
+                  maxW={"286.5px"}
+                />
+              </VStack>
             )}
             {gen_opts?.includes("minDate") && (
-              <DateInput
-                name={namePrefix + "minDate"}
-                onChange={handleChange}
-                value={genOptions?.minDate}
-                label={"Min Date"}
-                selectTime={gen_opts?.includes("time")}
-                styles={{ m: 2 }}
-                setFieldValue={setFieldValue}
-                inclusiveChecked={genOptions?.minDateInclusive}
-              />
+              <VStack>
+                <DateInput
+                  name={namePrefix + "minDate"}
+                  onChange={handleChange}
+                  value={genOptions?.minDate}
+                  label={"Min Date"}
+                  selectTime={gen_opts?.includes("time")}
+                  styles={{ m: 2 }}
+                  setFieldValue={setFieldValue}
+                  inclusiveChecked={genOptions?.minDateInclusive}
+                />
+                <ErrorMessage
+                  name={namePrefix + "minDate"}
+                  component={Text}
+                  color="red.500"
+                  maxW={"286.5px"}
+                />
+              </VStack>
             )}
             {gen_opts?.includes("maxDate") && (
-              <DateInput
-                name={namePrefix + "maxDate"}
-                onChange={handleChange}
-                value={genOptions?.maxDate}
-                label={"Max Date"}
-                selectTime={gen_opts?.includes("time")}
-                styles={{ m: 2 }}
-                setFieldValue={setFieldValue}
-                inclusiveChecked={genOptions?.maxDateInclusive}
-              />
+              <VStack>
+                <DateInput
+                  name={namePrefix + "maxDate"}
+                  onChange={handleChange}
+                  value={genOptions?.maxDate}
+                  label={"Max Date"}
+                  selectTime={gen_opts?.includes("time")}
+                  styles={{ m: 2 }}
+                  setFieldValue={setFieldValue}
+                  inclusiveChecked={genOptions?.maxDateInclusive}
+                />
+                <ErrorMessage
+                  name={namePrefix + "maxDate"}
+                  component={Text}
+                  color="red.500"
+                  maxW={"286.5px"}
+                />
+              </VStack>
             )}
             {gen_opts?.includes("minNumber") && (
-              <TextInput
-                name={namePrefix + "minNumber"}
-                onChange={handleChange}
-                value={genOptions?.minNumber}
-                label={"Min Value"}
-                isNumber={true}
-                styles={{ m: 2 }}
-                inclusiveChecked={genOptions?.minNumberInclusive}
-              />
+              <VStack>
+                <TextInput
+                  name={namePrefix + "minNumber"}
+                  onChange={handleChange}
+                  value={genOptions?.minNumber}
+                  label={"Min Value"}
+                  isNumber={true}
+                  styles={{ m: 2 }}
+                  inclusiveChecked={genOptions?.minNumberInclusive}
+                />
+                <ErrorMessage
+                  name={namePrefix + "minNumber"}
+                  component={Text}
+                  color="red.500"
+                  maxW={"286.5px"}
+                />
+              </VStack>
             )}
             {gen_opts?.includes("maxNumber") && (
-              <TextInput
-                name={namePrefix + "maxNumber"}
-                onChange={handleChange}
-                value={genOptions?.maxNumber}
-                label={"Max Value"}
-                isNumber={true}
-                styles={{ m: 2 }}
-                inclusiveChecked={genOptions?.maxNumberInclusive}
-              />
+              <VStack>
+                <TextInput
+                  name={namePrefix + "maxNumber"}
+                  onChange={handleChange}
+                  value={genOptions?.maxNumber}
+                  label={"Max Value"}
+                  isNumber={true}
+                  styles={{ m: 2 }}
+                  inclusiveChecked={genOptions?.maxNumberInclusive}
+                />
+                <ErrorMessage
+                  name={namePrefix + "maxNumber"}
+                  component={Text}
+                  color="red.500"
+                  maxW={"286.5px"}
+                />
+              </VStack>
             )}
             {gen_opts?.includes("nullPercent") && (
-              <TextInput
-                name={namePrefix + "nullPercent"}
-                onChange={handleChange}
-                value={genOptions?.nullPercent}
-                label={"Null Percentage"}
-                isNumber={true}
-                tooltip="The percentage of rows with NULL value "
-                styles={{ m: 2 }}
-              />
+              <VStack>
+                <TextInput
+                  name={namePrefix + "nullPercent"}
+                  onChange={handleChange}
+                  value={genOptions?.nullPercent}
+                  label={"Null Percentage"}
+                  isNumber={true}
+                  tooltip="The percentage of rows with NULL value "
+                  styles={{ m: 2 }}
+                />
+                <ErrorMessage
+                  name={namePrefix + "nullPercent"}
+                  component={Text}
+                  color="red.500"
+                  maxW={"286.5px"}
+                />
+              </VStack>
             )}
             {gen_opts?.includes("phoneFaxFormat") && (
               <TextInput

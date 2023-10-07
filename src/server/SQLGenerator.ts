@@ -62,7 +62,7 @@ class SQLGenerator {
     // Generate the SQL definition for each table
     for (let index = 0; index < tables.length; index++) {
       const table = tables[index];
-      sql += await this.generateOneTable(
+      sql += await this.generateOneTableDefinition(
         table,
         tableParsedFKColumnMap,
         format,
@@ -90,7 +90,7 @@ class SQLGenerator {
   }
 
   // SQL defintion for one table
-  protected static async generateOneTable(
+  protected static async generateOneTableDefinition(
     table: TableOptions,
     tablesForeignKeyMap: TablesParsedFKColumnsMap,
     format: Format,
@@ -183,38 +183,47 @@ class SQLGenerator {
   ): Promise<string> {
     const { name, fields } = table;
     // Get all the valid values for the table
+    const uniqueGroups = parsedConstraints
+      .filter((c) =>
+        [ConstraintType.PK, ConstraintType.UNIQUE].includes(c.type)
+      )
+      .map((c) => c.columns as string[]);
     const values = await ValuesProvider.getValidTableValues(
       table,
       valuesCache,
-      parsedFKColumnMap
+      parsedFKColumnMap,
+      uniqueGroups
     );
-    const minLen = Math.min(...Object.values(values).map((v) => v.length));
-    if (minLen === 0) {
+    const len = Object.values(values)[0].length;
+    if (len === 0) {
       return "-- WARNING: Your filters are too strict. No values were generated.";
     }
+    let sql = `-- INFO: Total rows generated: ${len}\n`;
 
     // Save the generated values for future generation of foreign key columns
     const cachedTableValues: ValidTableValuesMap = {};
     for (const [key, value] of Object.entries(values)) {
-      cachedTableValues[key] = value.slice(0, minLen);
+      cachedTableValues[key] = value;
     }
     valuesCache[name] = cachedTableValues;
 
-    let sql = `${kw.INSERT_INTO} ${name} (
+    sql += `${kw.INSERT_INTO} ${name} (
   ${fields.map((field) => field.name).join(",\n  ")}
 ) ${kw.VALUES}`;
     const needQuoteWraps = fields.map((field) => {
-      let systemType = parsedFKColumnMap[field.name]?.systemType || field.genOptions.actualType
+      let systemType =
+        parsedFKColumnMap[field.name]?.systemType ||
+        field.genOptions.actualType;
       const typeProcessor = new TypeProcessor(systemType);
       return typeProcessor.needQuoteWrap;
     });
-    for (let i = 0; i < minLen; i++) {
+    for (let i = 0; i < len; i++) {
       const rowValues = Object.values(values).map((v) => v[i]);
       const rowValuesWithQuote = rowValues.map((v, i) =>
         needQuoteWraps[i] ? `'${v}'` : v
       );
       sql += `\n(${rowValuesWithQuote.join(", ")})`;
-      if (i < minLen - 1) {
+      if (i < len - 1) {
         sql += ",";
       }
     }
@@ -250,6 +259,10 @@ class SQLGenerator {
       format,
       fkActualType
     );
+    let systemType =
+    tablesForeignKeyMap[tableName]?.[name]?.systemType ||
+    genOptions.actualType; 
+    const needQuoteWrap = new TypeProcessor(systemType).needQuoteWrap;
     const fname = alternativeColumnName ? alternativeColumnName : name;
     sql += `  ${fname} ${actualType}`;
     if (!notNull) {
@@ -262,7 +275,8 @@ class SQLGenerator {
     }
     if (!isForeignKey) {
       if (defaultValue) {
-        sql += ` ${kw.DEFAULT} ${defaultValue}`;
+        const defaultValueQuoted = needQuoteWrap ? `'${defaultValue}'` : defaultValue;
+        sql += ` ${kw.DEFAULT} ${defaultValueQuoted}`;
       }
       if (primaryKey) {
         sql += ` ${kw.PRIMARY_KEY}`;
@@ -296,7 +310,7 @@ class SQLGenerator {
         throw new Error(`Referenced table ${refTableName} not found`);
       }
       const referencedColumns = referencedTable.fields.filter((field) =>
-        refColumnNames!.includes(field.name.toLowerCase())
+        refColumnNames!.includes(field.name)
       );
       if (referencedColumns.length !== refColumnNames!.length) {
         throw new Error(`Invalid referenced columns`);
@@ -309,7 +323,9 @@ class SQLGenerator {
         // Dont need to go up more than 1 lvl since we already derived the type for every fk column
         if (TypeProvider.isForeignKey(fkActualType)) {
           const parsedFKColumn =
-            tablesForeignKeyMap[referencedTable.name][referencedColumns[i].name];
+            tablesForeignKeyMap[referencedTable.name][
+              referencedColumns[i].name
+            ];
           fkActualType = parsedFKColumn.typeWithArgs;
           typeWithArgs = fkActualType;
           systemType = parsedFKColumn.systemType;
@@ -349,7 +365,7 @@ class SQLGenerator {
       );
       const referencedTables = foreignKeyConstraints
         .map((constraint) => constraint.referencedTable)
-        .filter((val) => val !== undefined);
+        .filter((val) => val !== undefined && val !== table.name);
       dependencyMap[table.name] = referencedTables as string[];
     }
 
