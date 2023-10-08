@@ -59,12 +59,12 @@ insert into column_meta (display_name, description, example, column_name, data_t
   'person'
 ),
 (
-  'Email Prefix',
-  'Email username created from person fullname',
+  'Email username',
+  'Email username created from person fullname. Could be used as a prefix for email address',
   'johnsmith, maryjwatson',
   'email_prefix',
   'varchar(255)',
-  'entityVarchar',
+  'entityEmail',
   'person'
 ),
 (

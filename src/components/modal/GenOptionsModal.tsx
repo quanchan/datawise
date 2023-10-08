@@ -85,6 +85,7 @@ export const GenOptionsModal: React.FC<GenOptionsModalProps> = (props) => {
       );
       setFieldValue(namePrefix + "serial", genOptions?.serial || "n");
       setFieldValue(namePrefix + "withEntity", genOptions?.withEntity || "n");
+      setFieldValue(namePrefix + "justUsername", genOptions?.justUsername || "n")
     }
     //
   }, [type, gen_opts]);
@@ -306,6 +307,27 @@ export const GenOptionsModal: React.FC<GenOptionsModalProps> = (props) => {
                 value={genOptions?.phoneFaxFormat}
                 label={"Phone/Fax Generation Format"}
                 tooltip="The format of the phone/fax number. # will be replaced with random number. For example, +61 (###) ###-####"
+                styles={{ m: 2 }}
+              />
+            )}
+            {gen_opts?.includes("emailDomain") && (
+              <TextInput
+                name={namePrefix + "emailDomain"}
+                onChange={handleChange}
+                value={genOptions?.emailDomain}
+                label={"Email Domain"}
+                tooltip="The default domain for email addresses (without the @). For example, gmail.com. If left blank, the domain will be randomly generated. If just username is selected, this field will be ignored."
+                styles={{ m: 2 }}
+              />
+            )}
+            {gen_opts?.includes("justUsername") && (
+              <SelectInput
+                name={namePrefix + "justUsername"}
+                onChange={handleChange}
+                value={genOptions?.justUsername}
+                label={"Just Username"}
+                tooltip="If selected, only the username part of the email address will be generated."
+                options={YesNoOptions}
                 styles={{ m: 2 }}
               />
             )}

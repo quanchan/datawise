@@ -16,6 +16,7 @@ import {
   ParsedFKColumnMap,
   Field,
   FKMap,
+  YesNoOptions,
 } from "@/types";
 import { TypeProvider } from "./TypeProvider";
 import db from "@/db";
@@ -100,21 +101,10 @@ export class ValuesProvider {
               );
               break;
             case "y":
-              if (!entityMap[columnMeta.entity_meta_table]) {
-                entityMap[columnMeta.entity_meta_table] = [
-                  {
-                    columnMeta,
-                    genOptions: runtimeGenOptions,
-                    fieldName: name,
-                  },
-                ];
-              } else {
-                entityMap[columnMeta.entity_meta_table].push({
-                  columnMeta,
-                  genOptions: runtimeGenOptions,
-                  fieldName: name,
-                });
-              }
+              const newField = { columnMeta, genOptions: runtimeGenOptions, fieldName: name }
+              entityMap[columnMeta.entity_meta_table] = entityMap[columnMeta.entity_meta_table]
+              ? [...entityMap[columnMeta.entity_meta_table], newField]
+              : [newField];
               continue;
           }
         } else {
@@ -518,6 +508,11 @@ export class ValuesProvider {
     values = this.filterByExcluded(values, genOptions, allowedGenOpts);
     values = this.filterByMinNumber(values, genOptions, allowedGenOpts);
     values = this.filterByMaxNumber(values, genOptions, allowedGenOpts);
+    values = this.mapToEmailDomain(
+      values,
+      genOptions,
+      allowedGenOpts
+    );
     values = this.mapByWordCasing(values, genOptions, allowedGenOpts);
     if (genOptions.notNull || genOptions.primaryKey) {
       values.filter((value) => value !== null);
@@ -571,12 +566,19 @@ export class ValuesProvider {
         allowedGenOpts,
         fieldName
       );
+      entityValues = this.mapToEmailDomain(
+        entityValues,
+        genOptions,
+        allowedGenOpts,
+        fieldName
+      );
       entityValues = this.mapByWordCasing(
         entityValues,
         genOptions,
         allowedGenOpts,
         fieldName
       );
+
     }
     return this.shuffle(entityValues);
   }
@@ -709,6 +711,43 @@ export class ValuesProvider {
               v.replace(/^\w/, (c: string) => c.toUpperCase())
             )
           );
+      }
+    }
+    return values;
+  }
+
+  private static mapToEmailDomain<T extends ValidValue>(
+    values: T[],
+    genOptions: RuntimeGenOptions,
+    allowedGenOpts: (keyof GenOptions)[],
+    fieldName: string = ""
+  ): T[] {
+    const { emailDomain, justUsername } = genOptions;
+    if (allowedGenOpts.includes("emailDomain") && allowedGenOpts.includes("justUsername") && justUsername == 'n') {
+      if (emailDomain) {
+        return values.map((value) =>
+          this.mapper(value, (v) => v + "@" + emailDomain, fieldName)
+        );
+      } else {
+        const emailDomains = [
+          "@gmail.com",
+          "@yahoo.com",
+          "@outlook.com",
+          "@hotmail.com",
+          "@aol.com",
+          "@icloud.com",
+          "@protonmail.com",
+          "@mail.com",
+          "@live.com",
+        ];
+        return values.map((value) =>
+          this.mapper(
+            value,
+            (v) =>
+              v + emailDomains[Math.floor(Math.random() * emailDomains.length)],
+            fieldName
+          )
+        );
       }
     }
     return values;

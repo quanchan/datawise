@@ -19,7 +19,9 @@ export type GenOptions = {
   wordCasing?: string,
   stringFormat?: string,
   time?: boolean,
-  serial?: string
+  serial?: string,
+  emailDomain?: string,
+  justUsername?: string,
 }
 
 export const defaultGenOptions: GenOptions = {
@@ -32,6 +34,7 @@ export type AllowedGenOptions = Record<string, (keyof GenOptions)[]>;
 export const AllowedGenOptionsMap: AllowedGenOptions = {
   entityVarchar: ["actualType", "excluded", "wordCasing", "maxLength", "nullPercent", "withEntity"],
   entityNumber: ["actualType", "excluded", "minNumber", "maxNumber", "minNumberInclusive", "maxNumberInclusive", "nullPercent", "precision", "scale", "withEntity"],
+  entityEmail: ["actualType", "excluded", "emailFormat", "emailDomain", "nullPercent", "withEntity", "emailDomain", "justUsername"],
   randomInt: ["actualType", "minNumber", "maxNumber", "nullPercent", "precision", "minNumber", "maxNumber", "minNumberInclusive", "maxNumberInclusive", "serial"],
   randomDecimal: ["actualType", "minNumber", "maxNumber", "nullPercent", "precision", "scale", "minNumber", "maxNumber", "minNumberInclusive", "maxNumberInclusive"],
   randomDate: ["actualType", "minDate", "maxDate", "minDateInclusive", "maxDateInclusive","nullPercent"],
