@@ -364,7 +364,7 @@ export default function Home() {
                   w={"100%"}
                 >
                   <TabList my={4} justifyContent={"space-between"}>
-                    <HStack w={"100%"}>
+                    <HStack w={"100%"} overflowX={"auto"}>
                       <FieldArray name={`tables`}>
                         {({ remove, push }: ArrayHelpers) => (
                           <>
@@ -396,12 +396,13 @@ export default function Home() {
                         )}
                       </FieldArray>
                     </HStack>
-                    <Button
+                    {/* TODO: Enable again if implement visualiser */}
+                    {/* <Button
                       variant={"primary"}
                       onClick={() => onOpenModal("visualiser")}
                     >
                       Visualiser
-                    </Button>
+                    </Button> */}
                   </TabList>
                   <TabPanels w={"100%"}>
                     {values.tables.map((table, index) => (

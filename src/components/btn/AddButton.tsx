@@ -11,6 +11,7 @@ export const AddButton: React.FC<AddButtonProps> = (props) => {
   const { children, onClick } = props;
   return (
     <Button
+      minW={"120px"}
       padding={4}
       size="xs"
       justifyContent={"space-between"}
