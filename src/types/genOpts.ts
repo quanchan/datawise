@@ -22,6 +22,7 @@ export type GenOptions = {
   serial?: string,
   emailDomain?: string,
   justUsername?: string,
+  regex?: string,
 }
 
 export const defaultGenOptions: GenOptions = {
@@ -40,6 +41,7 @@ export const AllowedGenOptionsMap: AllowedGenOptions = {
   randomDate: ["actualType", "minDate", "maxDate", "minDateInclusive", "maxDateInclusive","nullPercent"],
   randomDateTime: ["actualType", "minDate", "maxDate", "minDateInclusive", "maxDateInclusive", "nullPercent", "time"],
   randomPhoneFax: ["actualType", "phoneFaxFormat", "nullPercent"],
+  randomRegex: ["actualType", "regex", "nullPercent"],
   foreignKey: ["nullPercent"],
 } 
 

@@ -143,9 +143,65 @@ export class ValuesGenerator {
         return this.generateRandomDateTimes(genOptions, quantity);
       case RuntimeTypesId.date:
         return this.generateRandomDates(genOptions, quantity);
+      case RuntimeTypesId.regex:
+        return this.generateRandomRegexString(genOptions, quantity);
       default:
         throw new Error(`Invalid typeid ${typeid}`);
     }
+  }
+  public static generateRandomRegexString(genOptions: RuntimeGenOptions, quantity: number) {
+    const { regex, unique, primaryKey } = genOptions;
+    // sample format: +## (###) ###-####
+    const randomStrings: string[] = [];
+    let regexPattern = regex || "";
+    for (let i = 0; i < quantity; i++) {
+      let result = '';
+      for (let j = 0; j < regexPattern.length; j++) {
+        const char = regexPattern[j];
+        if (char === '/') {
+          // Handle simplified regex tokens
+          const token = regexPattern.slice(j, j + 2);
+          switch (token) {
+            case '/w':
+              result += Math.random().toString(36).slice(2, 3); // Random alphanumeric character
+              break;
+            case '/d':
+              result += Math.floor(Math.random() * 10).toString(); // Random digit
+              break;
+            case '/W':
+              result += Math.random().toString(36).slice(2, 3).toUpperCase();
+  ; // Random uppercase alphabetic character or digit
+              break;
+            case '/a':
+              result += String.fromCharCode(
+                Math.floor(Math.random() * 26) + 97
+              ); // Random lowercase alphabetic character
+              break;
+            case '/A':
+              result += String.fromCharCode(
+                Math.floor(Math.random() * 26) + 65
+              ); // Random uppercase alphabetic character
+              break;
+            default:
+              j--
+              result += char; // Leave other characters unchanged
+          }
+          j++; // Skip the next character since it's part of the token
+        } else {
+          result += char; // Leave other characters unchanged
+        }
+      }
+      if (
+        (unique || primaryKey) &&
+        randomStrings.includes(result)
+      ) {
+        i--; // Retry if the string are supposed to be unique
+        continue;
+      }
+      randomStrings.push(result);
+    }
+
+    return randomStrings;
   }
 
   private static generateRandomDateCore(

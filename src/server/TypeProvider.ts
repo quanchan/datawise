@@ -69,6 +69,19 @@ export class TypeProvider {
       standalone: true,
       custom: false,
     },
+    {
+      id: RuntimeTypesId.regex,
+      display_name: "Random String w/ Regex",
+      description: "Random string generated using Simplified Regex. Can be used to generate unique id, email addresses, barcode, etc.",
+      example: "ABC-123, 1234567890, 2021-01-01",
+      data_type: "varchar(255)",
+      gen_opts_name: "randomRegex",
+      column_name: "",
+      entity_display_name: "",
+      entity_meta_table: "",
+      standalone: true,
+      custom: false,
+    },
   ];
 
   public static foreignKey = 

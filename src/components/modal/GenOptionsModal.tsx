@@ -85,7 +85,10 @@ export const GenOptionsModal: React.FC<GenOptionsModalProps> = (props) => {
       );
       setFieldValue(namePrefix + "serial", genOptions?.serial || "n");
       setFieldValue(namePrefix + "withEntity", genOptions?.withEntity || "n");
-      setFieldValue(namePrefix + "justUsername", genOptions?.justUsername || "n")
+      setFieldValue(
+        namePrefix + "justUsername",
+        genOptions?.justUsername || "n"
+      );
     }
     //
   }, [type, gen_opts]);
@@ -307,6 +310,17 @@ export const GenOptionsModal: React.FC<GenOptionsModalProps> = (props) => {
                 value={genOptions?.phoneFaxFormat}
                 label={"Phone/Fax Generation Format"}
                 tooltip="The format of the phone/fax number. # will be replaced with random number. For example, +61 (###) ###-####"
+                styles={{ m: 2 }}
+              />
+            )}
+            {gen_opts?.includes("regex") && (
+              <TextInput
+                doubleLength={true}
+                name={namePrefix + "regex"}
+                onChange={handleChange}
+                value={genOptions?.regex}
+                label={"Regex Generation Format"}
+                tooltip="The Simplified Regex format of the generated string. /d: digit, /w: alphanumeric, /W: uppercase alphanumeric, /a: alphabetic character, /A: uppercase alphabetic character, everything else means itself"
                 styles={{ m: 2 }}
               />
             )}
