@@ -53,7 +53,7 @@ export const TableConstraintsEditor: React.FC<TableConstraintsEditorProps> = (
         overflowX={{ base: "scroll", lg: "hidden" }}
         display={"flex"}
         spacing={4}
-        border={"1px solid"}
+        border={"2px solid"}
         borderColor={"border.primary"}
         p={4}
         mt={4}
@@ -74,7 +74,7 @@ export const TableConstraintsEditor: React.FC<TableConstraintsEditorProps> = (
           color={"border.primary"}
           opacity={1}
           my={0}
-          borderWidth={0.5}
+          borderWidth={1}
           w={"100%"}
         />
         <HStack pl={12} fontWeight={"semibold"} minW={"4xl"}>
@@ -87,7 +87,7 @@ export const TableConstraintsEditor: React.FC<TableConstraintsEditorProps> = (
           color={"border.primary"}
           opacity={1}
           my={0}
-          borderWidth={0.5}
+          borderWidth={1}
           w={"100%"}
         />
         <FieldArray name={`tables.${tableIndex}.constraints`}>

@@ -19,7 +19,7 @@ export class ConstraintProcessor {
   }
 
   private static parseForeignKey(input: string): ParsedTableConstraint {
-    const regex = /foreign key\((.*?)\) references (.*?)\((.*?)\)/i;
+    const regex = /foreign key\s?\((.*?)\) references (.*?)\((.*?)\)/i;
     const match = input.match(regex);
 
     if (!match || match.length !== 4) {
@@ -35,13 +35,13 @@ export class ConstraintProcessor {
     return {
       type: ConstraintType.FK,
       columns: columnNames,
-      referencedTable,
+      referencedTable: referencedTable.trim(),
       referencedColumns: refColumnNames,
     };
   }
 
   private static parsePrimaryKey(input: string): ParsedTableConstraint {
-    const regex = /primary key\((.*?)\)/i;
+    const regex = /primary key\s?\((.*?)\)/i;
     const match = input.match(regex);
 
     if (!match || match.length !== 2) {
@@ -57,7 +57,7 @@ export class ConstraintProcessor {
   }
 
   private static parseUnique(input: string): ParsedTableConstraint {
-    const regex = /unique\((.*?)\)/i;
+    const regex = /unique\s?\((.*?)\)/i;
     const match = input.match(regex);
 
     if (!match || match.length !== 2) {
@@ -73,7 +73,7 @@ export class ConstraintProcessor {
   }
 
   private static parseCheck(input: string): ParsedTableConstraint {
-    const regex = /check\((.*?)\)/i;
+    const regex = /check\s?\((.*?)\)/i;
     const match = input.match(regex);
 
     if (!match || match.length !== 2) {

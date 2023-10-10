@@ -16,6 +16,7 @@ export const AddButton: React.FC<AddButtonProps> = (props) => {
       size="xs"
       justifyContent={"space-between"}
       variant={"outline"}
+      borderWidth={2}
       fontWeight={"bold"}
       color={"text.secondary"}
       onClick={onClick}

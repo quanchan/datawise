@@ -438,7 +438,7 @@ export default function Home() {
                 </Select>
                 <Button
                   variant={"basic"}
-                  border={"1px solid"}
+                  border={"2px solid"}
                   borderColor={"border.primary"}
                   fontWeight={"bold"}
                   onClick={() => {

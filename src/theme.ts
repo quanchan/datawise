@@ -10,7 +10,7 @@ const { definePartsStyle, defineMultiStyleConfig } =
 const brandTabVariant = definePartsStyle((props) => {
   return {
     tab: {
-      border: "1px solid",
+      border: "2px solid",
       borderColor: "border.input",
       fontWeight: "bold",
       color: "text.secondary",

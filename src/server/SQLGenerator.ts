@@ -155,7 +155,13 @@ class SQLGenerator {
         args = [genOptions.precision?.toString(), genOptions.scale?.toString()];
         break;
       case "randomPhoneFax":
-        args = [genOptions.phoneFaxFormat?.length.toString()];
+        args = [genOptions.maxLength?.toString()];
+        break;
+      case "randomRegex":
+        args = [genOptions.maxLength?.toString()];
+        break;
+      case "entityEmail":
+        args = [genOptions.maxLength?.toString()];
         break;
       case "randomInt":
         args = [genOptions.precision?.toString()];
@@ -206,9 +212,9 @@ class SQLGenerator {
       cachedTableValues[key] = value;
     }
     valuesCache[name] = cachedTableValues;
-
+    const fieldNames = fields.map((field) => field.name);
     sql += `${kw.INSERT_INTO} ${name} (
-  ${fields.map((field) => field.name).join(",\n  ")}
+  ${fieldNames.join(",\n  ")}
 ) ${kw.VALUES}`;
     const needQuoteWraps = fields.map((field) => {
       let systemType =
@@ -218,9 +224,9 @@ class SQLGenerator {
       return typeProcessor.needQuoteWrap;
     });
     for (let i = 0; i < len; i++) {
-      const rowValues = Object.values(values).map((v) => v[i]);
+      const rowValues = fieldNames.map((fname) => values[fname][i]);
       const rowValuesWithQuote = rowValues.map((v, i) =>
-        needQuoteWraps[i] ? `'${v}'` : v
+        needQuoteWraps[i] && v !== "NULL" ? `'${v}'` : v
       );
       sql += `\n(${rowValuesWithQuote.join(", ")})`;
       if (i < len - 1) {
@@ -275,7 +281,7 @@ class SQLGenerator {
     }
     if (!isForeignKey) {
       if (defaultValue) {
-        const defaultValueQuoted = needQuoteWrap ? `'${defaultValue}'` : defaultValue;
+        const defaultValueQuoted = needQuoteWrap && defaultValue !== "NULL" ? `'${defaultValue}'` : defaultValue;
         sql += ` ${kw.DEFAULT} ${defaultValueQuoted}`;
       }
       if (primaryKey) {

@@ -6,10 +6,9 @@ import {
   Icon,
   IconButton,
   Input,
-  Text,
   VStack,
 } from "@chakra-ui/react";
-import { useFormikContext, ErrorMessage } from "formik";
+import { useFormikContext } from "formik";
 import { RiDeleteBinLine } from "react-icons/ri";
 export type TableConstraintControlProps = {
   onRemove: () => void;
@@ -17,6 +16,7 @@ export type TableConstraintControlProps = {
   constraintIndex: number;
   onEditConstraint: (index: number) => void;
 };
+import { ErrorMessage } from "./ErrorMessage";
 
 export const TableConstraintControl: React.FC<TableConstraintControlProps> = (
   props
@@ -33,7 +33,7 @@ export const TableConstraintControl: React.FC<TableConstraintControlProps> = (
       backgroundColor={"surface.02"}
       borderRadius={8}
       borderColor={"border.primary"}
-      borderWidth={1}
+      borderWidth={2}
       borderStyle={"solid"}
       alignItems={"flex-start"}
       padding={4}
@@ -87,13 +87,9 @@ export const TableConstraintControl: React.FC<TableConstraintControlProps> = (
       </HStack>
       <ErrorMessage
         name={`tables.${tableIndex}.constraints.${constraintIndex}.name`}
-        component={Text}
-        color="red.500"
       />
       <ErrorMessage
         name={`tables.${tableIndex}.constraints.${constraintIndex}.condition`}
-        component={Text}
-        color="red.500"
       />
     </VStack>
   );

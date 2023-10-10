@@ -13,10 +13,11 @@ import { FieldConstraintsControl } from "./FieldConstraintsControl";
 import { RiDeleteBinLine } from "react-icons/ri";
 import { MdOutlineDragIndicator } from "react-icons/md";
 import { Tables, Type } from "@/types";
-import { useFormikContext, ErrorMessage } from "formik";
+import { useFormikContext } from "formik";
 import axios from "axios";
 import { useQuery } from "@tanstack/react-query";
 import { Draggable } from "react-beautiful-dnd";
+import { ErrorMessage } from "./ErrorMessage";
 
 export type FieldControlProps = {
   onRemove: () => void;
@@ -56,7 +57,7 @@ export const FieldControl: React.FC<FieldControlProps> = (props) => {
             backgroundColor={"surface.02"}
             borderRadius={8}
             borderColor={"border.primary"}
-            borderWidth={1}
+            borderWidth={2}
             borderStyle={"solid"}
             alignItems={"flex-start"}
             padding={4}
@@ -139,25 +140,17 @@ export const FieldControl: React.FC<FieldControlProps> = (props) => {
             </HStack>
             <ErrorMessage
               name={`tables.${tableIndex}.fields.${fieldIndex}.name`}
-              component={Text}
-              color="red.500"
             />
             <ErrorMessage
               name={`tables.${tableIndex}.fields.${fieldIndex}.type`}
-              component={Text}
-              color="red.500"
             />
 
             <ErrorMessage
               name={`tables.${tableIndex}.fields.${fieldIndex}.constraints`}
-              component={Text}
-              color="red.500"
             />
 
             <ErrorMessage
               name={`tables.${tableIndex}.fields.${fieldIndex}.defaultValue`}
-              component={Text}
-              color="red.500"
             />
           </VStack>
         </div>

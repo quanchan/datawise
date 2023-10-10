@@ -5,7 +5,7 @@ import {
   BaseModalProps,
   GenOptionsModalFooter,
 } from "@/components/modal";
-import { ErrorMessage, useFormikContext } from "formik";
+import { useFormikContext } from "formik";
 import { Tables, WordCasing, WordCasingOptions, YesNoOptions } from "@/types";
 import { TextInput, DateInput, SelectInput } from "@/components/input";
 import { ValuePoolInput } from "../input/ValuePoolInput";
@@ -14,6 +14,8 @@ import axios from "axios";
 import { useQuery } from "@tanstack/react-query";
 import { TypeProcessor } from "@/server/TypeProcessor";
 import React from "react";
+import { ErrorMessage } from "@/components/ErrorMessage";
+
 
 export type GenOptionsModalProps = {
   onClose: () => void;
@@ -124,12 +126,12 @@ export const GenOptionsModal: React.FC<GenOptionsModalProps> = (props) => {
                 label="Actual Type"
                 disabled={true}
                 styles={{ m: 2 }}
-                tooltip={`This is the arbitrary type that this data belongs to. In your selected format, tt will be mapped to this type: ${typeProcessor.getSQLType(
+                tooltip={`This is the arbitrary type that this data belongs to. In your selected format, this will be mapped to : ${typeProcessor.getSQLType(
                   values.format
                 )}`}
               />
             )}
-            {gen_opts?.includes("withEntity") && (
+            {gen_opts?.includes("withEntity") && !type?.standalone && (
               <SelectInput
                 name={namePrefix + "withEntity"}
                 onChange={handleChange}
@@ -162,8 +164,6 @@ export const GenOptionsModal: React.FC<GenOptionsModalProps> = (props) => {
                 />
                 <ErrorMessage
                   name={namePrefix + "maxLength"}
-                  component={Text}
-                  color="red.500"
                   maxW={"286.5px"}
                 />
               </VStack>
@@ -181,8 +181,6 @@ export const GenOptionsModal: React.FC<GenOptionsModalProps> = (props) => {
                 />
                 <ErrorMessage
                   name={namePrefix + "precision"}
-                  component={Text}
-                  color="red.500"
                   maxW={"286.5px"}
                 />
               </VStack>
@@ -200,8 +198,6 @@ export const GenOptionsModal: React.FC<GenOptionsModalProps> = (props) => {
                 />
                 <ErrorMessage
                   name={namePrefix + "scale"}
-                  component={Text}
-                  color="red.500"
                   maxW={"286.5px"}
                 />
               </VStack>
@@ -220,8 +216,6 @@ export const GenOptionsModal: React.FC<GenOptionsModalProps> = (props) => {
                 />
                 <ErrorMessage
                   name={namePrefix + "minDate"}
-                  component={Text}
-                  color="red.500"
                   maxW={"286.5px"}
                 />
               </VStack>
@@ -240,8 +234,6 @@ export const GenOptionsModal: React.FC<GenOptionsModalProps> = (props) => {
                 />
                 <ErrorMessage
                   name={namePrefix + "maxDate"}
-                  component={Text}
-                  color="red.500"
                   maxW={"286.5px"}
                 />
               </VStack>
@@ -259,8 +251,6 @@ export const GenOptionsModal: React.FC<GenOptionsModalProps> = (props) => {
                 />
                 <ErrorMessage
                   name={namePrefix + "minNumber"}
-                  component={Text}
-                  color="red.500"
                   maxW={"286.5px"}
                 />
               </VStack>
@@ -278,8 +268,6 @@ export const GenOptionsModal: React.FC<GenOptionsModalProps> = (props) => {
                 />
                 <ErrorMessage
                   name={namePrefix + "maxNumber"}
-                  component={Text}
-                  color="red.500"
                   maxW={"286.5px"}
                 />
               </VStack>
@@ -292,13 +280,11 @@ export const GenOptionsModal: React.FC<GenOptionsModalProps> = (props) => {
                   value={genOptions?.nullPercent}
                   label={"Null Percentage"}
                   isNumber={true}
-                  tooltip="The percentage of rows with NULL value "
+                  tooltip="The percentage of rows with NULL value. For composite FK, the null percentage of that key will be the min percentage within all the columns."
                   styles={{ m: 2 }}
                 />
                 <ErrorMessage
                   name={namePrefix + "nullPercent"}
-                  component={Text}
-                  color="red.500"
                   maxW={"286.5px"}
                 />
               </VStack>

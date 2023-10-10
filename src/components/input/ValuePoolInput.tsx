@@ -75,7 +75,7 @@ export const ValuePoolInput: React.FC<ValuePoolInputProps> = (
         </HStack>
         <Box
           width={"100%"}
-          border="1px solid"
+          border="2px solid"
           borderColor="border.primary"
           p={4}
           borderRadius={4}
@@ -103,7 +103,7 @@ export const ValuePoolInput: React.FC<ValuePoolInputProps> = (
         </HStack>
         <Box
           width={"100%"}
-          border="1px solid"
+          border="2px solid"
           borderColor="border.primary"
           p={4}
           borderRadius={4}

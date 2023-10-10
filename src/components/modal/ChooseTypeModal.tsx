@@ -112,7 +112,7 @@ export const ChooseTypeModal: React.FC<ChooseTypeModalProps> = (props) => {
             mt={4}
             justifyContent={"space-between"}
             paddingBottom={4}
-            borderBottom={"1px solid"}
+            borderBottom={"2px solid"}
             borderColor={"border.primary"}
           >
             <HStack overflowX={"auto"} whiteSpace={"nowrap"}>

@@ -13,7 +13,6 @@ import {
   ArrayHelpers,
   FieldArray,
   useFormikContext,
-  ErrorMessage,
 } from "formik";
 import { Tables, defaultField } from "@/types";
 import { AddButton } from "./btn/AddButton";
@@ -24,6 +23,7 @@ import {
   Droppable,
   OnDragEndResponder,
 } from "react-beautiful-dnd";
+import { ErrorMessage } from "./ErrorMessage";
 
 export type TableFieldsEditorProps = {
   index: number;
@@ -52,7 +52,6 @@ export const TableFieldsEditor: React.FC<TableFieldsEditorProps> = (props) => {
 
   const onDragEnd: OnDragEndResponder = (result) => {
     const { source, destination } = result;
-    console.log(source, destination);
     if (!destination) return;
     if (
       source.index === destination.index &&
@@ -70,7 +69,7 @@ export const TableFieldsEditor: React.FC<TableFieldsEditorProps> = (props) => {
         overflowX={{ base: "scroll", lg: "hidden" }}
         display={"flex"}
         spacing={4}
-        border={"1px solid"}
+        border={"2px solid"}
         borderColor={"border.primary"}
         p={4}
         borderRadius={8}
@@ -111,13 +110,9 @@ export const TableFieldsEditor: React.FC<TableFieldsEditorProps> = (props) => {
           </HStack>
           <ErrorMessage
             name={`tables.${index}.name`}
-            component={Text}
-            color="red.500"
           />
           <ErrorMessage
             name={`tables.${index}.rowQuantity`}
-            component={Text}
-            color="red.500"
           />
         </VStack>
         <Divider
@@ -125,7 +120,7 @@ export const TableFieldsEditor: React.FC<TableFieldsEditorProps> = (props) => {
           color={"border.primary"}
           opacity={1}
           my={0}
-          borderWidth={0.5}
+          borderWidth={1}
           w={"100%"}
         />
         <HStack pl={12} fontWeight={"semibold"} minW={"4xl"}>
@@ -140,7 +135,7 @@ export const TableFieldsEditor: React.FC<TableFieldsEditorProps> = (props) => {
           color={"border.primary"}
           opacity={1}
           my={0}
-          borderWidth={0.5}
+          borderWidth={1}
           w={"100%"}
         />
         <DragDropContext onDragEnd={onDragEnd}>

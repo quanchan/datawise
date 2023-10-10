@@ -18,7 +18,7 @@ export const BaseFooter: React.FC<BaseFooterProps> = (props) => {
       bottom={0}
       left={0}
       justifyContent={"flex-end"}
-      borderTop={"1px solid"}
+      borderTop={"2px solid"}
       borderColor={"border.primary"}
       {...styles}
     >

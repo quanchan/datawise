@@ -35,13 +35,13 @@ export type AllowedGenOptions = Record<string, (keyof GenOptions)[]>;
 export const AllowedGenOptionsMap: AllowedGenOptions = {
   entityVarchar: ["actualType", "excluded", "wordCasing", "maxLength", "nullPercent", "withEntity"],
   entityNumber: ["actualType", "excluded", "minNumber", "maxNumber", "minNumberInclusive", "maxNumberInclusive", "nullPercent", "precision", "scale", "withEntity"],
-  entityEmail: ["actualType", "excluded", "emailFormat", "emailDomain", "nullPercent", "withEntity", "emailDomain", "justUsername"],
+  entityEmail: ["actualType", "excluded", "maxLength", "emailFormat", "emailDomain", "nullPercent", "withEntity", "emailDomain", "justUsername"],
   randomInt: ["actualType", "minNumber", "maxNumber", "nullPercent", "precision", "minNumber", "maxNumber", "minNumberInclusive", "maxNumberInclusive", "serial"],
   randomDecimal: ["actualType", "minNumber", "maxNumber", "nullPercent", "precision", "scale", "minNumber", "maxNumber", "minNumberInclusive", "maxNumberInclusive"],
   randomDate: ["actualType", "minDate", "maxDate", "minDateInclusive", "maxDateInclusive","nullPercent"],
   randomDateTime: ["actualType", "minDate", "maxDate", "minDateInclusive", "maxDateInclusive", "nullPercent", "time"],
-  randomPhoneFax: ["actualType", "phoneFaxFormat", "nullPercent"],
-  randomRegex: ["actualType", "regex", "nullPercent"],
+  randomPhoneFax: ["actualType", "maxLength", "phoneFaxFormat", "nullPercent"],
+  randomRegex: ["actualType", "maxLength", "regex", "nullPercent"],
   foreignKey: ["nullPercent"],
 } 
 
