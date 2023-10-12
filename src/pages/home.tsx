@@ -40,11 +40,7 @@ import {
 import { BaseFooter } from "@/components/BaseFooter";
 import * as yup from "yup";
 import dayjs from "dayjs";
-import { useDefaultSchemaContext } from "@/context/DefaultSchemaContext";
-
-const initialValues: Tables = {
-  ...defaultTables,
-};
+import { useDefaultSchemaContext } from "@/context";
 
 const sqlFieldNamePattern = /^[a-zA-Z][a-zA-Z0-9_]*$/;
 

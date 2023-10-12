@@ -24,9 +24,11 @@ export const ValuePoolInput: React.FC<ValuePoolInputProps> = (
           `/api/types/values?column=${type?.column_name}&table=${type?.entity_meta_table}`
         )
         .then((res) => res.data),
+    staleTime: 300000,
   });
   const [isExcluded, setIsExcluded] = useState<boolean[]>([]);
   const [values, setValues] = useState<(string | number)[]>([]);
+  
   React.useEffect(() => {
     if (data) {
       setValues(Array.from(new Set(data.sort())));

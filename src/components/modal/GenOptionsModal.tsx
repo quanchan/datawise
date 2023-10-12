@@ -10,12 +10,10 @@ import { Tables, WordCasing, WordCasingOptions, YesNoOptions } from "@/types";
 import { TextInput, DateInput, SelectInput } from "@/components/input";
 import { ValuePoolInput } from "../input/ValuePoolInput";
 import { Type } from "@/types";
-import axios from "axios";
-import { useQuery } from "@tanstack/react-query";
 import { TypeProcessor } from "@/server/TypeProcessor";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { ErrorMessage } from "@/components/ErrorMessage";
-
+import { useTypesContext } from "@/context";
 
 export type GenOptionsModalProps = {
   onClose: () => void;
@@ -29,11 +27,17 @@ export const GenOptionsModal: React.FC<GenOptionsModalProps> = (props) => {
   const fieldData = values.tables[tableIndex]?.fields[fieldIndex];
   const genOptions = fieldData?.genOptions;
   const typeId = fieldData?.type;
-  const { data: type } = useQuery<Type | undefined>({
-    queryKey: [`typeData${typeId}`],
-    queryFn: () =>
-      axios.get(`/api/types/id?id=${typeId}`).then((res) => res.data),
-  });
+
+  const [type, setType] = useState<Type | undefined>(undefined);
+  const { types } = useTypesContext();
+  useEffect(() => {
+    if (types && typeId) {
+      const type = types.find((type) => type.id === typeId);
+      setType(type);
+    }
+  }, [types, typeId]);
+
+
   const gen_opts = type?.gen_opts;
   const namePrefix = `tables.${tableIndex}.fields.${fieldIndex}.genOptions.`;
   const typeProcessor = new TypeProcessor(type?.data_type);
@@ -196,10 +200,7 @@ export const GenOptionsModal: React.FC<GenOptionsModalProps> = (props) => {
                   tooltip="The number of digits to the right of the decimal point in a number. For example, the number 123.45 has a scale of 2."
                   styles={{ m: 2 }}
                 />
-                <ErrorMessage
-                  name={namePrefix + "scale"}
-                  maxW={"286.5px"}
-                />
+                <ErrorMessage name={namePrefix + "scale"} maxW={"286.5px"} />
               </VStack>
             )}
             {gen_opts?.includes("minDate") && (
@@ -214,10 +215,7 @@ export const GenOptionsModal: React.FC<GenOptionsModalProps> = (props) => {
                   setFieldValue={setFieldValue}
                   inclusiveChecked={genOptions?.minDateInclusive}
                 />
-                <ErrorMessage
-                  name={namePrefix + "minDate"}
-                  maxW={"286.5px"}
-                />
+                <ErrorMessage name={namePrefix + "minDate"} maxW={"286.5px"} />
               </VStack>
             )}
             {gen_opts?.includes("maxDate") && (
@@ -232,10 +230,7 @@ export const GenOptionsModal: React.FC<GenOptionsModalProps> = (props) => {
                   setFieldValue={setFieldValue}
                   inclusiveChecked={genOptions?.maxDateInclusive}
                 />
-                <ErrorMessage
-                  name={namePrefix + "maxDate"}
-                  maxW={"286.5px"}
-                />
+                <ErrorMessage name={namePrefix + "maxDate"} maxW={"286.5px"} />
               </VStack>
             )}
             {gen_opts?.includes("minNumber") && (

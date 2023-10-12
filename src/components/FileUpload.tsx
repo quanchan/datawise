@@ -1,4 +1,4 @@
-import { useDefaultSchemaContext } from "@/context/DefaultSchemaContext";
+import { useDefaultSchemaContext } from "@/context";
 import { Text } from "@chakra-ui/react";
 import { useRouter } from "next/router";
 import React, { useState } from "react";

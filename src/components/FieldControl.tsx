@@ -14,10 +14,10 @@ import { RiDeleteBinLine } from "react-icons/ri";
 import { MdOutlineDragIndicator } from "react-icons/md";
 import { Tables, Type } from "@/types";
 import { useFormikContext } from "formik";
-import axios from "axios";
-import { useQuery } from "@tanstack/react-query";
 import { Draggable } from "react-beautiful-dnd";
 import { ErrorMessage } from "./ErrorMessage";
+import { useTypesContext } from "@/context";
+import { useEffect, useState } from "react";
 
 export type FieldControlProps = {
   onRemove: () => void;
@@ -32,12 +32,15 @@ export const FieldControl: React.FC<FieldControlProps> = (props) => {
   const { onRemove, tableIndex, fieldIndex, onChooseType, onEditOptions } =
     props;
   const data = values.tables[tableIndex]?.fields[fieldIndex];
+  const [typeObj, setTypeObj] = useState<Type | undefined>(undefined);
+  const { types } = useTypesContext();
 
-  const { data: typeObj } = useQuery<Type | undefined>({
-    queryKey: [`typeData${data?.type || ""}`],
-    queryFn: () =>
-      axios.get(`/api/types/id?id=${data?.type || ""}`).then((res) => res.data),
-  });
+  useEffect(() => {
+    if (types && data?.type) {
+      const type = types.find((type) => type.id === data.type);
+      setTypeObj(type);
+    }
+  }, [types, data?.type]);
 
   if (!data) return <></>;
 

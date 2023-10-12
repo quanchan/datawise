@@ -1,13 +1,20 @@
 import db from "@/db";
-import { ColumnMeta, CustomType, RuntimeTypesId, Type, AllowedGenOptionsMap, SpecialTypesId } from "@/types";
+import {
+  ColumnMeta,
+  CustomType,
+  RuntimeTypesId,
+  Type,
+  AllowedGenOptionsMap,
+  SpecialTypesId,
+} from "@/types";
 import { column_meta as cm, entity_meta as em } from "@/db/schema";
-
 export class TypeProvider {
   private static runtimeTypes: Type[] = [
     {
       id: RuntimeTypesId.int,
       display_name: "Random Integer",
-      description: "Random integer generated with user-defined options. Can be used to generate serial primary keys.",
+      description:
+        "Random integer generated with user-defined options. Can be used to generate serial primary keys.",
       example: "1, 2, 3, 4, 5",
       data_type: "number",
       gen_opts_name: "randomInt",
@@ -72,7 +79,8 @@ export class TypeProvider {
     {
       id: RuntimeTypesId.regex,
       display_name: "Random String w/ Regex",
-      description: "Random string generated using Simplified Regex. Can be used to generate unique id, email addresses, barcode, etc.",
+      description:
+        "Random string generated using Simplified Regex. Can be used to generate unique id, email addresses, barcode, etc.",
       example: "ABC-123, 1234567890, 2021-01-01",
       data_type: "varchar(255)",
       gen_opts_name: "randomRegex",
@@ -84,21 +92,20 @@ export class TypeProvider {
     },
   ];
 
-  public static foreignKey = 
-    {
-      id: SpecialTypesId.foreignKey,
-      display_name: "Foreign Key",
-      description: "A placeholder type so you can write your own Foreign Key Constraint using this field in the Constraint Editor.",
-      example: "",
-      data_type: "foreignKey",
-      gen_opts_name: "foreignKey",
-      column_name: "",
-      entity_display_name: "",
-      entity_meta_table: "",
-      standalone: true,
-      custom: false,
-    }
-  ;
+  public static foreignKey = {
+    id: SpecialTypesId.foreignKey,
+    display_name: "Foreign Key",
+    description:
+      "A placeholder type so you can write your own Foreign Key Constraint using this field in the Constraint Editor.",
+    example: "",
+    data_type: "foreignKey",
+    gen_opts_name: "foreignKey",
+    column_name: "",
+    entity_display_name: "",
+    entity_meta_table: "",
+    standalone: true,
+    custom: false,
+  };
 
   public static isRuntimeTypeId(typeid: string): boolean {
     return Object.values(RuntimeTypesId).includes(typeid as RuntimeTypesId);
@@ -114,7 +121,9 @@ export class TypeProvider {
     }
     return {
       ...type,
-      gen_opts: type.gen_opts_name ? AllowedGenOptionsMap[type.gen_opts_name] : [],
+      gen_opts: type.gen_opts_name
+        ? AllowedGenOptionsMap[type.gen_opts_name]
+        : [],
     };
   }
 
@@ -145,7 +154,9 @@ export class TypeProvider {
       return undefined;
     }
     try {
-      let type = [...this.runtimeTypes, this.foreignKey].find((type) => type.id === id);
+      let type = [...this.runtimeTypes, this.foreignKey].find(
+        (type) => type.id === id
+      );
       if (!type) {
         const types = await db.query<Type[]>(`
         SELECT 
@@ -171,6 +182,41 @@ export class TypeProvider {
       }
       return this.addGenOptsToType(type);
     } catch (e) {
+      return undefined;
+    }
+  }
+
+  public static async getTypeByDisplayName(
+    name?: string
+  ): Promise<Type | undefined> {
+    if (!name) {
+      return undefined;
+    }
+    try {
+      const types = await db.query<Type[]>(`
+      SELECT 
+        ${cm.n_id} as id, 
+        ${cm.n_display_name} as display_name, 
+        ${cm.n_description} as description, 
+        ${cm.n_example} as example, 
+        ${cm.n_data_type} as data_type,
+        ${cm.n_column_name} as column_name,
+        ${cm.n_gen_opts_name} as gen_opts_name,
+        ${em.n_display_name} as entity_display_name,
+        ${em.n_table_name} as entity_meta_table,
+        ${em.n_standalone} as standalone,
+        ${em.n_custom} as custom
+      FROM ${cm.n}
+      JOIN ${em.n} 
+      ON ${cm.n_entity_meta_table} = ${em.n_table_name}
+      WHERE ${cm.n_display_name} = '${name}';`);
+      console.log("types", types)
+      if (types.length !== 0) {
+        const newType = types[0];
+        return this.addGenOptsToType(newType);
+      }
+    } catch (e) {
+      console.log(e)
       return undefined;
     }
   }
@@ -204,7 +250,7 @@ export class TypeProvider {
         false,
         true
       );`);
-      await client.query(`
+      const insertRes = await client.query(`
       INSERT INTO ${cm.n} (
         ${cm.display_name}, 
         ${cm.description}, 
@@ -221,7 +267,8 @@ export class TypeProvider {
         '${column_name}', 
         '${column_name}', 
         'entityVarchar'
-      );`);
+      ) RETURNING ${cm.id};`);
+      const { id } = insertRes.rows[0];
       await client.query(`
       CREATE TABLE IF NOT EXISTS ${column_name} (
         id SERIAL PRIMARY KEY,
@@ -242,6 +289,7 @@ export class TypeProvider {
       );
       await Promise.all(promises);
       await client.query("COMMIT");
+      return await this.getTypeById(id);
     } catch (e) {
       await client.query("ROLLBACK");
       throw e;
@@ -256,7 +304,9 @@ export class TypeProvider {
     if (!id) {
       return undefined;
     }
-    let type = [...this.runtimeTypes, this.foreignKey].find((type) => type.id === id);
+    let type = [...this.runtimeTypes, this.foreignKey].find(
+      (type) => type.id === id
+    );
     if (type) {
       return this.convertTypeToColumnMeta(type);
     }
