@@ -95,6 +95,10 @@ export const GenOptionsModal: React.FC<GenOptionsModalProps> = (props) => {
         namePrefix + "justUsername",
         genOptions?.justUsername || "n"
       );
+      setFieldValue(
+        namePrefix + "divisibleBy",
+        genOptions?.divisibleBy || 1
+      );
     }
     //
   }, [type, gen_opts]);
@@ -263,6 +267,22 @@ export const GenOptionsModal: React.FC<GenOptionsModalProps> = (props) => {
                 />
                 <ErrorMessage
                   name={namePrefix + "maxNumber"}
+                  maxW={"286.5px"}
+                />
+              </VStack>
+            )}
+            {gen_opts?.includes("divisibleBy") && (
+              <VStack>
+                <TextInput
+                  name={namePrefix + "divisibleBy"}
+                  onChange={handleChange}
+                  value={genOptions?.divisibleBy}
+                  label={"Divisible By"}
+                  isNumber={true}
+                  styles={{ m: 2 }}
+                />
+                <ErrorMessage
+                  name={namePrefix + "divisibleBy"}
                   maxW={"286.5px"}
                 />
               </VStack>

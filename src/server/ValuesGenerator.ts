@@ -15,25 +15,31 @@ export class ValuesGenerator {
       unique,
       primaryKey,
       serial,
+      divisibleBy
     } = genOptions;
     precision = precision ? +precision! : 5;
     minNumber = minNumber !== undefined ? +minNumber! : -(10 ** precision! - 1);
     maxNumber = maxNumber !== undefined ? +maxNumber! : 10 ** precision! - 1;
     minNumber = minNumberInclusive ? minNumber : minNumber + 1;
     maxNumber = maxNumberInclusive ? maxNumber : maxNumber - 1;
+    divisibleBy = divisibleBy ? +divisibleBy : 1;
     const randomInts: string[] = [];
     if (serial === "y") {
       minNumber = minNumber || 0;
       for (let i = 0; i < quantity; i++) {
-        randomInts.push("" + (minNumber + i));
+        randomInts.push("" + (minNumber + divisibleBy * i));
       }
       return randomInts;
     }
-    for (let i = 0; i < quantity; i++) {
+    const minDivisible = Math.ceil(minNumber / divisibleBy) * divisibleBy;
+    const maxDivisible = Math.floor(maxNumber / divisibleBy) * divisibleBy;
+    const maxQuantity = (unique || primaryKey) ? Math.min(quantity, (maxDivisible - minDivisible) / divisibleBy + 1 ) : quantity;
+    for (let i = 0; i < maxQuantity; i++) {
       const randomInt =
-        Math.floor(Math.random() * (maxNumber - minNumber + 1)) + minNumber;
-      if ((unique || primaryKey) && randomInts.includes("" + randomInt)) {
-        i--; // Retry if the date is excluded
+        Math.floor(Math.random() * ((maxDivisible - minDivisible) / divisibleBy + 1)) * divisibleBy +
+        minDivisible;
+      if ((unique || primaryKey) && randomInts.includes("" + randomInt) && randomInts.length < maxQuantity) {
+        i--; // Retry if the number is already in the array
         continue;
       }
       randomInts.push("" + randomInt);
