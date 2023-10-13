@@ -98,7 +98,7 @@ class SQLGenerator {
   ): Promise<string> {
     const { name, fields, constraints } = table;
 
-    let sql = `${kw.CREATE_TABLE} ${kw.IF_NOT_EXISTS} ${name} (\n`;
+    let sql = `${kw.CREATE_TABLE} ${name} (\n`;
 
     for (let index = 0; index < fields.length; index++) {
       let field = fields[index];
@@ -270,14 +270,12 @@ class SQLGenerator {
     genOptions.actualType; 
     const needQuoteWrap = new TypeProcessor(systemType).needQuoteWrap;
     const fname = alternativeColumnName ? alternativeColumnName : name;
-    sql += `  ${fname} ${actualType}`;
-    if (!notNull) {
-      sql += ` ${kw.NULL}`;
-    } else {
-      sql += ` ${kw.NOT} ${kw.NULL}`;
-    }
+    sql += `  ${fname}\t${actualType}`;
+    if (notNull) {
+      sql += `\t${kw.NOT} ${kw.NULL}`;
+    } 
     if (unique) {
-      sql += ` ${kw.UNIQUE}`;
+      sql += `\t${kw.UNIQUE}`;
     }
     if (!isForeignKey) {
       if (defaultValue) {

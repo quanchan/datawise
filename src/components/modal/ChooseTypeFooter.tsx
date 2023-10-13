@@ -6,6 +6,7 @@ import { BaseFooter } from "@/components/BaseFooter";
 export type ChooseTypeFooterProps = {
   selection?: Type;
   onClose: () => void;
+  onSave: () => void;
 };
 
 function getSelectionText(selection?: Type) {
@@ -24,7 +25,7 @@ function getSelectionText(selection?: Type) {
 }
 
 export const ChooseTypeFooter: React.FC<ChooseTypeFooterProps> = (props) => {
-  const { selection, onClose } = props;
+  const { selection, onClose, onSave } = props;
   const selectionText = useMemo(() => getSelectionText(selection), [selection]);
   return (
     <BaseFooter
@@ -40,8 +41,14 @@ export const ChooseTypeFooter: React.FC<ChooseTypeFooterProps> = (props) => {
       </Text>
       <HStack spacing={4}>
         <Button
-          variant={"primary"}
+          variant={"outlinedBasic"}
           onClick={() => onClose()}
+        >
+          Cancel
+        </Button>
+        <Button
+          variant={"primary"}
+          onClick={() => onSave()}
           fontWeight={"bold"}
         >
           Save

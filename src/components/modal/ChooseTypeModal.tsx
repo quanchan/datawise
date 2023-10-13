@@ -56,11 +56,13 @@ export const ChooseTypeModal: React.FC<ChooseTypeModalProps> = (props) => {
         Standalone: [],
         Custom: [],
       };
-    const standalone = data.filter((type) => type.standalone && !type.custom);
+    const standalone = data.filter((type) => type.standalone && !type.custom && typeof type.id === "number");
+    const runtime = data.filter((type) => type.standalone && !type.custom && typeof type.id === "string");
     const custom = data.filter((type) => type.custom);
     const others = data.filter((type) => !type.standalone && !type.custom);
     const typeMap: Record<string, Type[]> = {};
     typeMap["All"] = data;
+    typeMap["Runtime"] = runtime;
     typeMap["Standalone"] = standalone;
     typeMap["Custom"] = custom;
     others.forEach((type) => {
@@ -191,7 +193,8 @@ export const ChooseTypeModal: React.FC<ChooseTypeModalProps> = (props) => {
         </Tabs>
         <ChooseTypeFooter
           selection={data?.filter((t) => t.id === selectedType)[0]}
-          onClose={onSave}
+          onClose={onClose}
+          onSave={onSave}
         />
       </VStack>
     </BaseModal>

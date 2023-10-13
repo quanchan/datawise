@@ -145,7 +145,7 @@ export class TypeProvider {
     JOIN ${em.n} 
     ON ${cm.n_entity_meta_table} = ${em.n_table_name};
     `);
-    const allTypes = [...types, ...this.runtimeTypes, this.foreignKey];
+    const allTypes = [...types, this.foreignKey, ...this.runtimeTypes];
     return allTypes.map((type: Type) => this.addGenOptsToType(type) as Type);
   }
 

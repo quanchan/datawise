@@ -433,10 +433,7 @@ export default function Home() {
                   <option value={Format.OracleSQL}>{Format.OracleSQL}</option>
                 </Select>
                 <Button
-                  variant={"basic"}
-                  border={"2px solid"}
-                  borderColor={"border.primary"}
-                  fontWeight={"bold"}
+                  variant={"outlinedBasic"}
                   onClick={() => {
                     // Create a Blob containing the SQL content
                     const blob = new Blob([JSON.stringify(values, null, 2)], {

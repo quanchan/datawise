@@ -59,6 +59,15 @@ const components: ChakraTheme["components"] = {
         height: 8,
         paddingInline: 3,
       },
+      outlinedBasic: {
+        fontSize: "xs",
+        minW: "75px",
+        height: 8,
+        paddingInline: 3,
+        border: "2px solid",
+        borderColor:"border.primary",
+        fontWeight: "bold",
+      },
       primary: {
         bg: "blue.primary",
         color: "white",

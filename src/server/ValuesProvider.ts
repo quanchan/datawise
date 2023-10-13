@@ -48,7 +48,6 @@ export class ValuesProvider {
           runtimeGenOptions,
           rowQuantity
         );
-        this.shuffle(values);
         this.addNullsForStandalone(values, runtimeGenOptions, rowQuantity);
       } else if (TypeProvider.isForeignKey(type)) {
         const parsedFKColumn = parsedFKColumnMap[name];
@@ -618,7 +617,7 @@ export class ValuesProvider {
     quantity: number,
     isEntity: boolean = false
   ) {
-    if (!genOptions.notNull && genOptions.nullPercent) {
+    if (!genOptions.notNull && !genOptions.primaryKey && genOptions.nullPercent) {
       const minQuantity = Math.min(values.length, quantity)
       const nullQuantity = Math.floor(minQuantity * (genOptions.nullPercent / 100));
       const indicesToAddNull = ValuesGenerator.generateRandomUniqueIndices(
