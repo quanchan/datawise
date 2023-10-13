@@ -1,7 +1,11 @@
+import { useDefaultSchemaContext } from "@/context";
 import { Text } from "@chakra-ui/react";
+import { useRouter } from "next/router";
 import React, { useState } from "react";
 
 export const FileUpload: React.FC = () => {
+  const router = useRouter();
+  const { setDefaultSchema } = useDefaultSchemaContext();
   const [dragging, setDragging] = useState(false);
 
   const handleDragEnter = (e: React.DragEvent<HTMLLabelElement>) => {
@@ -32,8 +36,17 @@ export const FileUpload: React.FC = () => {
     handleFileUpload(file);
   };
 
-  const handleFileUpload = (file: File) => {
-    console.log("Uploaded file:", file);
+  const handleFileUpload = async (file: File) => {
+    if (file) {
+      const content = await file.text();
+      try {
+        const json = JSON.parse(content);
+        setDefaultSchema(json);
+        router.push("/home");
+      } catch (e) {
+        alert("Invalid JSON file");
+      } 
+    }
   };
 
   return (
@@ -55,7 +68,7 @@ export const FileUpload: React.FC = () => {
       <Text color={"blue.primary"}>Click here or Drop a file</Text>
       <input
         type="file"
-        accept=".sql"
+        accept=".json"
         style={{ display: "none" }}
         onChange={handleFileChange}
         id="file-input"

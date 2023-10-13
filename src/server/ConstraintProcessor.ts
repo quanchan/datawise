@@ -2,15 +2,16 @@ import { ConstraintType, ParsedTableConstraint, TableConstraint } from "@/types"
 
 export class ConstraintProcessor {
   private static parse(input: string): ParsedTableConstraint {
-    // Lowercase and remove extra whitespace
-    input = input.toLowerCase().replace(/\s+/g, ' ');
-    if (input.startsWith(ConstraintType.FK)) {
+    // Remove extra whitespace
+    input = input.replace(/\s+/g, ' ');
+    const lowerinput = input.toLowerCase();
+    if (lowerinput.startsWith(ConstraintType.FK)) {
       return this.parseForeignKey(input);
-    } else if (input.startsWith(ConstraintType.PK)) {
+    } else if (lowerinput.startsWith(ConstraintType.PK)) {
       return this.parsePrimaryKey(input);
-    } else if (input.startsWith(ConstraintType.UNIQUE)) {
+    } else if (lowerinput.startsWith(ConstraintType.UNIQUE)) {
       return this.parseUnique(input);
-    } else if (input.startsWith(ConstraintType.CHECK)) {
+    } else if (lowerinput.startsWith(ConstraintType.CHECK)) {
       return this.parseCheck(input);
     } else {
       throw new Error(`Invalid constraint. Please use only "CHECK", "PRIMARY KEY", "FOREIGN KEY" and "UNIQUE": ${input}`);
@@ -18,7 +19,7 @@ export class ConstraintProcessor {
   }
 
   private static parseForeignKey(input: string): ParsedTableConstraint {
-    const regex = /foreign key\((.*?)\) references (.*?)\((.*?)\)/;
+    const regex = /foreign key\s?\((.*?)\) references (.*?)\((.*?)\)/i;
     const match = input.match(regex);
 
     if (!match || match.length !== 4) {
@@ -34,13 +35,13 @@ export class ConstraintProcessor {
     return {
       type: ConstraintType.FK,
       columns: columnNames,
-      referencedTable,
+      referencedTable: referencedTable.trim(),
       referencedColumns: refColumnNames,
     };
   }
 
   private static parsePrimaryKey(input: string): ParsedTableConstraint {
-    const regex = /primary key\((.*?)\)/;
+    const regex = /primary key\s?\((.*?)\)/i;
     const match = input.match(regex);
 
     if (!match || match.length !== 2) {
@@ -56,7 +57,7 @@ export class ConstraintProcessor {
   }
 
   private static parseUnique(input: string): ParsedTableConstraint {
-    const regex = /unique\((.*?)\)/;
+    const regex = /unique\s?\((.*?)\)/i;
     const match = input.match(regex);
 
     if (!match || match.length !== 2) {
@@ -72,7 +73,7 @@ export class ConstraintProcessor {
   }
 
   private static parseCheck(input: string): ParsedTableConstraint {
-    const regex = /check\((.*?)\)/;
+    const regex = /check\s?\((.*?)\)/i;
     const match = input.match(regex);
 
     if (!match || match.length !== 2) {

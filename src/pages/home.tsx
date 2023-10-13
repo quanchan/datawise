@@ -31,17 +31,16 @@ import {
   ChooseTypeModal,
   ConstraintModal,
   GenOptionsModal,
+  ErrorModal,
+  PreviewSQLModal,
+  ConfirmDeleteModal,
+  VisualiserModal,
+  CreateTypeModal,
 } from "@/components/modal";
-import { VisualiserModal } from "@/components/modal/VisualiserModal";
-import { ConfirmDeleteModal } from "@/components/modal/ConfirmDeleteModal";
-import { PreviewSQLModal } from "@/components/modal/PreviewSQLModal";
 import { BaseFooter } from "@/components/BaseFooter";
 import * as yup from "yup";
-import { CreateTypeModal } from "@/components/modal/CreateTypeModal";
-
-const initialValues: Tables = {
-  ...defaultTables,
-};
+import dayjs from "dayjs";
+import { useDefaultSchemaContext } from "@/context";
 
 const sqlFieldNamePattern = /^[a-zA-Z][a-zA-Z0-9_]*$/;
 
@@ -138,8 +137,86 @@ const validationSchema = yup.object().shape({
                 )
                 .required("Field name is required"),
               type: yup.string().required("Type is required"),
+              genOptions: yup.object().shape({
+                maxLength: yup
+                  .number()
+                  .optional()
+                  .positive("Max length must be a positive number"),
+                precision: yup
+                  .number()
+                  .optional()
+                  .positive("Precision must be a positive number"),
+                scale: yup
+                  .number()
+                  .optional()
+                  .positive("Scale must be a positive number"),
+                nullPercent: yup
+                  .number()
+                  .optional()
+                  .min(0, "Null percentage min value is 0")
+                  .max(100, "Null percentage max value is 100"),
+                minNumber: yup
+                  .number()
+                  .optional()
+                  .test(
+                    "minNumber",
+                    "Min value must be less than max value",
+                    function (value) {
+                      return (
+                        !value ||
+                        !this.parent.maxNumber ||
+                        value <= this.parent.maxNumber
+                      );
+                    }
+                  ),
+                maxNumber: yup
+                  .number()
+                  .optional()
+                  .test(
+                    "maxNumber",
+                    "Max value must be greater than min value",
+                    function (value) {
+                      return (
+                        !value ||
+                        !this.parent.minNumber ||
+                        value >= this.parent.minNumber
+                      );
+                    }
+                  ),
+                minDate: yup
+                  .string()
+                  .optional()
+                  .test(
+                    "minDate",
+                    "Min date must be less than max date",
+                    function (value) {
+                      return (
+                        !value ||
+                        !this.parent.maxDate ||
+                        this.parent.maxDate === value ||
+                        dayjs(value).isBefore(dayjs(this.parent.maxDate))
+                      );
+                    }
+                  ),
+                maxDate: yup
+                  .string()
+                  .optional()
+                  .test(
+                    "maxDate",
+                    "Max date must be greater than min date",
+                    function (value) {
+                      return (
+                        !value ||
+                        !this.parent.minDate ||
+                        this.parent.minDate === value ||
+                        dayjs(this.parent.minDate).isBefore(dayjs(value))
+                      );
+                    }
+                  ),
+              }),
             })
           )
+          .min(1, "At least one field is required")
           // @ts-ignore
           .unique("name", "Field name needs to be unique")
           .uniquePropertyValue(
@@ -181,6 +258,7 @@ type ModalOpenStates = {
   visualiser: boolean;
   preview: boolean;
   createType: boolean;
+  error: boolean;
 };
 
 export default function Home() {
@@ -193,6 +271,7 @@ export default function Home() {
     visualiser: false,
     preview: false,
     createType: false,
+    error: false,
   });
   const [currentFieldIndex, setCurrentFieldIndex] = React.useState<number>(0);
   const [currentConstraintIndex, setCurrentConstraintIndex] =
@@ -200,6 +279,9 @@ export default function Home() {
   const [deletingModal, setDeletingModal] = React.useState<number>(0);
   const [removeTable, setRemoveTable] =
     React.useState<ArrayHelpers["remove"]>();
+
+  const { defaultSchema } = useDefaultSchemaContext();
+
   const onOpenModal = (modal: keyof ModalOpenStates) => {
     // switch off every other modal, except for the open one
     setOpenModal((prev) => {
@@ -247,19 +329,14 @@ export default function Home() {
 
   return (
     <Formik
-      initialValues={initialValues}
-      onSubmit={async (values) => {
+      initialValues={defaultSchema}
+      onSubmit={async (_) => {
         onOpenModal("preview");
       }}
       validationSchema={validationSchema}
     >
-      {({
-        values,
-        handleChange,
-      }) => (
+      {({ values, handleChange, errors }) => (
         <>
-          {/* {console.log("error", errors)}
-          {console.log("values", values)} */}
           <Form>
             <VStack
               width={"100vw"}
@@ -283,7 +360,7 @@ export default function Home() {
                   w={"100%"}
                 >
                   <TabList my={4} justifyContent={"space-between"}>
-                    <HStack w={"100%"}>
+                    <HStack w={"100%"} overflowX={"auto"}>
                       <FieldArray name={`tables`}>
                         {({ remove, push }: ArrayHelpers) => (
                           <>
@@ -315,12 +392,13 @@ export default function Home() {
                         )}
                       </FieldArray>
                     </HStack>
-                    <Button
+                    {/* TODO: Enable again if implement visualiser */}
+                    {/* <Button
                       variant={"primary"}
                       onClick={() => onOpenModal("visualiser")}
                     >
                       Visualiser
-                    </Button>
+                    </Button> */}
                   </TabList>
                   <TabPanels w={"100%"}>
                     {values.tables.map((table, index) => (
@@ -354,7 +432,41 @@ export default function Home() {
                   <option value={Format.MySQL}>{Format.MySQL}</option>
                   <option value={Format.OracleSQL}>{Format.OracleSQL}</option>
                 </Select>
-                <Button variant={"primary"} type="submit" fontWeight={"bold"}>
+                <Button
+                  variant={"outlinedBasic"}
+                  onClick={() => {
+                    // Create a Blob containing the SQL content
+                    const blob = new Blob([JSON.stringify(values, null, 2)], {
+                      type: "application/json",
+                    });
+
+                    // Create a URL for the Blob
+                    const url = URL.createObjectURL(blob);
+
+                    // Create a temporary anchor element
+                    const a = document.createElement("a");
+                    a.href = url;
+                    a.download = "schema.json";
+
+                    // Trigger a click event on the anchor to initiate the download
+                    a.click();
+
+                    // Clean up by revoking the Blob URL
+                    URL.revokeObjectURL(url);
+                  }}
+                >
+                  Export
+                </Button>
+                <Button
+                  variant={"primary"}
+                  type="submit"
+                  fontWeight={"bold"}
+                  onClick={() => {
+                    if (Object.keys(errors).length !== 0) {
+                      onOpenModal("error");
+                    }
+                  }}
+                >
                   Preview
                 </Button>
               </BaseFooter>
@@ -410,6 +522,10 @@ export default function Home() {
               onOpenModal("chooseType");
               onCloseModal("createType");
             }}
+          />
+          <ErrorModal
+            isOpen={openModal.error}
+            onClose={() => onCloseModal("error")}
           />
         </>
       )}

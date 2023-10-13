@@ -27,7 +27,7 @@ export default function Home() {
         <NavCardButton header="Create New Schemas" onClick={goToCreateNewSchema}>
           <AiOutlinePlusCircle size={"4em"} color="#0093FA" />
         </NavCardButton>
-        <NavCardButton header="Modify Existing Schemas" onClick={goToCreateNewSchema}>
+        <NavCardButton header="Modify Existing Schemas">
           <FileUpload />
         </NavCardButton>
       </HStack>

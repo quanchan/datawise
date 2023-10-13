@@ -14,7 +14,7 @@ import {
   CardBody,
   Text,
 } from "@chakra-ui/react";
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, use, useEffect } from "react";
 import { TypeCard } from "@/components/TypeCard";
 import { Type, Tables, defaultGenOptions } from "@/types";
 import { BaseTopBar } from "@/components/BaseTopBar";
@@ -25,9 +25,8 @@ import {
 } from "@/components/modal";
 import { BiSearch } from "react-icons/bi";
 import { useFormikContext } from "formik";
-import axios from "axios";
-import { useQuery } from "@tanstack/react-query";
 import { AiOutlinePlusCircle } from "react-icons/ai";
+import { useTypesContext } from "@/context/TypesContext";
 
 export type ChooseTypeModalProps = Omit<BaseModalProps, 'onClose'> & {
   onClose: (selected: string) => void;
@@ -43,12 +42,12 @@ export const ChooseTypeModal: React.FC<ChooseTypeModalProps> = (props) => {
   const [selectedType, setSelectedType] = useState<string>(
     values.tables[tableIndex]?.fields[fieldIndex]?.type || ""
   );
+  useEffect(() => {
+    setSelectedType(values.tables[tableIndex]?.fields[fieldIndex]?.type || "")
+  }, [values.tables[tableIndex]?.fields[fieldIndex]?.type])
   const [searchTerm, setSearchTerm] = useState("");
 
-  const { data } = useQuery<Type[]>({
-    queryKey: ["typesData"],
-    queryFn: () => axios.get("/api/types").then((res) => res.data),
-  });
+  const { types: data } = useTypesContext();
 
   const typeMap = useMemo(() => {
     if (!data)
@@ -57,11 +56,13 @@ export const ChooseTypeModal: React.FC<ChooseTypeModalProps> = (props) => {
         Standalone: [],
         Custom: [],
       };
-    const standalone = data.filter((type) => type.standalone && !type.custom);
+    const standalone = data.filter((type) => type.standalone && !type.custom && typeof type.id === "number");
+    const runtime = data.filter((type) => type.standalone && !type.custom && typeof type.id === "string");
     const custom = data.filter((type) => type.custom);
     const others = data.filter((type) => !type.standalone && !type.custom);
     const typeMap: Record<string, Type[]> = {};
     typeMap["All"] = data;
+    typeMap["Runtime"] = runtime;
     typeMap["Standalone"] = standalone;
     typeMap["Custom"] = custom;
     others.forEach((type) => {
@@ -112,7 +113,7 @@ export const ChooseTypeModal: React.FC<ChooseTypeModalProps> = (props) => {
             mt={4}
             justifyContent={"space-between"}
             paddingBottom={4}
-            borderBottom={"1px solid"}
+            borderBottom={"2px solid"}
             borderColor={"border.primary"}
           >
             <HStack overflowX={"auto"} whiteSpace={"nowrap"}>
@@ -192,7 +193,8 @@ export const ChooseTypeModal: React.FC<ChooseTypeModalProps> = (props) => {
         </Tabs>
         <ChooseTypeFooter
           selection={data?.filter((t) => t.id === selectedType)[0]}
-          onClose={onSave}
+          onClose={onClose}
+          onSave={onSave}
         />
       </VStack>
     </BaseModal>

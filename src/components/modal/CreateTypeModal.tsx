@@ -16,9 +16,10 @@ import { SelectInput, TextInput } from "../input";
 import { useEffect, useState } from "react";
 import { BaseFooter } from "../BaseFooter";
 import { useFormikContext } from "formik";
-import { Tables, defaultCustomType, separatorOptions } from "@/types";
+import { Tables, Type, defaultCustomType, separatorOptions } from "@/types";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import axios from "axios";
+import { useTypesContext } from "@/context";
 
 export type CreateTypeModalProps = {} & BaseModalProps;
 
@@ -29,18 +30,23 @@ export const CreateTypeModal: React.FC<CreateTypeModalProps> = (props) => {
 
   useEffect(() => {
     setFieldValue("newType", defaultCustomType);
-  }, []);
+  }, [isOpen]);
 
   const namePrefix = `newType.`;
-
-  const newTypeMutation = useMutation(() =>
-    axios.post("/api/types/new", values.newType).then((res) => res.data)
-  );
-
+  
   const queryClient = useQueryClient();
-  const onSave = () => {
-    newTypeMutation.mutateAsync();
-    queryClient.invalidateQueries({ queryKey: ["typesData"] });
+  const newTypeMutation = useMutation({
+    mutationFn: async () => {
+      const res = await axios.post("/api/types/new", values.newType);
+      return res.data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["typesData"]});
+    }
+  });
+
+  const onSave = async () => {
+    await newTypeMutation.mutateAsync();
     onClose();
   };
   const newType = values.newType;
@@ -97,12 +103,7 @@ export const CreateTypeModal: React.FC<CreateTypeModalProps> = (props) => {
                 options={separatorOptions}
                 value={newType.separator}
               />
-              <Text
-                mt={4}
-                mb={2}
-                fontWeight={"semibold"}
-                fontSize={"md"}
-              >
+              <Text mt={4} mb={2} fontWeight={"semibold"} fontSize={"md"}>
                 Values
               </Text>
               <Textarea

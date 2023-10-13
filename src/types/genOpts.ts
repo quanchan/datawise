@@ -1,9 +1,9 @@
 export type GenOptions = {
   actualType: string,
   maxLength?: number,
-  minNumber?: number | string,
+  minNumber?: number,
   minNumberInclusive?: boolean,
-  maxNumber?: number | string,
+  maxNumber?: number,
   maxNumberInclusive?: boolean,
   precision?: number,
   scale?: number,
@@ -18,8 +18,12 @@ export type GenOptions = {
   nullPercent?: number,
   wordCasing?: string,
   stringFormat?: string,
-  distribution?: string,
   time?: boolean,
+  serial?: string,
+  emailDomain?: string,
+  justUsername?: string,
+  regex?: string,
+  divisibleBy?: number,
 }
 
 export const defaultGenOptions: GenOptions = {
@@ -31,12 +35,14 @@ export type AllowedGenOptions = Record<string, (keyof GenOptions)[]>;
 
 export const AllowedGenOptionsMap: AllowedGenOptions = {
   entityVarchar: ["actualType", "excluded", "wordCasing", "maxLength", "nullPercent", "withEntity"],
-  entityNumber: ["actualType", "excluded", "minNumber", "maxNumber", "minNumberInclusive", "maxNumberInclusive", "nullPercent", "precision", "scale", "withEntity"],
-  randomInt: ["actualType", "minNumber", "maxNumber", "nullPercent", "precision", "minNumber", "maxNumber", "minNumberInclusive", "maxNumberInclusive", "distribution"],
-  randomDecimal: ["actualType", "minNumber", "maxNumber", "nullPercent", "precision", "scale", "minNumber", "maxNumber", "minNumberInclusive", "maxNumberInclusive", "distribution"],
+  entityNumber: ["actualType", "excluded", "minNumber", "maxNumber", "minNumberInclusive", "maxNumberInclusive", "nullPercent", "precision", "scale", "withEntity", "divisibleBy"],
+  entityEmail: ["actualType", "excluded", "maxLength", "emailFormat", "emailDomain", "nullPercent", "withEntity", "emailDomain", "justUsername"],
+  randomInt: ["actualType", "minNumber", "maxNumber", "nullPercent", "precision", "minNumber", "maxNumber", "minNumberInclusive", "maxNumberInclusive", "serial", "divisibleBy"],
+  randomDecimal: ["actualType", "minNumber", "maxNumber", "nullPercent", "precision", "scale", "minNumber", "maxNumber", "minNumberInclusive", "maxNumberInclusive"],
   randomDate: ["actualType", "minDate", "maxDate", "minDateInclusive", "maxDateInclusive","nullPercent"],
   randomDateTime: ["actualType", "minDate", "maxDate", "minDateInclusive", "maxDateInclusive", "nullPercent", "time"],
-  randomPhoneFax: ["actualType", "phoneFaxFormat", "nullPercent"],
+  randomPhoneFax: ["actualType", "maxLength", "phoneFaxFormat", "nullPercent"],
+  randomRegex: ["actualType", "maxLength", "regex", "nullPercent"],
   foreignKey: ["nullPercent"],
 } 
 

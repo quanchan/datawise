@@ -6,6 +6,7 @@ export enum RuntimeTypesId {
   datetime = "datetime",
   date = "date",
   phonefax = "phonefax",
+  regex = "regex",
 }
 
 export enum SpecialTypesId {

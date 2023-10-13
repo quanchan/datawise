@@ -10,7 +10,7 @@ const { definePartsStyle, defineMultiStyleConfig } =
 const brandTabVariant = definePartsStyle((props) => {
   return {
     tab: {
-      border: "1px solid",
+      border: "2px solid",
       borderColor: "border.input",
       fontWeight: "bold",
       color: "text.secondary",
@@ -58,6 +58,15 @@ const components: ChakraTheme["components"] = {
         minW: "75px",
         height: 8,
         paddingInline: 3,
+      },
+      outlinedBasic: {
+        fontSize: "xs",
+        minW: "75px",
+        height: 8,
+        paddingInline: 3,
+        border: "2px solid",
+        borderColor:"border.primary",
+        fontWeight: "bold",
       },
       primary: {
         bg: "blue.primary",

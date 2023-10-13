@@ -48,6 +48,7 @@ export class ValuesProvider {
           runtimeGenOptions,
           rowQuantity
         );
+        this.addNullsForStandalone(values, runtimeGenOptions, rowQuantity);
       } else if (TypeProvider.isForeignKey(type)) {
         const parsedFKColumn = parsedFKColumnMap[name];
         const { refTable, refColumn, isStandalone, group } = parsedFKColumn;
@@ -66,6 +67,7 @@ export class ValuesProvider {
                 rowQuantity,
                 refItself
               );
+              this.addNullsForStandalone(values, runtimeGenOptions, rowQuantity);
             } else {
               // If the foreign key is not standalone, it means that it is a part of a multi-column foreign key
               // and will need to be generated together with other columns
@@ -86,7 +88,6 @@ export class ValuesProvider {
           throw new Error(`Table ${refTable} not found`);
         }
       } else {
-
         const columnMeta = await TypeProvider.getColumnMetaById(type);
         if (columnMeta) {
           switch (genOptions.withEntity) {
@@ -100,21 +101,16 @@ export class ValuesProvider {
               );
               break;
             case "y":
-              if (!entityMap[columnMeta.entity_meta_table]) {
-                entityMap[columnMeta.entity_meta_table] = [
-                  {
-                    columnMeta,
-                    genOptions: runtimeGenOptions,
-                    fieldName: name,
-                  },
-                ];
-              } else {
-                entityMap[columnMeta.entity_meta_table].push({
-                  columnMeta,
-                  genOptions: runtimeGenOptions,
-                  fieldName: name,
-                });
-              }
+              const newField = {
+                columnMeta,
+                genOptions: runtimeGenOptions,
+                fieldName: name,
+              };
+              entityMap[columnMeta.entity_meta_table] = entityMap[
+                columnMeta.entity_meta_table
+              ]
+                ? [...entityMap[columnMeta.entity_meta_table], newField]
+                : [newField];
               continue;
           }
         } else {
@@ -134,7 +130,8 @@ export class ValuesProvider {
       tableValues,
       fkMap,
       rowQuantity,
-      uniqueGroups
+      uniqueGroups,
+      table
     );
 
     // Finish groupGeneratedTogether array to store all the columns that are generated together
@@ -232,9 +229,9 @@ export class ValuesProvider {
         uniqueGroupsValues
       );
 
-      minLen = Object.values(uniqueTableValues)[0].length
+      minLen = Object.values(uniqueTableValues)[0].length;
       tableValues = uniqueTableValues;
-    } 
+    }
     // slice the value to match the lowest length of all the columns
     for (const field in tableValues) {
       tableValues[field] = tableValues[field].slice(0, minLen);
@@ -254,11 +251,14 @@ export class ValuesProvider {
     // Go through each unique group and check if the row satisfied all the constraints
     uniqueGroups.forEach((group, index) => {
       let valuesString = "";
+      let nullString = "";
       for (const col of group) {
         valuesString += col + ":" + values[col] + ",";
+        nullString += col + ":" + "NULL" + ",";
       }
       valuesStrings.push(valuesString);
-      if (uniqueGroupsValues[index].includes(valuesString)) {
+      // All null still count as unique
+      if (uniqueGroupsValues[index].includes(valuesString) && valuesString !== nullString) {
         isUnique = false;
       }
     });
@@ -347,7 +347,8 @@ export class ValuesProvider {
     tableValues: ValidTableValuesMap,
     fkMap: FKMap,
     rowQuantity: number,
-    uniqueGroups: string[][]
+    uniqueGroups: string[][],
+    table: TableOptions
   ) {
     for (const group in fkMap) {
       const colsInFK = fkMap[group];
@@ -367,6 +368,13 @@ export class ValuesProvider {
           break;
         }
       }
+
+      // Handle Null percentage by generating random indices to replace with null. The number of indices 
+      // is the min null percentage within all columns in the FK
+      const nullPercents = table.fields.filter(f => colsInFK.includes(f.name)).map(f => f.genOptions.nullPercent).filter(p => p !== undefined) as number[];
+      const minNullPercent = Math.min(...nullPercents)
+      const nullQuantity = Math.floor(rowQuantity * (minNullPercent / 100));
+
       // Since we temporary stored all the values pool in fkMap, we can just generate random indices,
       // pick fk values from those pools and replace the pools with the actual values
       const indices = ValuesGenerator.generateRandomIndices(
@@ -375,11 +383,16 @@ export class ValuesProvider {
         isUnique,
         false
       );
+      const indicesToAddNull = ValuesGenerator.generateRandomUniqueIndices(
+        rowQuantity,
+        nullQuantity
+      ).sort();
       for (const col of fkMap[group]) {
         const values = [];
         for (const index of indices) {
           values.push(tableValues[col][index]);
         }
+        this.addNulls(values, indicesToAddNull);
         tableValues[col] = values;
       }
     }
@@ -409,11 +422,6 @@ export class ValuesProvider {
           const fieldGenOpts = fields.find((field) => field.name === fieldName)!
             .genOptions as RuntimeGenOptions;
 
-          // Directly remove all the row with null value if the field is not nullable
-          if (fieldGenOpts.notNull || fieldGenOpts.primaryKey) {
-            validValues.filter((value) => value[fieldName] !== null);
-          }
-
           // Save all the duplicated indices of that entity column in duplicatedMap
           // to remove after all the columns are processed to reduce the number of lost rows
           if (fieldGenOpts.unique || fieldGenOpts.primaryKey) {
@@ -425,14 +433,18 @@ export class ValuesProvider {
                 duplicatedMap[value[fieldName]] = [index];
               }
             });
+            // WARN: Object.values order of values is not guaranteed. Not sure if this will cause any problem 
             const duplicatedValuesEntry = Object.values(duplicatedMap).filter(
               (group) => group.length > 1
             );
             duplicatedValues.push(...duplicatedValuesEntry);
           }
-
+          const fieldValues = validValues.map((value) => value[fieldName]);
+          console.log(fieldValues)
+          this.addNullsForStandalone(fieldValues, fieldGenOpts, rowQuantity, true);
+          console.log(fieldValues)
           // Temporary save the column values to tableValues
-          tableValues[fieldName] = validValues.map((value) => value[fieldName]);
+          tableValues[fieldName] = fieldValues;
         }
 
         // If there are duplicated rows, remove them, prioritizing the ones with the highest amount
@@ -502,9 +514,9 @@ export class ValuesProvider {
     return values;
   }
 
-  public static async getAllColumnEntities(table: string) {
+  public static async getAllColumnEntities(table: string): Promise<EntitiesValues> {
     const result = await db.query<EntitiesValues>(`SELECT * FROM ${table};`);
-    return result;
+    return result as EntitiesValues;
   }
 
   private static async getValidColumnValuesWithoutEntity(
@@ -518,6 +530,7 @@ export class ValuesProvider {
     values = this.filterByExcluded(values, genOptions, allowedGenOpts);
     values = this.filterByMinNumber(values, genOptions, allowedGenOpts);
     values = this.filterByMaxNumber(values, genOptions, allowedGenOpts);
+    values = this.mapToEmailDomain(values, genOptions, allowedGenOpts);
     values = this.mapByWordCasing(values, genOptions, allowedGenOpts);
     if (genOptions.notNull || genOptions.primaryKey) {
       values.filter((value) => value !== null);
@@ -532,7 +545,9 @@ export class ValuesProvider {
         }
       }
     }
-    return this.shuffle(values);
+    this.shuffle(values);
+    this.addNullsForStandalone(values, genOptions, quantity);
+    return values;
   }
 
   private static async getValidColumnValuesWithEntity(
@@ -571,6 +586,12 @@ export class ValuesProvider {
         allowedGenOpts,
         fieldName
       );
+      entityValues = this.mapToEmailDomain(
+        entityValues,
+        genOptions,
+        allowedGenOpts,
+        fieldName
+      );
       entityValues = this.mapByWordCasing(
         entityValues,
         genOptions,
@@ -578,7 +599,8 @@ export class ValuesProvider {
         fieldName
       );
     }
-    return this.shuffle(entityValues);
+    this.shuffle(entityValues);
+    return entityValues
   }
 
   private static shuffle<T extends ValidValue>(array: T[]): T[] {
@@ -587,6 +609,35 @@ export class ValuesProvider {
       [array[i], array[j]] = [array[j], array[i]];
     }
     return array;
+  }
+
+  private static addNullsForStandalone(
+    values: string[],
+    genOptions: RuntimeGenOptions,
+    quantity: number,
+    isEntity: boolean = false
+  ) {
+    if (!genOptions.notNull && !genOptions.primaryKey && genOptions.nullPercent) {
+      const minQuantity = Math.min(values.length, quantity)
+      const nullQuantity = Math.floor(minQuantity * (genOptions.nullPercent / 100));
+      const indicesToAddNull = ValuesGenerator.generateRandomUniqueIndices(
+        minQuantity,
+        nullQuantity
+      ).sort();
+      this.addNulls(values, indicesToAddNull, isEntity);
+    }
+    return values;
+  }
+
+  private static addNulls(values: string[], indicesToAddNull: number[], isEntity: boolean = false) {
+
+    for (let i = 0; i < indicesToAddNull.length; i++) {
+      let replaced = values[i];
+      values.splice(indicesToAddNull[i], 1, "NULL");
+      if (replaced !== undefined && !isEntity) {
+        values.push(replaced);
+      }
+    }
   }
 
   private static filterByExcluded<T extends ValidValue>(
@@ -709,6 +760,47 @@ export class ValuesProvider {
               v.replace(/^\w/, (c: string) => c.toUpperCase())
             )
           );
+      }
+    }
+    return values;
+  }
+
+  private static mapToEmailDomain<T extends ValidValue>(
+    values: T[],
+    genOptions: RuntimeGenOptions,
+    allowedGenOpts: (keyof GenOptions)[],
+    fieldName: string = ""
+  ): T[] {
+    const { emailDomain, justUsername } = genOptions;
+    if (
+      allowedGenOpts.includes("emailDomain") &&
+      allowedGenOpts.includes("justUsername") &&
+      justUsername == "n"
+    ) {
+      if (emailDomain) {
+        return values.map((value) =>
+          this.mapper(value, (v) => v + "@" + emailDomain, fieldName)
+        );
+      } else {
+        const emailDomains = [
+          "@gmail.com",
+          "@yahoo.com",
+          "@outlook.com",
+          "@hotmail.com",
+          "@aol.com",
+          "@icloud.com",
+          "@protonmail.com",
+          "@mail.com",
+          "@live.com",
+        ];
+        return values.map((value) =>
+          this.mapper(
+            value,
+            (v) =>
+              v + emailDomains[Math.floor(Math.random() * emailDomains.length)],
+            fieldName
+          )
+        );
       }
     }
     return values;

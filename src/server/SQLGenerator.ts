@@ -98,7 +98,7 @@ class SQLGenerator {
   ): Promise<string> {
     const { name, fields, constraints } = table;
 
-    let sql = `${kw.CREATE_TABLE} ${kw.IF_NOT_EXISTS} ${name} (\n`;
+    let sql = `${kw.CREATE_TABLE} ${name} (\n`;
 
     for (let index = 0; index < fields.length; index++) {
       let field = fields[index];
@@ -155,7 +155,13 @@ class SQLGenerator {
         args = [genOptions.precision?.toString(), genOptions.scale?.toString()];
         break;
       case "randomPhoneFax":
-        args = [genOptions.phoneFaxFormat?.length.toString()];
+        args = [genOptions.maxLength?.toString()];
+        break;
+      case "randomRegex":
+        args = [genOptions.maxLength?.toString()];
+        break;
+      case "entityEmail":
+        args = [genOptions.maxLength?.toString()];
         break;
       case "randomInt":
         args = [genOptions.precision?.toString()];
@@ -206,9 +212,9 @@ class SQLGenerator {
       cachedTableValues[key] = value;
     }
     valuesCache[name] = cachedTableValues;
-
+    const fieldNames = fields.map((field) => field.name);
     sql += `${kw.INSERT_INTO} ${name} (
-  ${fields.map((field) => field.name).join(",\n  ")}
+  ${fieldNames.join(",\n  ")}
 ) ${kw.VALUES}`;
     const needQuoteWraps = fields.map((field) => {
       let systemType =
@@ -218,9 +224,9 @@ class SQLGenerator {
       return typeProcessor.needQuoteWrap;
     });
     for (let i = 0; i < len; i++) {
-      const rowValues = Object.values(values).map((v) => v[i]);
+      const rowValues = fieldNames.map((fname) => values[fname][i]);
       const rowValuesWithQuote = rowValues.map((v, i) =>
-        needQuoteWraps[i] ? `'${v}'` : v
+        needQuoteWraps[i] && v !== "NULL" ? `'${v}'` : v
       );
       sql += `\n(${rowValuesWithQuote.join(", ")})`;
       if (i < len - 1) {
@@ -259,19 +265,22 @@ class SQLGenerator {
       format,
       fkActualType
     );
+    let systemType =
+    tablesForeignKeyMap[tableName]?.[name]?.systemType ||
+    genOptions.actualType; 
+    const needQuoteWrap = new TypeProcessor(systemType).needQuoteWrap;
     const fname = alternativeColumnName ? alternativeColumnName : name;
-    sql += `  ${fname} ${actualType}`;
-    if (!notNull) {
-      sql += ` ${kw.NULL}`;
-    } else {
-      sql += ` ${kw.NOT} ${kw.NULL}`;
-    }
+    sql += `  ${fname}\t${actualType}`;
+    if (notNull) {
+      sql += `\t${kw.NOT} ${kw.NULL}`;
+    } 
     if (unique) {
-      sql += ` ${kw.UNIQUE}`;
+      sql += `\t${kw.UNIQUE}`;
     }
     if (!isForeignKey) {
       if (defaultValue) {
-        sql += ` ${kw.DEFAULT} ${defaultValue}`;
+        const defaultValueQuoted = needQuoteWrap && defaultValue !== "NULL" ? `'${defaultValue}'` : defaultValue;
+        sql += ` ${kw.DEFAULT} ${defaultValueQuoted}`;
       }
       if (primaryKey) {
         sql += ` ${kw.PRIMARY_KEY}`;
@@ -305,7 +314,7 @@ class SQLGenerator {
         throw new Error(`Referenced table ${refTableName} not found`);
       }
       const referencedColumns = referencedTable.fields.filter((field) =>
-        refColumnNames!.includes(field.name.toLowerCase())
+        refColumnNames!.includes(field.name)
       );
       if (referencedColumns.length !== refColumnNames!.length) {
         throw new Error(`Invalid referenced columns`);

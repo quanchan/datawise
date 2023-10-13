@@ -24,12 +24,14 @@ export const ValuePoolInput: React.FC<ValuePoolInputProps> = (
           `/api/types/values?column=${type?.column_name}&table=${type?.entity_meta_table}`
         )
         .then((res) => res.data),
+    staleTime: 300000,
   });
   const [isExcluded, setIsExcluded] = useState<boolean[]>([]);
   const [values, setValues] = useState<(string | number)[]>([]);
+  
   React.useEffect(() => {
     if (data) {
-      setValues(Array.from(new Set(data.sort())))
+      setValues(Array.from(new Set(data.sort())));
     }
   }, [data]);
 
@@ -41,12 +43,23 @@ export const ValuePoolInput: React.FC<ValuePoolInputProps> = (
     if (excluded) {
       const isExcluded = excluded.includes(values[index]);
       if (isExcluded) {
-        setFieldValue(name || "", excluded.filter((v) => v !== values[index]));
+        setFieldValue(
+          name || "",
+          excluded.filter((v) => v !== values[index])
+        );
       } else {
         setFieldValue(name || "", [...excluded, values[index]]);
       }
     }
   };
+
+  const excludeAll = () => {
+    setFieldValue(name || "", [...values]);
+  }
+
+  const includeAll = () => {
+    setFieldValue(name || "", []);
+  }
 
   return (
     <HStack
@@ -58,10 +71,13 @@ export const ValuePoolInput: React.FC<ValuePoolInputProps> = (
       maxW={"1234px"}
     >
       <VStack width={"50%"} pr={3} alignItems={"flex-start"}>
-        <InputLabel name={name} label={"Value Pool"} />
+        <HStack>
+          <InputLabel name={name} label={"Value Pool"} />
+          <Button mb={2} variant={"outline"} size="sm" onClick={excludeAll}>Exclude all</Button>
+        </HStack>
         <Box
           width={"100%"}
-          border="1px solid"
+          border="2px solid"
           borderColor="border.primary"
           p={4}
           borderRadius={4}
@@ -83,10 +99,13 @@ export const ValuePoolInput: React.FC<ValuePoolInputProps> = (
         </Box>
       </VStack>
       <VStack width={"50%"} pl={3} alignItems={"flex-start"}>
-        <InputLabel name={name} label={"Excluded Pool"} />
+        <HStack>
+          <InputLabel name={name} label={"Excluded Pool"} />
+          <Button mb={2} variant={"outline"} size="sm" onClick={includeAll}>Include all</Button>
+        </HStack>
         <Box
           width={"100%"}
-          border="1px solid"
+          border="2px solid"
           borderColor="border.primary"
           p={4}
           borderRadius={4}

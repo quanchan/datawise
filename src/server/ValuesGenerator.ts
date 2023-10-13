@@ -14,19 +14,32 @@ export class ValuesGenerator {
       maxNumberInclusive,
       unique,
       primaryKey,
+      serial,
+      divisibleBy
     } = genOptions;
     precision = precision ? +precision! : 5;
-    minNumber = minNumber !== "" ? +minNumber! : -(10 ** precision! - 1);
-    maxNumber = maxNumber !== "" ? +maxNumber! : 10 ** precision! - 1;
+    minNumber = minNumber !== undefined ? +minNumber! : -(10 ** precision! - 1);
+    maxNumber = maxNumber !== undefined ? +maxNumber! : 10 ** precision! - 1;
     minNumber = minNumberInclusive ? minNumber : minNumber + 1;
     maxNumber = maxNumberInclusive ? maxNumber : maxNumber - 1;
+    divisibleBy = divisibleBy ? +divisibleBy : 1;
     const randomInts: string[] = [];
-
-    for (let i = 0; i < quantity; i++) {
+    if (serial === "y") {
+      minNumber = minNumber || 0;
+      for (let i = 0; i < quantity; i++) {
+        randomInts.push("" + (minNumber + divisibleBy * i));
+      }
+      return randomInts;
+    }
+    const minDivisible = Math.ceil(minNumber / divisibleBy) * divisibleBy;
+    const maxDivisible = Math.floor(maxNumber / divisibleBy) * divisibleBy;
+    const maxQuantity = (unique || primaryKey) ? Math.min(quantity, (maxDivisible - minDivisible) / divisibleBy + 1 ) : quantity;
+    for (let i = 0; i < maxQuantity; i++) {
       const randomInt =
-        Math.floor(Math.random() * (maxNumber - minNumber + 1)) + minNumber;
-      if ((unique || primaryKey) && randomInts.includes("" + randomInt)) {
-        i--; // Retry if the date is excluded
+        Math.floor(Math.random() * ((maxDivisible - minDivisible) / divisibleBy + 1)) * divisibleBy +
+        minDivisible;
+      if ((unique || primaryKey) && randomInts.includes("" + randomInt) && randomInts.length < maxQuantity) {
+        i--; // Retry if the number is already in the array
         continue;
       }
       randomInts.push("" + randomInt);
@@ -51,14 +64,11 @@ export class ValuesGenerator {
     precision = precision ? +precision! : 5;
     scale = scale ? +scale! : 2;
     minNumber =
-      minNumber !== "" ? +minNumber! : -(10 ** (precision - scale) - 1);
-    maxNumber = maxNumber !== "" ? +maxNumber! : 10 ** (precision - scale) - 1;
-    minNumber = minNumberInclusive
-      ? minNumber
-      : minNumber + 1 / 10 ** scale;
-    maxNumber = maxNumberInclusive
-      ? maxNumber
-      : maxNumber - 1 / 10 ** scale;
+      minNumber !== undefined ? +minNumber! : -(10 ** (precision - scale) - 1);
+    maxNumber =
+      maxNumber !== undefined ? +maxNumber! : 10 ** (precision - scale) - 1;
+    minNumber = minNumberInclusive ? minNumber : minNumber + 1 / 10 ** scale;
+    maxNumber = maxNumberInclusive ? maxNumber : maxNumber - 1 / 10 ** scale;
     const randomDecimals: string[] = [];
 
     for (let i = 0; i < quantity; i++) {
@@ -93,10 +103,7 @@ export class ValuesGenerator {
           );
         }
       }
-      if (
-        (unique || primaryKey) &&
-        randomPhoneFax.includes(phoneFax)
-      ) {
+      if ((unique || primaryKey) && randomPhoneFax.includes(phoneFax)) {
         i--; // Retry if the date is excluded
         continue;
       }
@@ -136,9 +143,64 @@ export class ValuesGenerator {
         return this.generateRandomDateTimes(genOptions, quantity);
       case RuntimeTypesId.date:
         return this.generateRandomDates(genOptions, quantity);
+      case RuntimeTypesId.regex:
+        return this.generateRandomRegexString(genOptions, quantity);
       default:
         throw new Error(`Invalid typeid ${typeid}`);
     }
+  }
+  public static generateRandomRegexString(
+    genOptions: RuntimeGenOptions,
+    quantity: number
+  ) {
+    const { regex, unique, primaryKey } = genOptions;
+    // sample format: +## (###) ###-####
+    const randomStrings: string[] = [];
+    let regexPattern = regex || "";
+    for (let i = 0; i < quantity; i++) {
+      let result = "";
+      for (let j = 0; j < regexPattern.length; j++) {
+        const char = regexPattern[j];
+        if (char === "/") {
+          // Handle simplified regex tokens
+          const token = regexPattern.slice(j, j + 2);
+          switch (token) {
+            case "/w":
+              result += Math.random().toString(36).slice(2, 3); // Random alphanumeric character
+              break;
+            case "/d":
+              result += Math.floor(Math.random() * 10).toString(); // Random digit
+              break;
+            case "/W":
+              result += Math.random().toString(36).slice(2, 3).toUpperCase(); // Random uppercase alphabetic character or digit
+              break;
+            case "/a":
+              result += String.fromCharCode(
+                Math.floor(Math.random() * 26) + 97
+              ); // Random lowercase alphabetic character
+              break;
+            case "/A":
+              result += String.fromCharCode(
+                Math.floor(Math.random() * 26) + 65
+              ); // Random uppercase alphabetic character
+              break;
+            default:
+              j--;
+              result += char; // Leave other characters unchanged
+          }
+          j++; // Skip the next character since it's part of the token
+        } else {
+          result += char; // Leave other characters unchanged
+        }
+      }
+      if ((unique || primaryKey) && randomStrings.includes(result)) {
+        i--; // Retry if the string are supposed to be unique
+        continue;
+      }
+      randomStrings.push(result);
+    }
+
+    return randomStrings;
   }
 
   private static generateRandomDateCore(
@@ -146,7 +208,14 @@ export class ValuesGenerator {
     quantity: number,
     withTime: boolean = false
   ): string[] {
-    const { minDate, maxDate, minDateInclusive, maxDateInclusive, unique, primaryKey } = genOptions;
+    const {
+      minDate,
+      maxDate,
+      minDateInclusive,
+      maxDateInclusive,
+      unique,
+      primaryKey,
+    } = genOptions;
     let minDateObj: Date | undefined;
     let maxDateObj: Date | undefined;
     const format = withTime ? "YYYY-MM-DD hh:mm:ss" : "YYYY-MM-DD";
@@ -206,10 +275,7 @@ export class ValuesGenerator {
 
       // Format the date as 'YYYY-MM-DD' and push it to the result array
       const formattedDate = dayjsDate.format(format);
-      if (
-        (unique || primaryKey) &&
-        generatedDates.includes(formattedDate)
-      ) {
+      if ((unique || primaryKey) && generatedDates.includes(formattedDate)) {
         i--; // Retry if the date is excluded
         continue;
       }
@@ -223,12 +289,21 @@ export class ValuesGenerator {
     pool: ValidColumnValue,
     genOptions: RuntimeGenOptions,
     quantity: number,
-    canMapToItself: boolean,
+    canMapToItself: boolean
   ): ValidColumnValue {
     const { unique } = genOptions;
     const generatedValues: ValidColumnValue = [];
-    const indices = this.generateRandomIndices(pool.length, quantity, unique, canMapToItself);
+    const indices = this.generateRandomIndices(
+      pool.length,
+      quantity,
+      unique,
+      canMapToItself
+    );
     for (const index of indices) {
+      if (index === -1) {
+        generatedValues.push("NULL");
+        continue;
+      }
       generatedValues.push(pool[index]);
     }
     return generatedValues;
@@ -238,7 +313,7 @@ export class ValuesGenerator {
     range: number,
     quantity: number,
     unique: boolean,
-    canMapToItself: boolean,
+    canMapToItself: boolean
   ): number[] {
     const generatedIndexes: number[] = [];
 
@@ -257,7 +332,7 @@ export class ValuesGenerator {
     for (let i = 0; i < quantity; i++) {
       let randomIndex;
       if (canMapToItself) {
-        randomIndex = Math.floor(Math.random() * i);
+        randomIndex = i == 0 ? -1 : Math.floor(Math.random() * i);
         generatedIndexes.push(randomIndex);
         continue;
       } else {
@@ -270,5 +345,22 @@ export class ValuesGenerator {
       generatedIndexes.push(randomIndex);
     }
     return generatedIndexes;
+  }
+
+  public static generateRandomUniqueIndices(range: number, quantity: number) {
+    // To efficiently generate quantity unique indices within the range [0, range), we use the Fisher-Yates (or Knuth) shuffle algorithm.
+    if (quantity === 0) {
+      return [];
+    }
+    const indices = Array(range)
+      .fill(0)
+      .map((_, i) => i);
+    for (let i = range - 1; i >= range - quantity; i--) {
+      const randomIndex = Math.floor(Math.random() * (i + 1));
+      // Swap the random index with the current index
+      [indices[i], indices[randomIndex]] = [indices[randomIndex], indices[i]];
+    }
+
+    return indices.slice(-quantity);
   }
 }
