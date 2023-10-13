@@ -5,7 +5,7 @@ import { BaseFooter } from "@/components/BaseFooter";
 
 export type ChooseTypeFooterProps = {
   selection?: Type;
-  onClose: () => void;
+  onClose: (selected: string) => void;
   onSave: () => void;
 };
 
@@ -42,7 +42,7 @@ export const ChooseTypeFooter: React.FC<ChooseTypeFooterProps> = (props) => {
       <HStack spacing={4}>
         <Button
           variant={"outlinedBasic"}
-          onClick={() => onClose()}
+          onClick={() => onClose("")}
         >
           Cancel
         </Button>
