@@ -31,6 +31,12 @@ export const PreviewSQLModal: React.FC<PreviewSQLModalProps> = (props) => {
     }
   }, [isOpen]);
 
+  useEffect(() => {
+    const el = document.evaluate("//*[contains(text(), 'SQL Preview')]", document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue;
+    //@ts-ignore 
+    el?.scrollIntoView({ behavior: "smooth" });
+  }, [data])
+
   const downloadSQL = () => {
     // Create a Blob containing the SQL content
     const blob = new Blob([data], { type: "application/sql" });
@@ -61,6 +67,7 @@ export const PreviewSQLModal: React.FC<PreviewSQLModalProps> = (props) => {
         }
         fontSize={"xs"}
         mb={"65px"}
+        mx={12}
       >
         {data}
       </ModalBody>
