@@ -1,13 +1,32 @@
 services:
   db:
-    image: postgres:latest
+    image: postgres:15
     container_name: pgsql
     ports:
       - 5432:5432
     volumes:
-      - ./volumes/postgres:/var/lib/postgresql/data
+      - pg_data:/var/lib/postgresql/data
     environment:
       POSTGRES_USER: ${DATABASE_USERNAME}
       POSTGRES_PASSWORD: ${DATABASE_PASSWORD}
       POSTGRES_DB: ${DATABASE_NAME}
     restart: always
+
+  app:
+    build: 
+      context: ./
+    container_name: app
+    ports:
+      - 3000:3000
+    depends_on:
+      - db
+    environment:
+      DATABASE_USERNAME: ${DATABASE_USERNAME}
+      DATABASE_PASSWORD: ${DATABASE_PASSWORD}
+      DATABASE_NAME: ${DATABASE_NAME}
+      DATABASE_HOST: ${DATABASE_HOST}
+    restart: always
+    network_mode: "host"
+
+volumes:
+  pg_data:
