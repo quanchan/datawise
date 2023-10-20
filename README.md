@@ -9,7 +9,7 @@ All of them assumed that you have:
 This is the recommended way if you just want to run the application as quickly as possible:
 
 First, you will need to have docker installed.
-Docker (Find your appropriate OS guide): https://docs.docker.com/desktop/install/windows-install/
+- Docker (Find your appropriate OS guide): https://docs.docker.com/desktop/install/windows-install/
 
 Open a terminal and navigate to the folder that you have cloned the project.
 
@@ -29,9 +29,9 @@ docker compose down
 This is
 First, you will need to have nodejs, yarn and docker installed.
 
-NodeJS: https://nodejs.org/en/download
-Yarn: https://yarnpkg.com/getting-started/install
-Docker (Find your appropriate OS guide): https://docs.docker.com/desktop/install/windows-install/
+- NodeJS: https://nodejs.org/en/download
+- Yarn: https://yarnpkg.com/getting-started/install
+- Docker (Find your appropriate OS guide): https://docs.docker.com/desktop/install/windows-install/
 
 Next, navigate to the folder that you have cloned the project and install the project dependencies using a terminal window
 ```
