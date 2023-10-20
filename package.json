@@ -5,8 +5,9 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
-    "start": "next start",
-    "lint": "next lint"
+    "start": "yarn db && next start",
+    "lint": "next lint",
+    "db": "db-migrate up all"
   },
   "dependencies": {
     "@chakra-ui/react": "^2.8.0",
