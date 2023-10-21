@@ -68,6 +68,11 @@ export const defaultTables: Tables = {
   newType: defaultCustomType,
 };
 
+export type DefaultSchemaContext = {
+  defaultSchema: Tables,
+  setDefaultSchema: React.Dispatch<React.SetStateAction<Tables>>,
+}
+
 export const sqlReservedWords = [
   "ADD",
   "ALL",

@@ -23,7 +23,7 @@ export const InputLabel: React.FC<InputLabelProps> = (props) => {
         whiteSpace={"nowrap"}
       >
         {tooltip && (
-          <Tooltip display={"inline"} label={tooltip} fontSize={"md"}>
+          <Tooltip display={"inline"} label={tooltip} fontSize={"md"} size={"300px"}>
             <span style={{ verticalAlign: "text-top" }}>
               <Icon as={BiInfoCircle} mr={1} />
             </span>

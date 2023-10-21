@@ -5,15 +5,15 @@ import {
   BaseModalProps,
   GenOptionsModalFooter,
 } from "@/components/modal";
-import { ErrorMessage, useFormikContext } from "formik";
+import { useFormikContext } from "formik";
 import { Tables, WordCasing, WordCasingOptions, YesNoOptions } from "@/types";
 import { TextInput, DateInput, SelectInput } from "@/components/input";
 import { ValuePoolInput } from "../input/ValuePoolInput";
 import { Type } from "@/types";
-import axios from "axios";
-import { useQuery } from "@tanstack/react-query";
 import { TypeProcessor } from "@/server/TypeProcessor";
-import React from "react";
+import React, { useEffect, useState } from "react";
+import { ErrorMessage } from "@/components/ErrorMessage";
+import { useTypesContext } from "@/context";
 
 export type GenOptionsModalProps = {
   onClose: () => void;
@@ -27,11 +27,17 @@ export const GenOptionsModal: React.FC<GenOptionsModalProps> = (props) => {
   const fieldData = values.tables[tableIndex]?.fields[fieldIndex];
   const genOptions = fieldData?.genOptions;
   const typeId = fieldData?.type;
-  const { data: type } = useQuery<Type | undefined>({
-    queryKey: [`typeData${typeId}`],
-    queryFn: () =>
-      axios.get(`/api/types/id?id=${typeId}`).then((res) => res.data),
-  });
+
+  const [type, setType] = useState<Type | undefined>(undefined);
+  const { types } = useTypesContext();
+  useEffect(() => {
+    if (types && typeId) {
+      const type = types.find((type) => type.id === typeId);
+      setType(type);
+    }
+  }, [types, typeId]);
+
+
   const gen_opts = type?.gen_opts;
   const namePrefix = `tables.${tableIndex}.fields.${fieldIndex}.genOptions.`;
   const typeProcessor = new TypeProcessor(type?.data_type);
@@ -83,7 +89,16 @@ export const GenOptionsModal: React.FC<GenOptionsModalProps> = (props) => {
         namePrefix + "wordCasing",
         genOptions?.wordCasing || WordCasing.original
       );
+      setFieldValue(namePrefix + "serial", genOptions?.serial || "n");
       setFieldValue(namePrefix + "withEntity", genOptions?.withEntity || "n");
+      setFieldValue(
+        namePrefix + "justUsername",
+        genOptions?.justUsername || "n"
+      );
+      setFieldValue(
+        namePrefix + "divisibleBy",
+        genOptions?.divisibleBy || 1
+      );
     }
     //
   }, [type, gen_opts]);
@@ -119,12 +134,12 @@ export const GenOptionsModal: React.FC<GenOptionsModalProps> = (props) => {
                 label="Actual Type"
                 disabled={true}
                 styles={{ m: 2 }}
-                tooltip={`This is the arbitrary type that this data belongs to. In your selected format, tt will be mapped to this type: ${typeProcessor.getSQLType(
+                tooltip={`This is the arbitrary type that this data belongs to. In your selected format, this will be mapped to : ${typeProcessor.getSQLType(
                   values.format
                 )}`}
               />
             )}
-            {gen_opts?.includes("withEntity") && (
+            {gen_opts?.includes("withEntity") && !type?.standalone && (
               <SelectInput
                 name={namePrefix + "withEntity"}
                 onChange={handleChange}
@@ -133,6 +148,17 @@ export const GenOptionsModal: React.FC<GenOptionsModalProps> = (props) => {
                 label={"With Entity"}
                 styles={{ m: 2 }}
                 tooltip="Certain types are grouped together in a Domain Entity. They can be generated as their individual field or generate together with other fields in their entity so that the result is more consistent and meaningful."
+              />
+            )}
+            {gen_opts?.includes("serial") && (
+              <SelectInput
+                name={namePrefix + "serial"}
+                onChange={handleChange}
+                value={genOptions?.serial}
+                options={YesNoOptions}
+                label={"Serial"}
+                styles={{ m: 2 }}
+                tooltip="Numbers will be generated sequentially from the provided min number."
               />
             )}
             {gen_opts?.includes("maxLength") && (
@@ -146,8 +172,6 @@ export const GenOptionsModal: React.FC<GenOptionsModalProps> = (props) => {
                 />
                 <ErrorMessage
                   name={namePrefix + "maxLength"}
-                  component={Text}
-                  color="red.500"
                   maxW={"286.5px"}
                 />
               </VStack>
@@ -165,8 +189,6 @@ export const GenOptionsModal: React.FC<GenOptionsModalProps> = (props) => {
                 />
                 <ErrorMessage
                   name={namePrefix + "precision"}
-                  component={Text}
-                  color="red.500"
                   maxW={"286.5px"}
                 />
               </VStack>
@@ -182,12 +204,7 @@ export const GenOptionsModal: React.FC<GenOptionsModalProps> = (props) => {
                   tooltip="The number of digits to the right of the decimal point in a number. For example, the number 123.45 has a scale of 2."
                   styles={{ m: 2 }}
                 />
-                <ErrorMessage
-                  name={namePrefix + "scale"}
-                  component={Text}
-                  color="red.500"
-                  maxW={"286.5px"}
-                />
+                <ErrorMessage name={namePrefix + "scale"} maxW={"286.5px"} />
               </VStack>
             )}
             {gen_opts?.includes("minDate") && (
@@ -202,12 +219,7 @@ export const GenOptionsModal: React.FC<GenOptionsModalProps> = (props) => {
                   setFieldValue={setFieldValue}
                   inclusiveChecked={genOptions?.minDateInclusive}
                 />
-                <ErrorMessage
-                  name={namePrefix + "minDate"}
-                  component={Text}
-                  color="red.500"
-                  maxW={"286.5px"}
-                />
+                <ErrorMessage name={namePrefix + "minDate"} maxW={"286.5px"} />
               </VStack>
             )}
             {gen_opts?.includes("maxDate") && (
@@ -222,12 +234,7 @@ export const GenOptionsModal: React.FC<GenOptionsModalProps> = (props) => {
                   setFieldValue={setFieldValue}
                   inclusiveChecked={genOptions?.maxDateInclusive}
                 />
-                <ErrorMessage
-                  name={namePrefix + "maxDate"}
-                  component={Text}
-                  color="red.500"
-                  maxW={"286.5px"}
-                />
+                <ErrorMessage name={namePrefix + "maxDate"} maxW={"286.5px"} />
               </VStack>
             )}
             {gen_opts?.includes("minNumber") && (
@@ -243,8 +250,6 @@ export const GenOptionsModal: React.FC<GenOptionsModalProps> = (props) => {
                 />
                 <ErrorMessage
                   name={namePrefix + "minNumber"}
-                  component={Text}
-                  color="red.500"
                   maxW={"286.5px"}
                 />
               </VStack>
@@ -262,8 +267,22 @@ export const GenOptionsModal: React.FC<GenOptionsModalProps> = (props) => {
                 />
                 <ErrorMessage
                   name={namePrefix + "maxNumber"}
-                  component={Text}
-                  color="red.500"
+                  maxW={"286.5px"}
+                />
+              </VStack>
+            )}
+            {gen_opts?.includes("divisibleBy") && (
+              <VStack>
+                <TextInput
+                  name={namePrefix + "divisibleBy"}
+                  onChange={handleChange}
+                  value={genOptions?.divisibleBy}
+                  label={"Divisible By"}
+                  isNumber={true}
+                  styles={{ m: 2 }}
+                />
+                <ErrorMessage
+                  name={namePrefix + "divisibleBy"}
                   maxW={"286.5px"}
                 />
               </VStack>
@@ -276,13 +295,11 @@ export const GenOptionsModal: React.FC<GenOptionsModalProps> = (props) => {
                   value={genOptions?.nullPercent}
                   label={"Null Percentage"}
                   isNumber={true}
-                  tooltip="The percentage of rows with NULL value "
+                  tooltip="The percentage of rows with NULL value. For composite FK, the null percentage of that key will be the min percentage within all the columns."
                   styles={{ m: 2 }}
                 />
                 <ErrorMessage
                   name={namePrefix + "nullPercent"}
-                  component={Text}
-                  color="red.500"
                   maxW={"286.5px"}
                 />
               </VStack>
@@ -294,6 +311,38 @@ export const GenOptionsModal: React.FC<GenOptionsModalProps> = (props) => {
                 value={genOptions?.phoneFaxFormat}
                 label={"Phone/Fax Generation Format"}
                 tooltip="The format of the phone/fax number. # will be replaced with random number. For example, +61 (###) ###-####"
+                styles={{ m: 2 }}
+              />
+            )}
+            {gen_opts?.includes("regex") && (
+              <TextInput
+                doubleLength={true}
+                name={namePrefix + "regex"}
+                onChange={handleChange}
+                value={genOptions?.regex}
+                label={"Regex Generation Format"}
+                tooltip="The Simplified Regex format of the generated string. /d: digit, /w: alphanumeric, /W: uppercase alphanumeric, /a: alphabetic character, /A: uppercase alphabetic character, everything else means itself"
+                styles={{ m: 2 }}
+              />
+            )}
+            {gen_opts?.includes("emailDomain") && (
+              <TextInput
+                name={namePrefix + "emailDomain"}
+                onChange={handleChange}
+                value={genOptions?.emailDomain}
+                label={"Email Domain"}
+                tooltip="The default domain for email addresses (without the @). For example, gmail.com. If left blank, the domain will be randomly generated. If just username is selected, this field will be ignored."
+                styles={{ m: 2 }}
+              />
+            )}
+            {gen_opts?.includes("justUsername") && (
+              <SelectInput
+                name={namePrefix + "justUsername"}
+                onChange={handleChange}
+                value={genOptions?.justUsername}
+                label={"Just Username"}
+                tooltip="If selected, only the username part of the email address will be generated."
+                options={YesNoOptions}
                 styles={{ m: 2 }}
               />
             )}

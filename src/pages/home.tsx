@@ -40,10 +40,7 @@ import {
 import { BaseFooter } from "@/components/BaseFooter";
 import * as yup from "yup";
 import dayjs from "dayjs";
-
-const initialValues: Tables = {
-  ...defaultTables,
-};
+import { useDefaultSchemaContext } from "@/context";
 
 const sqlFieldNamePattern = /^[a-zA-Z][a-zA-Z0-9_]*$/;
 
@@ -282,6 +279,9 @@ export default function Home() {
   const [deletingModal, setDeletingModal] = React.useState<number>(0);
   const [removeTable, setRemoveTable] =
     React.useState<ArrayHelpers["remove"]>();
+
+  const { defaultSchema } = useDefaultSchemaContext();
+
   const onOpenModal = (modal: keyof ModalOpenStates) => {
     // switch off every other modal, except for the open one
     setOpenModal((prev) => {
@@ -329,7 +329,7 @@ export default function Home() {
 
   return (
     <Formik
-      initialValues={initialValues}
+      initialValues={defaultSchema}
       onSubmit={async (_) => {
         onOpenModal("preview");
       }}
@@ -360,7 +360,7 @@ export default function Home() {
                   w={"100%"}
                 >
                   <TabList my={4} justifyContent={"space-between"}>
-                    <HStack w={"100%"}>
+                    <HStack w={"100%"} overflowX={"auto"}>
                       <FieldArray name={`tables`}>
                         {({ remove, push }: ArrayHelpers) => (
                           <>
@@ -392,12 +392,13 @@ export default function Home() {
                         )}
                       </FieldArray>
                     </HStack>
-                    <Button
+                    {/* TODO: Enable again if implement visualiser */}
+                    {/* <Button
                       variant={"primary"}
                       onClick={() => onOpenModal("visualiser")}
                     >
                       Visualiser
-                    </Button>
+                    </Button> */}
                   </TabList>
                   <TabPanels w={"100%"}>
                     {values.tables.map((table, index) => (
@@ -431,6 +432,31 @@ export default function Home() {
                   <option value={Format.MySQL}>{Format.MySQL}</option>
                   <option value={Format.OracleSQL}>{Format.OracleSQL}</option>
                 </Select>
+                <Button
+                  variant={"outlinedBasic"}
+                  onClick={() => {
+                    // Create a Blob containing the SQL content
+                    const blob = new Blob([JSON.stringify(values, null, 2)], {
+                      type: "application/json",
+                    });
+
+                    // Create a URL for the Blob
+                    const url = URL.createObjectURL(blob);
+
+                    // Create a temporary anchor element
+                    const a = document.createElement("a");
+                    a.href = url;
+                    a.download = "schema.json";
+
+                    // Trigger a click event on the anchor to initiate the download
+                    a.click();
+
+                    // Clean up by revoking the Blob URL
+                    URL.revokeObjectURL(url);
+                  }}
+                >
+                  Export
+                </Button>
                 <Button
                   variant={"primary"}
                   type="submit"

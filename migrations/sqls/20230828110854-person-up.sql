@@ -59,12 +59,12 @@ insert into column_meta (display_name, description, example, column_name, data_t
   'person'
 ),
 (
-  'Email Prefix',
-  'Email username created from person fullname',
+  'Email username',
+  'Email username created from person fullname. Could be used as a prefix for email address',
   'johnsmith, maryjwatson',
   'email_prefix',
   'varchar(255)',
-  'entityVarchar',
+  'entityEmail',
   'person'
 ),
 (
@@ -101,7 +101,7 @@ INSERT INTO person (first_name, last_name, middle_name, initials, email_prefix, 
   ('Robert', 'Johnson', 'Lee', 'RJL', 'robertjohnson', 'Male', 'M', 'Mr.', 'person'),
   ('Emily', 'Brown', 'Grace', 'EBG', 'ebrown', 'Non-Binary', 'N', 'Ms.', 'person'),
   ('David', 'Wilson', 'James', 'DWJ', 'djwilson', 'Male', 'M', 'Dr.', 'person'),
-  ('Sarah', 'Taylor', NULL, 'ST', 'staylor123', 'Female', 'F', 'Ms.', 'person'),
+  ('Sarah', 'Taylor', 'Daphne', 'ST', 'staylor123', 'Female', 'F', 'Ms.', 'person'),
   ('Michael', 'Anderson', 'Thomas', 'MAT', 'm.anderson', 'Male', 'M', 'Mr.', 'person'),
   ('Olivia', 'Martinez', 'Marie', 'OMM', 'oliviam', 'Female', 'F', 'Dr.', 'person'),
   ('William', 'White', 'Alexander', 'WWA', 'wwhite', 'Male', 'M', 'Mr.', 'person'),

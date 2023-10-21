@@ -22,6 +22,7 @@ export const TypeCard: React.FC<TypeCardProps> = (props) => {
     <Card
       onClick={handleClick}
       variant={"outline"}
+      borderWidth={"2px"}
       width={{ base: "100%", md: "47%", lg: "23%" }}
       _hover={selectedStyle}
       {...appliedStyle}
@@ -32,7 +33,7 @@ export const TypeCard: React.FC<TypeCardProps> = (props) => {
         fontSize={"md"}
       >
         <span style={{ verticalAlign: "text-top" }}>
-          <CardHeader borderBottom={"1px solid"} borderColor={"border.primary"}>
+          <CardHeader borderBottom={"2px solid"} borderColor={"border.primary"}>
             {type.display_name}
           </CardHeader>
           <CardBody color="text.secondary">
@@ -44,8 +45,7 @@ export const TypeCard: React.FC<TypeCardProps> = (props) => {
             ) : (
               ""
             )}
-            Entity: {" " + type.entity_display_name}
-            <br />
+            {type.standalone ? "" : <>Entity: {type.entity_display_name}<br/></>}
             Example: {" " + type.example}
             <br />
             SQL Type: {" " + typeProcessor.typeSQL.toUpperCase()}

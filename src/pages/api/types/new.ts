@@ -1,6 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 
-import { CustomType, Type } from "@/types";
+import { CustomType } from "@/types";
 import { TypeProvider } from "@/server/TypeProvider";
 
 export default async function handler(
@@ -9,7 +9,7 @@ export default async function handler(
 ) {
   if (req.method == "POST") {
     const newType = req.body as CustomType;
-    await TypeProvider.createType(newType);
-    res.status(200).send("Success!");
+    const type = await TypeProvider.createType(newType);
+    res.status(200).send(type);
   }
 }

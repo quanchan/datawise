@@ -24,9 +24,11 @@ export const ValuePoolInput: React.FC<ValuePoolInputProps> = (
           `/api/types/values?column=${type?.column_name}&table=${type?.entity_meta_table}`
         )
         .then((res) => res.data),
+    staleTime: 300000,
   });
   const [isExcluded, setIsExcluded] = useState<boolean[]>([]);
   const [values, setValues] = useState<(string | number)[]>([]);
+  
   React.useEffect(() => {
     if (data) {
       setValues(Array.from(new Set(data.sort())));
@@ -52,11 +54,11 @@ export const ValuePoolInput: React.FC<ValuePoolInputProps> = (
   };
 
   const excludeAll = () => {
-    setIsExcluded(values?.map((v) => true) ?? []);
+    setFieldValue(name || "", [...values]);
   }
 
   const includeAll = () => {
-    setIsExcluded(values?.map((v) => false) ?? []);
+    setFieldValue(name || "", []);
   }
 
   return (
@@ -75,7 +77,7 @@ export const ValuePoolInput: React.FC<ValuePoolInputProps> = (
         </HStack>
         <Box
           width={"100%"}
-          border="1px solid"
+          border="2px solid"
           borderColor="border.primary"
           p={4}
           borderRadius={4}
@@ -103,7 +105,7 @@ export const ValuePoolInput: React.FC<ValuePoolInputProps> = (
         </HStack>
         <Box
           width={"100%"}
-          border="1px solid"
+          border="2px solid"
           borderColor="border.primary"
           p={4}
           borderRadius={4}

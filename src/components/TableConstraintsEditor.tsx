@@ -9,14 +9,15 @@ import {
 } from "@chakra-ui/react";
 import { TableConstraintControl } from "./TableConstraintControl";
 import { AddButton } from "./btn/AddButton";
-import {
-  ArrayHelpers,
-  FieldArray,
-  useFormikContext,
-} from "formik";
+import { ArrayHelpers, FieldArray, useFormikContext } from "formik";
 import { Tables, defaultTableConstraints } from "@/types";
 import React from "react";
 import { ConfirmDeleteModal } from "./modal/ConfirmDeleteModal";
+import {
+  DragDropContext,
+  Droppable,
+  OnDragEndResponder,
+} from "react-beautiful-dnd";
 
 export type TableConstraintsEditorProps = {
   tableIndex: number;
@@ -27,7 +28,7 @@ export const TableConstraintsEditor: React.FC<TableConstraintsEditorProps> = (
   props
 ) => {
   const { tableIndex, onEditConstraint } = props;
-  const { values } = useFormikContext<Tables>();
+  const { values, setFieldValue } = useFormikContext<Tables>();
   const data = values.tables[tableIndex]?.constraints;
 
   const { isOpen, onOpen, onClose } = useDisclosure();
@@ -45,6 +46,20 @@ export const TableConstraintsEditor: React.FC<TableConstraintsEditorProps> = (
     onOpen();
   };
 
+  const onDragEnd: OnDragEndResponder = (result) => {
+    const { source, destination } = result;
+    if (!destination) return;
+    if (
+      source.index === destination.index &&
+      source.droppableId === destination.droppableId
+    )
+      return;
+    const constraints = [...data];
+    constraints.splice(source.index, 1);
+    constraints.splice(destination.index, 0, data[source.index]);
+    setFieldValue(`tables.${tableIndex}.constraints`, constraints);
+  };
+
   if (!data) return <></>;
 
   return (
@@ -53,7 +68,7 @@ export const TableConstraintsEditor: React.FC<TableConstraintsEditorProps> = (
         overflowX={{ base: "scroll", lg: "hidden" }}
         display={"flex"}
         spacing={4}
-        border={"1px solid"}
+        border={"2px solid"}
         borderColor={"border.primary"}
         p={4}
         mt={4}
@@ -74,7 +89,7 @@ export const TableConstraintsEditor: React.FC<TableConstraintsEditorProps> = (
           color={"border.primary"}
           opacity={1}
           my={0}
-          borderWidth={0.5}
+          borderWidth={1}
           w={"100%"}
         />
         <HStack pl={12} fontWeight={"semibold"} minW={"4xl"}>
@@ -87,36 +102,45 @@ export const TableConstraintsEditor: React.FC<TableConstraintsEditorProps> = (
           color={"border.primary"}
           opacity={1}
           my={0}
-          borderWidth={0.5}
+          borderWidth={1}
           w={"100%"}
         />
-        <FieldArray name={`tables.${tableIndex}.constraints`}>
-          {({ remove, push }: ArrayHelpers) => (
-            <>
-              {data.map((_, i) => (
-                <TableConstraintControl
-                  key={i}
-                  onRemove={() => openRemoveConstraintModal(i, remove)}
-                  tableIndex={tableIndex}
-                  constraintIndex={i}
-                  onEditConstraint={onEditConstraint}
-                />
-              ))}
-              <Box textAlign={"left"}>
-                <AddButton
-                  onClick={() => {
-                    push({
-                      ...defaultTableConstraints,
-                      name: `constraint_${data.length + 1}`,
-                    });
-                  }}
-                >
-                  Add Constraint
-                </AddButton>
-              </Box>
-            </>
-          )}
-        </FieldArray>
+        <DragDropContext onDragEnd={onDragEnd}>
+          <Droppable droppableId={"tableConstraints-" + tableIndex}>
+            {(provided) => (
+              <div {...provided.droppableProps} ref={provided.innerRef}>
+                <FieldArray name={`tables.${tableIndex}.constraints`}>
+                  {({ remove, push }: ArrayHelpers) => (
+                    <Stack spacing={4}>
+                      {data.map((_, i) => (
+                        <TableConstraintControl
+                          key={i}
+                          onRemove={() => openRemoveConstraintModal(i, remove)}
+                          tableIndex={tableIndex}
+                          constraintIndex={i}
+                          onEditConstraint={onEditConstraint}
+                        />
+                      ))}
+                      {provided.placeholder}
+                      <Box textAlign={"left"}>
+                        <AddButton
+                          onClick={() => {
+                            push({
+                              ...defaultTableConstraints,
+                              name: `constraint_${data.length + 1}`,
+                            });
+                          }}
+                        >
+                          Add Constraint
+                        </AddButton>
+                      </Box>
+                    </Stack>
+                  )}
+                </FieldArray>
+              </div>
+            )}
+          </Droppable>
+        </DragDropContext>
       </Stack>
       <ConfirmDeleteModal
         isOpen={isOpen}

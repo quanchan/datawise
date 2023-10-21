@@ -25,7 +25,7 @@ export const NavCardButton: React.FC<NavCardButtonProps> = (props) => {
         m={8}
         mt={0}
         p={0}
-        border={"1px dashed #0093FA"}
+        border={"2px dashed #0093FA"}
         borderRadius={4}
         minHeight={40}
         display={"flex"}
