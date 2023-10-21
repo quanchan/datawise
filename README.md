@@ -26,7 +26,8 @@ docker compose down
 ```
 
 ### Development start
-This is
+This is the recommended way if you want to work on the development side of the project.
+
 First, you will need to have nodejs, yarn and docker installed.
 
 - NodeJS: https://nodejs.org/en/download
