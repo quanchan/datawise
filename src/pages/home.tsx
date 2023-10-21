@@ -405,13 +405,15 @@ export default function Home() {
                       <TabPanel p={0} key={index}>
                         <Box display={"flex"} flexDirection={"column"}>
                           <TableFieldsEditor
-                            index={index}
+                            tableIndex={index}
                             onChooseType={onChooseType}
                             onEditOptions={onEditOptions}
+                            currentTable={tabIndex}
                           />
                           <TableConstraintsEditor
                             tableIndex={index}
                             onEditConstraint={onEditConstraint}
+                            currentTable={tabIndex}
                           />
                         </Box>
                       </TabPanel>

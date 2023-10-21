@@ -22,12 +22,13 @@ import {
 export type TableConstraintsEditorProps = {
   tableIndex: number;
   onEditConstraint: (index: number) => void;
+  currentTable: number;
 };
 
 export const TableConstraintsEditor: React.FC<TableConstraintsEditorProps> = (
   props
 ) => {
-  const { tableIndex, onEditConstraint } = props;
+  const { tableIndex, onEditConstraint, currentTable } = props;
   const { values, setFieldValue } = useFormikContext<Tables>();
   const data = values.tables[tableIndex]?.constraints;
 
@@ -37,6 +38,8 @@ export const TableConstraintsEditor: React.FC<TableConstraintsEditorProps> = (
   const [removeField, setRemoveField] =
     React.useState<ArrayHelpers["remove"]>();
 
+  if (tableIndex !== currentTable) return <></>;
+    
   const openRemoveConstraintModal = (
     index: number,
     remove: ArrayHelpers["remove"]
