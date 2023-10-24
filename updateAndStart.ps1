@@ -7,9 +7,6 @@ Start-Process -FilePath "yarn" -Wait
 # Open a new PowerShell window and run 'docker compose up' without waiting
 Start-Process -FilePath "powershell" -ArgumentList "-NoProfile -NoExit -Command `"docker compose up`""
 
-# Run 'yarn db'
-Start-Process -FilePath "yarn" -ArgumentList "db" -Wait -NoNewWindow
-
 # Run 'yarn build'
 Start-Process -FilePath "yarn" -ArgumentList "build" -Wait -NoNewWindow
 
