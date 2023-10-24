@@ -9,11 +9,7 @@ import {
   useDisclosure,
 } from "@chakra-ui/react";
 import { FieldControl } from "./FieldControl";
-import {
-  ArrayHelpers,
-  FieldArray,
-  useFormikContext,
-} from "formik";
+import { ArrayHelpers, FieldArray, useFormikContext } from "formik";
 import { Tables, defaultField } from "@/types";
 import { AddButton } from "./btn/AddButton";
 import React from "react";
@@ -26,20 +22,24 @@ import {
 import { ErrorMessage } from "./ErrorMessage";
 
 export type TableFieldsEditorProps = {
-  index: number;
+  tableIndex: number;
   onChooseType: (index: number) => void;
   onEditOptions: (index: number) => void;
+  currentTable: number;
 };
 
 export const TableFieldsEditor: React.FC<TableFieldsEditorProps> = (props) => {
-  const { index, onChooseType, onEditOptions } = props;
+  const { tableIndex, onChooseType, onEditOptions, currentTable } = props;
   const { values, handleChange, setFieldValue } = useFormikContext<Tables>();
-  const data = values.tables[index];
+  const data = values.tables[tableIndex];
 
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [currentFieldIndex, setCurrentFieldIndex] = React.useState<number>(0);
+
   const [removeField, setRemoveField] =
     React.useState<ArrayHelpers["remove"]>();
+
+  if (tableIndex !== currentTable) return <></>;
 
   const openRemoveFieldModal = (
     fieldIndex: number,
@@ -61,7 +61,7 @@ export const TableFieldsEditor: React.FC<TableFieldsEditorProps> = (props) => {
     const fields = [...data.fields];
     fields.splice(source.index, 1);
     fields.splice(destination.index, 0, data.fields[source.index]);
-    setFieldValue(`tables.${index}.fields`, fields);
+    setFieldValue(`tables.${tableIndex}.fields`, fields);
   };
   return (
     <>
@@ -84,7 +84,7 @@ export const TableFieldsEditor: React.FC<TableFieldsEditorProps> = (props) => {
             <HStack spacing={3}>
               <Text>Table Name</Text>
               <Input
-                name={`tables.${index}.name`}
+                name={`tables.${tableIndex}.name`}
                 onChange={handleChange}
                 value={data.name}
                 fontSize={"sm"}
@@ -94,7 +94,7 @@ export const TableFieldsEditor: React.FC<TableFieldsEditorProps> = (props) => {
               />
               <Text>Row Quantity</Text>
               <Input
-                name={`tables.${index}.rowQuantity`}
+                name={`tables.${tableIndex}.rowQuantity`}
                 onChange={handleChange}
                 value={data.rowQuantity}
                 p={0}
@@ -108,12 +108,8 @@ export const TableFieldsEditor: React.FC<TableFieldsEditorProps> = (props) => {
             </HStack>
             <Box></Box>
           </HStack>
-          <ErrorMessage
-            name={`tables.${index}.name`}
-          />
-          <ErrorMessage
-            name={`tables.${index}.rowQuantity`}
-          />
+          <ErrorMessage name={`tables.${tableIndex}.name`} />
+          <ErrorMessage name={`tables.${tableIndex}.rowQuantity`} />
         </VStack>
         <Divider
           orientation="horizontal"
@@ -139,10 +135,10 @@ export const TableFieldsEditor: React.FC<TableFieldsEditorProps> = (props) => {
           w={"100%"}
         />
         <DragDropContext onDragEnd={onDragEnd}>
-          <Droppable droppableId={"table-" + index}>
+          <Droppable droppableId={"table-" + tableIndex}>
             {(provided) => (
               <div {...provided.droppableProps} ref={provided.innerRef}>
-                <FieldArray name={`tables.${index}.fields`}>
+                <FieldArray name={`tables.${tableIndex}.fields`}>
                   {({ remove, push }: ArrayHelpers) => (
                     <Stack spacing={4}>
                       {data.fields.map((f, i) => (
@@ -150,7 +146,7 @@ export const TableFieldsEditor: React.FC<TableFieldsEditorProps> = (props) => {
                           key={i}
                           onRemove={() => openRemoveFieldModal(i, remove)}
                           fieldIndex={i}
-                          tableIndex={index}
+                          tableIndex={tableIndex}
                           onChooseType={onChooseType}
                           onEditOptions={onEditOptions}
                         />

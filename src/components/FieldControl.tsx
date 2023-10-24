@@ -46,6 +46,7 @@ export const FieldControl: React.FC<FieldControlProps> = (props) => {
 
   return (
     <Draggable
+      key={"field-" + tableIndex + "-" + fieldIndex}
       draggableId={"field-" + tableIndex + "-" + fieldIndex}
       index={fieldIndex}
     >
