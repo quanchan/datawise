@@ -6,6 +6,7 @@ export type TypeMap = {
   char: string;
   varchar: string;
   text: string;
+  uuid: string;
 }
 
 export const NeedQuoteWrap: Record<keyof TypeMap, boolean> = {
@@ -16,6 +17,7 @@ export const NeedQuoteWrap: Record<keyof TypeMap, boolean> = {
   char: true,
   varchar: true,
   text: true,
+  uuid: true,
 }
 
 export const MySQLTypeMap: TypeMap = {
@@ -26,6 +28,7 @@ export const MySQLTypeMap: TypeMap = {
   char: "CHAR",
   varchar: "VARCHAR",
   text: "TEXT",
+  uuid: "CHAR(36)",
 }
 
 export const OracleSQLTypeMap: TypeMap = {
@@ -36,6 +39,7 @@ export const OracleSQLTypeMap: TypeMap = {
   char: "CHAR",
   varchar: "VARCHAR",
   text: "CLOB",
+  uuid: "RAW(16)",
 }
 
 

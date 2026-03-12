@@ -18,13 +18,13 @@ export const FieldConstraintsControl: React.FC<
 
   return (
     <HStack w={"100%"} justifyContent={"space-between"}>
-      <Checkbox name={`tables.${tableIndex}.fields.${fieldIndex}.constraints.notNull`} checked={data.notNull} onChange={handleChange}>
+      <Checkbox name={`tables.${tableIndex}.fields.${fieldIndex}.constraints.notNull`} isChecked={data.notNull} onChange={handleChange}>
         <Text fontSize="xs">NOT NULL</Text>
       </Checkbox>
-      <Checkbox name={`tables.${tableIndex}.fields.${fieldIndex}.constraints.unique`} checked={data.unique} onChange={handleChange}>
+      <Checkbox name={`tables.${tableIndex}.fields.${fieldIndex}.constraints.unique`} isChecked={data.unique} onChange={handleChange}>
         <Text fontSize="xs">UNIQUE</Text>
       </Checkbox>
-      <Checkbox name={`tables.${tableIndex}.fields.${fieldIndex}.constraints.primaryKey`} checked={data.primaryKey} onChange={handleChange}>
+      <Checkbox name={`tables.${tableIndex}.fields.${fieldIndex}.constraints.primaryKey`} isChecked={data.primaryKey} onChange={handleChange}>
         <Text fontSize="xs">PRIMARY KEY</Text>
       </Checkbox>
     </HStack>
