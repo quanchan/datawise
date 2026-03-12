@@ -169,6 +169,9 @@ class SQLGenerator {
       case "randomDecimal":
         args = [genOptions.precision?.toString(), genOptions.scale?.toString()];
         break;
+      case "randomGuid":
+        args = [];
+        break;
       default:
         args = [];
     }

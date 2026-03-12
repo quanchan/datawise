@@ -44,6 +44,7 @@ export const AllowedGenOptionsMap: AllowedGenOptions = {
   randomPhoneFax: ["actualType", "maxLength", "phoneFaxFormat", "nullPercent"],
   randomRegex: ["actualType", "maxLength", "regex", "nullPercent"],
   foreignKey: ["nullPercent"],
+  randomGuid: ["actualType", "nullPercent"],
 } 
 
 export enum WordCasing {

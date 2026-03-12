@@ -1,5 +1,6 @@
 import { RuntimeGenOptions, RuntimeTypesId, ValidColumnValue } from "@/types";
 import dayjs from "dayjs";
+import { randomUUID } from "crypto";
 
 export class ValuesGenerator {
   public static generateRandomInts(
@@ -145,6 +146,8 @@ export class ValuesGenerator {
         return this.generateRandomDates(genOptions, quantity);
       case RuntimeTypesId.regex:
         return this.generateRandomRegexString(genOptions, quantity);
+      case RuntimeTypesId.guid:
+        return this.generateRandomGuids(quantity);
       default:
         throw new Error(`Invalid typeid ${typeid}`);
     }
@@ -201,6 +204,20 @@ export class ValuesGenerator {
     }
 
     return randomStrings;
+  }
+
+  public static generateRandomGuids(quantity: number): string[] {
+    const guids: string[] = [];
+    for (let i = 0; i < quantity; i++) {
+      const guid = randomUUID();
+      // GUIDs are inherently unique, but check just in case
+      if (guids.includes(guid)) {
+        i--;
+        continue;
+      }
+      guids.push(guid);
+    }
+    return guids;
   }
 
   private static generateRandomDateCore(

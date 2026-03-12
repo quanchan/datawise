@@ -90,6 +90,20 @@ export class TypeProvider {
       standalone: true,
       custom: false,
     },
+    {
+      id: RuntimeTypesId.guid,
+      display_name: "Random GUID",
+      description:
+        "Random UUID/GUID (v4) generated to be used as a unique primary key identifier.",
+      example: "f47ac10b-58cc-4372-a567-0e02b2c3d479",
+      data_type: "uuid",
+      gen_opts_name: "randomGuid",
+      column_name: "",
+      entity_display_name: "",
+      entity_meta_table: "",
+      standalone: true,
+      custom: false,
+    },
   ];
 
   public static foreignKey = {
